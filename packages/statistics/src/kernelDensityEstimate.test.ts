@@ -7,7 +7,7 @@ import {
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
 } from './__fixtures__/testSamples'
 import {
-  kernelDensityEstimateForNormalDistribution,
+  kernelDensityEstimate,
   optimalThreshold,
 } from './kernelDensityEstimate'
 
@@ -19,7 +19,7 @@ const PLOT_CONFIG: PlotConfig = {
 describe('kernelDensityEstimateForNormalDistribution', () => {
   it('should correctly calculate the KDE', () => {
     const data = [93, 93, 96, 100, 101, 102, 102]
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: data,
     })
     expect(densityEstimate).toMatchInlineSnapshot(`
@@ -36,7 +36,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
   })
 
   it('should return the correct kernel density estimate for a unimodal sample', () => {
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: UNIMODAL_SAMPLE,
     })
     const plotted = plot(densityEstimate, PLOT_CONFIG)
@@ -63,7 +63,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
   })
 
   it('should return the correct kernel density estimate for a normally distributed unimodal sample', () => {
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
     })
     const plotted = plot(densityEstimate, PLOT_CONFIG)
@@ -89,7 +89,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
   })
 
   it('should return the correct kernel density estimate for a bimodal sample', () => {
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: BIMODAL_SAMPLE,
     })
     const plotted = plot(densityEstimate, PLOT_CONFIG)
@@ -115,7 +115,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
   })
 
   it('should return the correct kernel density estimate for a multimodal sample', () => {
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: MULTIMODAL_SAMPLE,
     })
     const plotted = plot(densityEstimate, PLOT_CONFIG)
@@ -142,7 +142,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
   })
 
   it('should return the correct kernel density estimate for a multimodal sample with heavy beginning', () => {
-    const densityEstimate = kernelDensityEstimateForNormalDistribution({
+    const densityEstimate = kernelDensityEstimate({
       sortedData: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
     })
     const plotted = plot(densityEstimate, PLOT_CONFIG)

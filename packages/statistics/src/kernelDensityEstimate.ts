@@ -102,7 +102,7 @@ export function optimalThreshold(
 /**
  * See https://mathisonian.github.io/kde/
  */
-export function kernelDensityEstimateForNormalDistribution({
+export function kernelDensityEstimate({
   data,
   sortedData = utilities.sort(data!),
   kernelStretchFactor = DEFAULT_KERNEL_STRETCH_FACTOR,

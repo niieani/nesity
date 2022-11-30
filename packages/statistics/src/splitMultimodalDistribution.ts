@@ -1,13 +1,13 @@
 import {
+  kernelDensityEstimate,
   KernelDensityEstimateConfig,
-  kernelDensityEstimateForNormalDistribution,
 } from './kernelDensityEstimate'
 import * as utilities from './utilities'
 
 export function getLocalMaxima(config: KernelDensityEstimateConfig): number[] {
   const { data, sortedData = utilities.sort(data!) } = config
   const dataLength = sortedData.length
-  const kde = kernelDensityEstimateForNormalDistribution({
+  const kde = kernelDensityEstimate({
     sortedData,
     ...config,
   })
@@ -31,7 +31,7 @@ export function splitMultimodalDistribution(
 ): number[][] {
   const { data, sortedData = utilities.sort(data!) } = config
   const dataLength = sortedData.length
-  const kde = kernelDensityEstimateForNormalDistribution({
+  const kde = kernelDensityEstimate({
     sortedData,
     ...config,
   })
