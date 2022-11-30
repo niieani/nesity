@@ -1,0 +1,62 @@
+{
+  "name": "nesity-monorepo",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/niieani/nesity/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niieani/nesity.git"
+  },
+  "license": "MIT",
+  "author": "Bazyli Brzoska <npm@invent.life> (https://invent.life)",
+  "files": [
+    "src",
+    "cjs",
+    "esm"
+  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "build": "yarn build:cjs && yarn build:esm",
+    "build:cjs": "yarn foreach-run tsc --outDir cjs --declarationDir cjs --module commonjs --target es6",
+    "build:esm": "yarn foreach-run tsc --outDir esm --declarationDir esm --module esnext --target es6",
+    "clean": "git clean -dfX --exclude=node_modules packages && beemo typescript:sync-project-refs",
+    "foreach-run": "PATH=\"$PWD/node_modules/.bin:$PATH\" yarn workspaces foreach --parallel --interlaced --topological --topological-dev --verbose run rrun",
+    "format": "yarn foreach-run prettier --write \"./{src,tests,.config}/**/!(*.d).{.js,jsx,ts,tsx,json,md}\"",
+    "postinstallDev": "yarn prepare",
+    "prepare": "rrun husky install .config/husky && beemo create-config && beemo typescript:sync-project-refs",
+    "release": "beemo run-script release",
+    "test": "yarn test:format && yarn test:types && yarn test:lint && yarn test:code",
+    "test:code": "rrun jest",
+    "test:format": "yarn foreach-run prettier --check \"./{src,tests,.config}/**/!(*.d).{.js,jsx,ts,tsx,json,md}\"",
+    "test:lint": "rrun eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'",
+    "test:types": "yarn foreach-run tsc --noEmit"
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "master",
+      {
+        "name": "main",
+        "channel": false
+      },
+      "next",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ]
+  },
+  "devDependencies": {
+    "@niieani/scaffold": "^1.5.22"
+  },
+  "packageManager": "yarn@3.3.0"
+}

@@ -1,0 +1,83 @@
+{
+  "name": "nesity-statistics",
+  "bugs": {
+    "url": "https://github.com/niieani/nesity/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niieani/nesity.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "statistics",
+    "kde",
+    "math",
+    "kernel-density-estimate",
+    "split-multimodal-distibution"
+  ],
+  "author": "Bazyli Brzoska <npm@invent.life> (https://invent.life)",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./esm/main.js",
+      "require": "./cjs/main.js",
+      "types": "./src/main.ts"
+    },
+    "./*": {
+      "import": "./esm/*.js",
+      "require": "./cjs/*.js",
+      "types": "./src/*.ts"
+    },
+    "./cjs": {
+      "require": "./cjs/main.js",
+      "types": "./src/main.ts"
+    },
+    "./cjs/*": {
+      "require": "./cjs/*.js",
+      "types": "./src/*.ts"
+    },
+    "./esm/*": {
+      "import": "./esm/*.js",
+      "types": "./src/*.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "cjs/main.js",
+  "module": "esm/main.js",
+  "source": "src/main.ts",
+  "files": [
+    "cjs",
+    "esm",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "rrun": "rrun"
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "master",
+      {
+        "name": "main",
+        "channel": false
+      },
+      "next",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ]
+  },
+  "devDependencies": {
+    "@niieani/scaffold": "^1.5.22",
+    "@types/asciichart": "^1",
+    "asciichart": "^1.5.25"
+  }
+}
