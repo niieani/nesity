@@ -5,6 +5,7 @@ import {
   MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
+  UNIMODAL_SAMPLE_REAL,
 } from './__fixtures__/testSamples'
 import {
   kernelDensityEstimate,
@@ -24,13 +25,13 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     })
     expect(densityEstimate).toMatchInlineSnapshot(`
       Array [
-        0.060605274685025204,
-        0.060605274685025204,
-        0.05532135671935776,
-        0.08735319797805376,
-        0.09511038127889694,
-        0.09016756371575972,
-        0.09016756371575972,
+        0.05190959710900418,
+        0.05190959710900418,
+        0.05965428920481614,
+        0.07793877696845898,
+        0.07909126512329022,
+        0.07452605896121355,
+        0.07452605896121355,
       ]
     `)
   })
@@ -47,16 +48,16 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     // prettier-ignore
     expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
 "
- 10 ┤   ╭─╮
- 10 ┤  ╭╯ ╰╮
+ 10 ┤  ╭───╮
+  9 ┤  │   │
   9 ┤ ╭╯   ╰╮
   9 ┤ │     │
   8 ┤ │     │
   8 ┤╭╯     ╰╮
-  8 ┤│       │
   7 ┤│       │
   7 ┤│       │
   7 ┤│       │
+  6 ┤│       │
   6 ┼╯       ╰
 "
 `)
@@ -73,17 +74,43 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     // prettier-ignore
     expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
 "
- 49 ┤     ╭────╮
- 44 ┤    ╭╯    ╰─╮
- 40 ┤   ╭╯       ╰╮
- 36 ┤ ╭─╯         │
- 31 ┤ │           ╰╮
- 27 ┤ │            ╰─╮
- 23 ┤ │              │
- 18 ┤╭╯              ╰╮
- 14 ┤│                ╰─
- 10 ┤│
+ 44 ┤     ╭──────╮
+ 40 ┤   ╭─╯      ╰╮
+ 36 ┤  ╭╯         │
+ 32 ┤ ╭╯          ╰╮
+ 28 ┤ │            ╰─╮
+ 24 ┤ │              │
+ 20 ┤╭╯              │
+ 16 ┤│               ╰╮
+ 13 ┤│                ╰─
+  9 ┤│
   5 ┼╯
+"
+`)
+  })
+
+  it('should return the correct kernel density estimate for another normally distributed unimodal sample', () => {
+    const densityEstimate = kernelDensityEstimate({
+      sortedData: UNIMODAL_SAMPLE_REAL,
+    })
+    const plotted = plot(densityEstimate, PLOT_CONFIG)
+      .split('\n')
+      .map((v) => v.trimEnd())
+      .join('\n')
+    // prettier-ignore
+    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+"
+113 ┤        ╭───────────╮
+105 ┤     ╭──╯           ╰──╮
+ 96 ┤     │                 ╰─╮
+ 87 ┤   ╭─╯                   ╰╮
+ 79 ┤  ╭╯                      │
+ 70 ┤╭─╯                       ╰──╮
+ 62 ┤│                            │
+ 53 ┤│                            │
+ 44 ┤│                            │
+ 36 ┼╯                            ╰╮
+ 27 ┤                              ╰
 "
 `)
   })
@@ -99,17 +126,17 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     // prettier-ignore
     expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
 "
- 10 ┤        ╭───╮
- 10 ┤        │   │
- 10 ┤  ╭─╮   │   ╰╮
-  9 ┤  │ │  ╭╯    │
-  9 ┤  │ ╰╮ │     │
-  9 ┤ ╭╯  │ │     │
-  9 ┤ │   │ │     │
-  9 ┤ │   ╰╮│     ╰
-  8 ┤ │    ││
-  8 ┤╭╯    ╰╯
-  8 ┼╯
+  8 ┤   ╭╮
+  8 ┤   ││   ╭──╮
+  8 ┤  ╭╯╰╮ ╭╯  ╰╮
+  8 ┤  │  ╰╮│    │
+  8 ┤  │   ╰╯    │
+  8 ┤ ╭╯         ╰╮
+  8 ┤ │           │
+  7 ┤ │           │
+  7 ┤ │           │
+  7 ┤ │           │
+  7 ┼─╯           ╰
 "
 `)
   })
@@ -126,15 +153,15 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     // prettier-ignore
     expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
 "
-  6 ┤  ╭─╮   ╭───╮
-  6 ┤  │ │   │   ╰╮ ╭───╮
-  6 ┤ ╭╯ ╰╮ ╭╯    │ │   ╰╮
-  6 ┤ │   │ │     ╰╮│    │
-  5 ┤ │   ╰╮│      ││    │
-  5 ┼─╯    ╰╯      ││    ╰
-  5 ┤              ││
-  5 ┤              ││
-  5 ┤              ││
+  5 ┤  ╭─╮
+  5 ┤ ╭╯ ╰╮   ╭──╮
+  5 ┤ │   │  ╭╯  ╰╮ ╭───╮
+  5 ┤ │   ╰╮╭╯    │ │   ╰╮
+  5 ┼─╯    ╰╯     ╰╮│    │
+  4 ┤              ││    │
+  4 ┤              ││    ╰
+  4 ┤              ││
+  4 ┤              ││
   4 ┤              ││
   4 ┤              ╰╯
 "
@@ -153,16 +180,16 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     // prettier-ignore
     expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
 "
- 10 ┼─────────╮
-  9 ┤         │
-  8 ┤         │
-  8 ┤         ╰╮
-  7 ┤          ╰╮
-  6 ┤           │
-  6 ┤           ╰─╮╭───╮
-  5 ┤             ╰╯   ╰╮ ╭────╮
-  5 ┤                   ╰╮│    ╰
-  4 ┤                    ││
+  8 ┤       ╭─╮
+  7 ┼───────╯ │
+  7 ┤         ╰╮
+  6 ┤          │
+  6 ┤          ╰╮
+  5 ┤           ╰╮
+  5 ┤            ╰╮
+  5 ┤             │
+  4 ┤             │╭────╮ ╭───╮
+  4 ┤             ╰╯    ╰╮│   ╰─
   3 ┤                    ╰╯
 "
 `)

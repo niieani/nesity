@@ -10,6 +10,7 @@ import {
   MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
+  UNIMODAL_SAMPLE_REAL,
 } from './__fixtures__/testSamples'
 import { splitMultimodalDistribution } from './splitMultimodalDistribution'
 
@@ -26,6 +27,14 @@ describe('multimodalDistribution', () => {
         data: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
       }),
     ).toEqual([UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION])
+  })
+
+  it('keeps another unimodal normally distributed dataset unchanged', () => {
+    expect(
+      splitMultimodalDistribution({
+        data: UNIMODAL_SAMPLE_REAL,
+      }),
+    ).toEqual([UNIMODAL_SAMPLE_REAL])
   })
 
   it('splits a bimodal dataset into unimodal datasets', () => {

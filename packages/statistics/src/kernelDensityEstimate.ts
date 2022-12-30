@@ -2,7 +2,7 @@
 
 import * as utilities from './utilities'
 
-export const DEFAULT_KERNEL_STRETCH_FACTOR = 1
+export const DEFAULT_KERNEL_STRETCH_FACTOR = 1.3
 export const DEFAULT_QUANTILE_PRECISION = 0.01
 export const DEFAULT_MINIMUM_VELOCITY_TO_FIRST_QUARTILE_RATIO = 0.25
 
