@@ -10,6 +10,7 @@ export interface KernelDensityEstimateConfigBase {
   kernelStretchFactor?: number
   getThreshold?: (sortedData: number[]) => number
   densityFunction?: (x: number) => number
+  getBandwidth?: (threshold: number, sortedData: number[]) => number
 }
 export type KernelDensityEstimateConfig = KernelDensityEstimateConfigBase &
   (
@@ -108,16 +109,14 @@ export function kernelDensityEstimate({
   kernelStretchFactor = DEFAULT_KERNEL_STRETCH_FACTOR,
   getThreshold = (d) => optimalThreshold(d).value,
   densityFunction = ProbabilityDensityFunctions.Gaussian,
+  getBandwidth = calculateSilvermansRuleOfThumbBandwidth,
 }: KernelDensityEstimateConfig): number[] {
   const dataLength = sortedData.length
   const threshold = getThreshold(sortedData)
 
   // https://en.wikipedia.org/wiki/Kernel_density_estimation#A_rule-of-thumb_bandwidth_estimator
   // calculate bandwidth using Silverman's rule of thumb (normal distribution approximation, Gaussian approximation)
-  const bandwidth = calculateSilvermansRuleOfThumbBandwidth(
-    threshold,
-    sortedData,
-  )
+  const bandwidth = getBandwidth(threshold, sortedData)
 
   const scaledBandwidth = bandwidth * kernelStretchFactor
 
