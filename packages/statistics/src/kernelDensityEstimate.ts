@@ -6,20 +6,19 @@ export const DEFAULT_KERNEL_STRETCH_FACTOR = 1.3
 export const DEFAULT_QUANTILE_PRECISION = 0.01
 export const DEFAULT_MINIMUM_VELOCITY_TO_FIRST_QUARTILE_RATIO = 0.25
 
+export type GetBandwidthConfig = utilities.DataOrSortedData & {
+  threshold?: number
+}
+
 export interface KernelDensityEstimateConfigBase {
   kernelStretchFactor?: number
-  getThreshold?: (sortedData: number[]) => number
+  getThreshold?: (config: utilities.DataOrSortedData) => number
+  getBandwidth?: (config: GetBandwidthConfig) => number
   densityFunction?: (x: number) => number
-  getBandwidth?: (threshold: number, sortedData: number[]) => number
 }
+
 export type KernelDensityEstimateConfig = KernelDensityEstimateConfigBase &
-  (
-    | {
-        sortedData: number[]
-        data?: number[]
-      }
-    | { data: number[]; sortedData?: number[] }
-  )
+  utilities.DataOrSortedData
 
 // https://www.real-statistics.com/distribution-fitting/kernel-density-estimation/
 export const ProbabilityDensityFunctions = {
@@ -36,39 +35,55 @@ export const ProbabilityDensityFunctions = {
   cosine: (x: number) => (Math.PI / 4) * Math.cos((1 - Math.PI * x) / 2),
 }
 
-export const calculateSilvermansRuleOfThumbBandwidth = (
-  stdev: number,
-  sortedData: number[],
-) =>
+export const calculateSilvermansRuleOfThumbBandwidth = ({
+  data,
+  sortedData = utilities.sort(data!),
+  threshold = utilities.stdev({ sortedData }),
+}: GetBandwidthConfig) =>
   // also possible to use this alternative simplified version (see Wikipedia):
   // 1.06 * stdev * sortedData.length ** (-1 / 5)
   0.9 *
-  Math.min(stdev, utilities.interQuartileRange(sortedData) / 1.34) *
+  Math.min(threshold, utilities.interQuartileRange({ sortedData }) / 1.34) *
   sortedData.length ** (-1 / 5)
+
+export interface OptimalThresholdConfigBase {
+  precisionDelta?: number
+  minimumVelocityToFirstQuartileRatio?: number
+}
+
+export type OptimalThresholdConfig = utilities.DataOrSortedData &
+  OptimalThresholdConfigBase & {
+    stdev?: number
+  }
 
 /**
  * a custom KDE threshold estimator
  */
-export function optimalThreshold(
-  sortedData: number[],
+export function optimalThreshold({
+  data,
+  sortedData = utilities.sort(data!),
   precisionDelta = DEFAULT_QUANTILE_PRECISION,
   minimumVelocityToFirstQuartileRatio = DEFAULT_MINIMUM_VELOCITY_TO_FIRST_QUARTILE_RATIO,
-): {
+  stdev = utilities.stdev({ sortedData }),
+}: OptimalThresholdConfig): {
   p: number
   value: number
   stdev: number
 } {
-  const distances = utilities.distances(sortedData)
-  const q1 = utilities.quantile(sortedData, utilities.FIRST_QUARTILE)
+  const distances = utilities.distances({ sortedData })
+  const q1 = utilities.quantile({
+    sortedData,
+    q: utilities.FIRST_QUARTILE,
+  })
 
   let p = 1
-  let distance = utilities.quantile(distances, p)
+  let distance = utilities.quantile({ data: distances, q: p })
   let lastMatchingValue: { p: number; value: number } | undefined
 
   // iterating from the top, find the lowest quantile with the sharpest change in distance
   do {
     const prevP = p - precisionDelta
-    const prevDistance = utilities.quantile(distances, prevP)
+    const prevDistance = utilities.quantile({ data: distances, q: prevP })
     const changeVelocity = Math.abs(prevDistance - distance)
     const changeVelocityToFirstQuartileRatio = changeVelocity / q1
     if (
@@ -82,8 +97,6 @@ export function optimalThreshold(
     p = prevP
     distance = prevDistance
   } while (p >= utilities.THIRD_QUARTILE)
-
-  const stdev = utilities.stdev(sortedData)
 
   if (!lastMatchingValue) {
     return {
@@ -107,29 +120,29 @@ export function kernelDensityEstimate({
   data,
   sortedData = utilities.sort(data!),
   kernelStretchFactor = DEFAULT_KERNEL_STRETCH_FACTOR,
-  getThreshold = (d) => optimalThreshold(d).value,
   densityFunction = ProbabilityDensityFunctions.Gaussian,
+  getThreshold = (d) => optimalThreshold(d).value,
   getBandwidth = calculateSilvermansRuleOfThumbBandwidth,
 }: KernelDensityEstimateConfig): number[] {
-  const dataLength = sortedData.length
-  const threshold = getThreshold(sortedData)
+  const sampleCount = sortedData.length
+  const threshold = getThreshold({ sortedData })
 
   // https://en.wikipedia.org/wiki/Kernel_density_estimation#A_rule-of-thumb_bandwidth_estimator
   // calculate bandwidth using Silverman's rule of thumb (normal distribution approximation, Gaussian approximation)
-  const bandwidth = getBandwidth(threshold, sortedData)
+  const bandwidth = getBandwidth({ threshold, sortedData })
 
   const scaledBandwidth = bandwidth * kernelStretchFactor
 
   // kernel density estimation, think about this like making a histogram from input values
   const kde: number[] = []
-  for (let i = 0; i < dataLength; i++) {
+  for (let i = 0; i < sampleCount; i++) {
     let sum = 0
-    for (let j = 0; j < dataLength; j++) {
+    for (let j = 0; j < sampleCount; j++) {
       sum +=
         (1 / scaledBandwidth) *
         densityFunction((sortedData[i]! - sortedData[j]!) / scaledBandwidth)
     }
-    kde[i] = sum / dataLength
+    kde[i] = sum / sampleCount
   }
   return kde
 }

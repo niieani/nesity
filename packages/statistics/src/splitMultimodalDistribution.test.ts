@@ -13,56 +13,79 @@ import {
   UNIMODAL_SAMPLE_REAL,
 } from './__fixtures__/testSamples'
 import { splitMultimodalDistribution } from './splitMultimodalDistribution'
+import * as utilities from './utilities'
 
-describe('multimodalDistribution', () => {
-  it('keeps a unimodal dataset unchanged', () => {
-    expect(splitMultimodalDistribution({ data: UNIMODAL_SAMPLE })).toEqual([
-      UNIMODAL_SAMPLE,
-    ])
-  })
+const random = utilities.getStableRandom()
 
-  it('keeps a unimodal normally distributed dataset unchanged', () => {
-    expect(
-      splitMultimodalDistribution({
-        data: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
-      }),
-    ).toEqual([UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION])
-  })
-
-  it('keeps another unimodal normally distributed dataset unchanged', () => {
-    expect(
-      splitMultimodalDistribution({
-        data: UNIMODAL_SAMPLE_REAL,
-      }),
-    ).toEqual([UNIMODAL_SAMPLE_REAL])
-  })
-
-  it('splits a bimodal dataset into unimodal datasets', () => {
-    expect(splitMultimodalDistribution({ data: BIMODAL_SAMPLE })).toEqual([
-      BIMODAL_SAMPLE_1,
-      BIMODAL_SAMPLE_2,
-    ])
-  })
-
-  it('splits a multimodal dataset into unimodal datasets', () => {
-    const result = splitMultimodalDistribution({ data: MULTIMODAL_SAMPLE })
-    expect(result).toHaveLength(3)
-    expect(result).toEqual([
-      MULTIMODAL_SAMPLE_1,
-      MULTIMODAL_SAMPLE_2,
-      MULTIMODAL_SAMPLE_3,
-    ])
-  })
-
-  it('splits a multimodal dataset with a heavy beginning into unimodal datasets', () => {
-    const result = splitMultimodalDistribution({
-      data: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
+describe.each([0, 1, 2, 3])(
+  'splitMultimodalDistribution (noiseValuesPerSample %i)',
+  (noiseValuesPerSample) => {
+    it('keeps a unimodal dataset unchanged', () => {
+      expect(
+        splitMultimodalDistribution({
+          data: UNIMODAL_SAMPLE,
+          noiseValuesPerSample,
+          random,
+        }),
+      ).toEqual([UNIMODAL_SAMPLE])
     })
-    expect(result).toHaveLength(3)
-    expect(result).toEqual([
-      [...MULTIMODAL_SAMPLE_BEGINNING, ...MULTIMODAL_SAMPLE_1],
-      MULTIMODAL_SAMPLE_2,
-      MULTIMODAL_SAMPLE_3,
-    ])
-  })
-})
+
+    it('keeps a unimodal normally distributed dataset unchanged', () => {
+      expect(
+        splitMultimodalDistribution({
+          data: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
+          noiseValuesPerSample,
+          random,
+        }),
+      ).toEqual([UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION])
+    })
+
+    it('keeps another unimodal normally distributed dataset unchanged', () => {
+      expect(
+        splitMultimodalDistribution({
+          data: UNIMODAL_SAMPLE_REAL,
+          noiseValuesPerSample,
+          random,
+        }),
+      ).toEqual([UNIMODAL_SAMPLE_REAL])
+    })
+
+    it('splits a bimodal dataset into unimodal datasets', () => {
+      expect(
+        splitMultimodalDistribution({
+          data: BIMODAL_SAMPLE,
+          noiseValuesPerSample,
+          random,
+        }),
+      ).toEqual([BIMODAL_SAMPLE_1, BIMODAL_SAMPLE_2])
+    })
+
+    it('splits a multimodal dataset into unimodal datasets', () => {
+      const result = splitMultimodalDistribution({
+        data: MULTIMODAL_SAMPLE,
+        noiseValuesPerSample,
+        random,
+      })
+      expect(result).toHaveLength(3)
+      expect(result).toEqual([
+        MULTIMODAL_SAMPLE_1,
+        MULTIMODAL_SAMPLE_2,
+        MULTIMODAL_SAMPLE_3,
+      ])
+    })
+
+    it('splits a multimodal dataset with a heavy beginning into unimodal datasets', () => {
+      const result = splitMultimodalDistribution({
+        data: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
+        noiseValuesPerSample,
+        random,
+      })
+      expect(result).toHaveLength(3)
+      expect(result).toEqual([
+        [...MULTIMODAL_SAMPLE_BEGINNING, ...MULTIMODAL_SAMPLE_1],
+        MULTIMODAL_SAMPLE_2,
+        MULTIMODAL_SAMPLE_3,
+      ])
+    })
+  },
+)

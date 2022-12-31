@@ -1,4 +1,3 @@
-import { plot, PlotConfig } from 'asciichart'
 import {
   BIMODAL_SAMPLE,
   MULTIMODAL_SAMPLE,
@@ -11,11 +10,7 @@ import {
   kernelDensityEstimate,
   optimalThreshold,
 } from './kernelDensityEstimate'
-
-const PLOT_CONFIG: PlotConfig = {
-  height: 10,
-  format: (n) => `${Math.round(n * 10_000)}`.padStart(3, ' '),
-}
+import { asPlot } from './testPlottingHelpers'
 
 describe('kernelDensityEstimateForNormalDistribution', () => {
   it('should correctly calculate the KDE', () => {
@@ -40,25 +35,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: UNIMODAL_SAMPLE,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
-
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
- 10 ┤  ╭───╮
-  9 ┤  │   │
-  9 ┤ ╭╯   ╰╮
-  9 ┤ │     │
-  8 ┤ │     │
-  8 ┤╭╯     ╰╮
-  7 ┤│       │
-  7 ┤│       │
-  7 ┤│       │
-  6 ┤│       │
-  6 ┼╯       ╰
+979 ┤  ╭───╮
+941 ┤  │   │
+902 ┤ ╭╯   ╰╮
+864 ┤ │     │
+825 ┤ │     │
+787 ┤╭╯     ╰╮
+748 ┤│       │
+710 ┤│       │
+671 ┤│       │
+633 ┤│       │
+594 ┼╯       ╰
+Scaled by: 1000000
 "
 `)
   })
@@ -67,24 +58,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
- 44 ┤     ╭──────╮
- 40 ┤   ╭─╯      ╰╮
- 36 ┤  ╭╯         │
- 32 ┤ ╭╯          ╰╮
- 28 ┤ │            ╰─╮
- 24 ┤ │              │
- 20 ┤╭╯              │
- 16 ┤│               ╰╮
- 13 ┤│                ╰─
-  9 ┤│
-  5 ┼╯
+437 ┤     ╭──────╮
+398 ┤   ╭─╯      ╰╮
+359 ┤  ╭╯         │
+320 ┤ ╭╯          ╰╮
+281 ┤ │            ╰─╮
+243 ┤ │              │
+204 ┤╭╯              │
+165 ┤│               ╰╮
+126 ┤│                ╰─
+ 87 ┤│
+ 48 ┼╯
+Scaled by: 100000
 "
 `)
   })
@@ -93,24 +81,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: UNIMODAL_SAMPLE_REAL,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
-113 ┤        ╭───────────╮
-105 ┤     ╭──╯           ╰──╮
- 96 ┤     │                 ╰─╮
- 87 ┤   ╭─╯                   ╰╮
- 79 ┤  ╭╯                      │
- 70 ┤╭─╯                       ╰──╮
- 62 ┤│                            │
- 53 ┤│                            │
- 44 ┤│                            │
- 36 ┼╯                            ╰╮
- 27 ┤                              ╰
+1134 ┤       ╭────────────╮
+1048 ┤     ╭─╯            ╰──╮
+ 961 ┤     │                 ╰─╮
+ 875 ┤   ╭─╯                   ╰╮
+ 788 ┤  ╭╯                      │
+ 702 ┤╭─╯                       ╰──╮
+ 616 ┤│                            │
+ 529 ┤│                            │
+ 443 ┤│                            │
+ 356 ┼╯                            ╰╮
+ 270 ┤                              ╰
+Scaled by: 100000
 "
 `)
   })
@@ -119,24 +104,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: BIMODAL_SAMPLE,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
-  8 ┤   ╭╮
-  8 ┤   ││   ╭──╮
-  8 ┤  ╭╯╰╮ ╭╯  ╰╮
-  8 ┤  │  ╰╮│    │
-  8 ┤  │   ╰╯    │
-  8 ┤ ╭╯         ╰╮
-  8 ┤ │           │
-  7 ┤ │           │
-  7 ┤ │           │
-  7 ┤ │           │
-  7 ┼─╯           ╰
+840 ┤   ╭╮
+826 ┤   ││   ╭──╮
+813 ┤  ╭╯╰╮ ╭╯  ╰╮
+799 ┤  │  ╰╮│    │
+786 ┤  │   ╰╯    │
+772 ┤ ╭╯         ╰╮
+758 ┤ │           │
+745 ┤ │           │
+731 ┤ │           │
+718 ┤ │           ╰
+704 ┼─╯
+Scaled by: 1000000
 "
 `)
   })
@@ -145,25 +127,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: MULTIMODAL_SAMPLE,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
-
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
-  5 ┤  ╭─╮
-  5 ┤ ╭╯ ╰╮   ╭──╮
-  5 ┤ │   │  ╭╯  ╰╮ ╭───╮
-  5 ┤ │   ╰╮╭╯    │ │   ╰╮
-  5 ┼─╯    ╰╯     ╰╮│    │
-  4 ┤              ││    │
-  4 ┤              ││    ╰
-  4 ┤              ││
-  4 ┤              ││
-  4 ┤              ││
-  4 ┤              ╰╯
+510 ┤  ╭╮
+497 ┤  │╰╮
+484 ┤ ╭╯ ╰╮  ╭───╮
+471 ┤ │   │  │   ╰╮ ╭───╮
+458 ┤ │   ╰╮╭╯    │ │   ╰╮
+446 ┼─╯    ╰╯     ╰╮│    │
+433 ┤              ││    ╰
+420 ┤              ││
+407 ┤              ││
+394 ┤              ││
+381 ┤              ╰╯
+Scaled by: 1000000
 "
 `)
   })
@@ -172,25 +150,21 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
     const densityEstimate = kernelDensityEstimate({
       sortedData: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
     })
-    const plotted = plot(densityEstimate, PLOT_CONFIG)
-      .split('\n')
-      .map((v) => v.trimEnd())
-      .join('\n')
-
     // prettier-ignore
-    expect(`\n${plotted}\n`).toMatchInlineSnapshot(`
+    expect(asPlot(densityEstimate)).toMatchInlineSnapshot(`
 "
-  8 ┤       ╭─╮
-  7 ┼───────╯ │
-  7 ┤         ╰╮
-  6 ┤          │
-  6 ┤          ╰╮
-  5 ┤           ╰╮
-  5 ┤            ╰╮
-  5 ┤             │
-  4 ┤             │╭────╮ ╭───╮
-  4 ┤             ╰╯    ╰╮│   ╰─
-  3 ┤                    ╰╯
+783 ┤       ╭─╮
+736 ┼───────╯ │
+689 ┤         ╰╮
+642 ┤          │
+595 ┤          ╰╮
+549 ┤           ╰╮
+502 ┤            ╰╮
+455 ┤             │
+408 ┤             │╭────╮ ╭───╮
+361 ┤             ╰╯    ╰╮│   ╰─
+314 ┤                    ╰╯
+Scaled by: 1000000
 "
 `)
   })
@@ -198,13 +172,17 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
 
 describe('optimalThreshold', () => {
   it('find the right quantile when presented with multimodal data', () => {
-    const threshold = optimalThreshold(MULTIMODAL_SAMPLE_HEAVY_BEGINNING)
+    const threshold = optimalThreshold({
+      sortedData: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
+    })
     expect(threshold.p).toBeCloseTo(0.93)
     expect(threshold.stdev).toBeCloseTo(1_523.93)
     expect(threshold.value).toBeCloseTo(375)
   })
   it('fallback to stdev in naturally distributed data', () => {
-    const threshold = optimalThreshold(UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION)
+    const threshold = optimalThreshold({
+      sortedData: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
+    })
     expect(threshold.p).toBeNaN()
     expect(threshold.stdev).toBeCloseTo(89.88)
     expect(threshold.value).toBeCloseTo(89.88)

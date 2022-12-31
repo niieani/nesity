@@ -75,6 +75,12 @@
       }
     ]
   },
+  "dependencies": {
+    "@stdlib/stats-kstest": "^0.0.7",
+    "@stdlib/stats-ttest2": "^0.0.7",
+    "jerzy": "^0.2.1",
+    "jstat": "^1.9.6"
+  },
   "devDependencies": {
     "@niieani/scaffold": "^1.5.22",
     "@types/asciichart": "^1",
