@@ -127,8 +127,16 @@ export function compare({
   const [sorted1, sorted2] = [utils.sort(data1), utils.sort(data2)]
   const [mean1, mean2] = [utils.mean(data1), utils.mean(data2)]
   const [variance1, variance2] = [
-    utils.variance({ sortedData: sorted1, mean: mean1 }),
-    utils.variance({ sortedData: sorted2, mean: mean2 }),
+    utils.variance({
+      sortedData: sorted1,
+      mean: mean1,
+      besselsCorrection: true,
+    }),
+    utils.variance({
+      sortedData: sorted2,
+      mean: mean2,
+      besselsCorrection: true,
+    }),
   ]
   const [stdev1, stdev2] = [
     utils.stdev({ sortedData: sorted1, variance: variance1 }),
@@ -138,14 +146,17 @@ export function compare({
     calcShapiroWilk(data1),
     calcShapiroWilk(data2),
   ]
-  const pooledVariance =
-    (data1.length * variance1 + data2.length * variance2) /
-    (data1.length + data2.length)
+  const pooledVariance = utils.pooledVariance({
+    data1,
+    variance1,
+    data2,
+    variance2,
+  })
   const pooledStDev = Math.sqrt(pooledVariance)
   const meanDifference = mean1 - mean2
 
   // Calculate the effect size using Cohen's d
-  const cohensD = calcCohensD(mean1, mean2, pooledStDev)
+  const cohensD = calcCohensD({ mean1, mean2, pooledStDev, data1, data2 })
   const overlappingCoefficient = calcGaussOverlap(cohensD)
   const probabilityOfSuperiority = calcCL(cohensD)
   const nonOverlapMeasure = calcU3(cohensD)

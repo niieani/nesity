@@ -5,9 +5,10 @@ import { getStableRandom } from './utilities'
 describe('compare', () => {
   it('should compare two datasets', () => {
     const START = 20
+    const SIZE = 16
     const result = compare({
-      data1: REAL_WORLD_DATA_1.sample1.slice(START, START + 16),
-      data2: REAL_WORLD_DATA_1.sample2.slice(START, START + 16),
+      data1: REAL_WORLD_DATA_1.sample1.slice(START, START + SIZE),
+      data2: REAL_WORLD_DATA_1.sample2.slice(START, START + SIZE),
       noiseValuesPerSample: 3,
       kernelStretchFactor: 1,
       random: getStableRandom(500),
@@ -15,7 +16,7 @@ describe('compare', () => {
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "cohensD": 0.22023379161470488,
+        "cohensD": 0.18330704064377773,
         "data1": Object {
           "data": Array [
             1168.7350000000001,
@@ -40,9 +41,9 @@ describe('compare', () => {
           "modalityCount": 1,
           "normalityProbability": 0.9909270379330676,
           "rejectedData": Array [],
-          "stdev": 124.39794529829395,
+          "stdev": 128.47764545139032,
           "validCount": 16,
-          "variance": 15474.848794437334,
+          "variance": 16506.505380733157,
         },
         "data2": Object {
           "data": Array [
@@ -69,14 +70,14 @@ describe('compare', () => {
             2445.73,
             4040.1620000000003,
           ],
-          "stdev": 93.74198015698863,
+          "stdev": 97.91030502224473,
           "validCount": 12,
-          "variance": 8787.558843753251,
+          "variance": 9586.427829549002,
         },
         "meanDifference": 24.72987916666648,
-        "nonOverlapMeasure": 0.5871554596397097,
+        "nonOverlapMeasure": 0.5727214448176261,
         "originalResult": Object {
-          "cohensD": -0.6014784586799964,
+          "cohensD": -0.5150511924674506,
           "data1": Object {
             "data": Array [
               1168.7350000000001,
@@ -100,9 +101,9 @@ describe('compare', () => {
             "mean": 1315.3505375,
             "normalityProbability": 0.9909270379330676,
             "rejectedData": Array [],
-            "stdev": 124.39794529829396,
+            "stdev": 128.47764545139034,
             "validCount": 16,
-            "variance": 15474.848794437337,
+            "variance": 16506.50538073316,
           },
           "data2": Object {
             "data": Array [
@@ -127,23 +128,23 @@ describe('compare', () => {
             "mean": 1625.785028125,
             "normalityProbability": 0.9999683331360395,
             "rejectedData": Array [],
-            "stdev": 719.2238167152007,
+            "stdev": 742.8111638223221,
             "validCount": 16,
-            "variance": 517282.89853038057,
+            "variance": 551768.4250990726,
           },
           "meanDifference": -310.4344906250001,
-          "nonOverlapMeasure": 0.2737606775710079,
+          "nonOverlapMeasure": 0.30325862382504015,
           "outcome": "equal",
-          "overlappingCoefficient": 0.7636133520665646,
-          "pooledStDev": 516.1190498929573,
-          "pooledVariance": 266378.87366240897,
-          "probabilityOfSuperiority": 0.33530553569798455,
+          "overlappingCoefficient": 0.7967730585096843,
+          "pooledStDev": 533.0454626388849,
+          "pooledVariance": 284137.4652399029,
+          "probabilityOfSuperiority": 0.35785575561146643,
         },
         "outcome": "equal",
-        "overlappingCoefficient": 0.9123166687278216,
-        "pooledStDev": 112.28921313733255,
-        "pooledVariance": 12608.867387001299,
-        "probabilityOfSuperiority": 0.561876605455133,
+        "overlappingCoefficient": 0.9269733272930984,
+        "pooledStDev": 116.52802350904471,
+        "pooledVariance": 13578.780262924476,
+        "probabilityOfSuperiority": 0.5515655313983803,
       }
     `)
   })

@@ -1,4 +1,5 @@
 import { normal } from 'jstat'
+import * as utils from './utilities'
 
 /**
  * Overlap
@@ -30,13 +31,51 @@ export const calcCL = (cohensD: number): number =>
 export const calcU3 = (cohensD: number): number => normal.cdf(cohensD, 0, 1)
 
 /**
- * Cohen’s d is simply the standardized mean difference,
+ * Cohen's d is a way to determine the effect size of a statistical test.
+ * The resulting value is the standardized mean difference,
  * δ=(μ2−μ1)/σ
  * where δ is the population parameter of Cohen’s d. Where it is assumed that σ1=σ2=σ,
  * i.e., homogeneous population variances. And μi is the mean of the respective population.
  */
-export const calcCohensD = (
-  mean1: number,
-  mean2: number,
-  stDev: number,
-): number => (mean1 - mean2) / stDev
+export const calcCohensD = ({
+  data1,
+  data2,
+  n1 = data1.length,
+  n2 = data2.length,
+  mean1 = utils.mean(data1),
+  mean2 = utils.mean(data2),
+  pooledStDev = utils.stdev({
+    variance: utils.pooledVariance({
+      data1,
+      n1,
+      data2,
+      n2,
+      besselsCorrection: true,
+    }),
+  }),
+  // eslint-disable-next-line no-magic-numbers
+  correctForSmallSampleSizeWhenBelow = 50,
+}: {
+  data1: number[]
+  data2: number[]
+  n1?: number
+  n2?: number
+  mean1?: number
+  mean2?: number
+  pooledStDev?: number
+  /**
+   * The constants 3 and 2.25 in the correction formula provided are related to the degrees of freedom of the t-distribution.
+   * It is worth noting that these constants are not universally accepted, and there is some debate about their appropriate use. It is always a good idea to carefully consider the assumptions underlying any correction that you apply, and to consider whether it is appropriate for your specific research context.
+   */
+  correctForSmallSampleSizeWhenBelow?: number
+}): number => {
+  const n = utils.harmonicMean(n1, n2)
+  const cohensD = (mean1 - mean2) / pooledStDev
+  if (n < correctForSmallSampleSizeWhenBelow) {
+    const correctionFactorForSmallSampleSize =
+      // eslint-disable-next-line no-magic-numbers
+      ((n - 3) / (n - 2.25)) * Math.sqrt((n - 2) / n)
+    return cohensD * correctionFactorForSmallSampleSize
+  }
+  return cohensD
+}
