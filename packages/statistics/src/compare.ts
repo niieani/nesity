@@ -157,6 +157,8 @@ export function compare({
     utils.stdev({ sortedData: sorted1, variance: variance1 }),
     utils.stdev({ sortedData: sorted2, variance: variance2 }),
   ]
+
+  // TODO: potentially add Kolmogorov Smirnov test
   const [shapiroWilk1, shapiroWilk2] = [
     calcShapiroWilk(data1),
     calcShapiroWilk(data2),
@@ -204,10 +206,10 @@ export function compare({
     : isInvalid
     ? 'invalid'
     : // first is greater than second
-    twoSided.rejected && greater.rejected
+    greater.rejected
     ? 'less'
     : // first is less than second
-    twoSided.rejected && less.rejected
+    less.rejected
     ? 'greater'
     : 'equal'
 
@@ -244,7 +246,10 @@ export function compare({
       mean: mean1,
       stdev: stdev1,
       variance: variance1,
-      normalityProbability: 1 - shapiroWilk1.pValue,
+      normalityProbability:
+        Number.isNaN(shapiroWilk1.pValue) || shapiroWilk1.pValue < 0
+          ? 0
+          : Math.max(1 - shapiroWilk1.pValue, 1),
       validCount: data1.length,
       invalidCount: rejectedData1?.length ?? 0,
       rejectedData: rejectedData1 ?? [],
@@ -254,7 +259,10 @@ export function compare({
       mean: mean2,
       stdev: stdev2,
       variance: variance2,
-      normalityProbability: 1 - shapiroWilk2.pValue,
+      normalityProbability:
+        Number.isNaN(shapiroWilk2.pValue) || shapiroWilk2.pValue < 0
+          ? 0
+          : Math.max(1 - shapiroWilk2.pValue, 1),
       validCount: data2.length,
       invalidCount: rejectedData2?.length ?? 0,
       rejectedData: rejectedData2 ?? [],
