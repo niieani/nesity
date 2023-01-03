@@ -82,8 +82,8 @@ export interface SampleStatistics {
   stdev: number
   normalityProbability: number
   validCount: number
-  invalidCount: number
   data: number[]
+  rejectedCount: number
   rejectedData: number[]
   modalityCount?: number
 }
@@ -248,10 +248,10 @@ export function compare({
       variance: variance1,
       normalityProbability:
         Number.isNaN(shapiroWilk1.pValue) || shapiroWilk1.pValue < 0
-          ? 0
-          : Math.max(1 - shapiroWilk1.pValue, 1),
+          ? 1
+          : Math.max(1 - shapiroWilk1.pValue, 0),
       validCount: data1.length,
-      invalidCount: rejectedData1?.length ?? 0,
+      rejectedCount: rejectedData1?.length ?? 0,
       rejectedData: rejectedData1 ?? [],
       data: sorted1,
     },
@@ -262,9 +262,9 @@ export function compare({
       normalityProbability:
         Number.isNaN(shapiroWilk2.pValue) || shapiroWilk2.pValue < 0
           ? 0
-          : Math.max(1 - shapiroWilk2.pValue, 1),
+          : Math.max(1 - shapiroWilk2.pValue, 0),
       validCount: data2.length,
-      invalidCount: rejectedData2?.length ?? 0,
+      rejectedCount: rejectedData2?.length ?? 0,
       rejectedData: rejectedData2 ?? [],
       data: sorted2,
     },
