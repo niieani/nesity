@@ -76,7 +76,7 @@ function getSplits({
   }
 }
 
-interface SampleStatistics {
+export interface SampleStatistics {
   mean: number
   variance: number
   stdev: number
@@ -88,8 +88,21 @@ interface SampleStatistics {
   modalityCount?: number
 }
 
-interface ComparisonResult {
-  outcome: string
+export interface SingleTTest {
+  rejected: boolean
+  pValue: number
+  confidenceInterval: ConfidenceInterval
+}
+
+export interface ComparisonResult {
+  outcome: 'less' | 'greater' | 'equal' | 'invalid'
+  ttest: {
+    twoSided: SingleTTest
+    greater: SingleTTest
+    less: SingleTTest
+    degreesOfFreedom: number
+    tValue: number
+  }
   meanDifference: number
   pooledVariance: number
   pooledStDev: number
@@ -101,6 +114,8 @@ interface ComparisonResult {
   data2: SampleStatistics
   originalResult?: ComparisonResult
 }
+
+export type ConfidenceInterval = [number | null, number | null]
 
 export function compare({
   data1,
@@ -205,6 +220,26 @@ export function compare({
     overlappingCoefficient,
     probabilityOfSuperiority,
     nonOverlapMeasure,
+    ttest: {
+      // how many standard deviations away from the mean of the distribution:
+      tValue: twoSided.statistic,
+      degreesOfFreedom: twoSided.df,
+      twoSided: {
+        rejected: twoSided.rejected,
+        pValue: twoSided.pValue,
+        confidenceInterval: twoSided.ci as ConfidenceInterval,
+      },
+      greater: {
+        rejected: greater.rejected,
+        pValue: greater.pValue,
+        confidenceInterval: greater.ci as ConfidenceInterval,
+      },
+      less: {
+        rejected: less.rejected,
+        pValue: less.pValue,
+        confidenceInterval: less.ci as ConfidenceInterval,
+      },
+    },
     data1: {
       mean: mean1,
       stdev: stdev1,
@@ -225,7 +260,7 @@ export function compare({
       rejectedData: rejectedData2 ?? [],
       data: sorted2,
     },
-  }
+  } as const
 
   // TODO: might want to reject 1st and 4th quartile outliers in the first pass,
   // or as a 2nd pass before advanced denoising

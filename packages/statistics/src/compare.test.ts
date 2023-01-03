@@ -139,12 +139,68 @@ describe('compare', () => {
           "pooledStDev": 533.0454626388849,
           "pooledVariance": 284137.4652399029,
           "probabilityOfSuperiority": 0.35785575561146643,
+          "ttest": Object {
+            "degreesOfFreedom": 15.896666721939464,
+            "greater": Object {
+              "confidenceInterval": Array [
+                -639.5950082629629,
+                Infinity,
+              ],
+              "pValue": 0.9404324401755751,
+              "rejected": false,
+            },
+            "less": Object {
+              "confidenceInterval": Array [
+                -Infinity,
+                18.726027012962785,
+              ],
+              "pValue": 0.059567559824424805,
+              "rejected": false,
+            },
+            "tValue": -1.6472165983623648,
+            "twoSided": Object {
+              "confidenceInterval": Array [
+                -710.1630764402786,
+                89.29409519027843,
+              ],
+              "pValue": 0.11913511964884961,
+              "rejected": false,
+            },
+          },
         },
         "outcome": "equal",
         "overlappingCoefficient": 0.9269733272930984,
         "pooledStDev": 116.52802350904471,
         "pooledVariance": 13578.780262924476,
         "probabilityOfSuperiority": 0.5515655313983803,
+        "ttest": Object {
+          "degreesOfFreedom": 25.98106296036767,
+          "greater": Object {
+            "confidenceInterval": Array [
+              -48.24633661040269,
+              Infinity,
+            ],
+            "pValue": 0.2841175035056639,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              97.70609494373612,
+            ],
+            "pValue": 0.7158824964943361,
+            "rejected": false,
+          },
+          "tValue": 0.5780083258579302,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              -63.21833143468515,
+              112.67808976801855,
+            ],
+            "pValue": 0.5682350070113278,
+            "rejected": false,
+          },
+        },
       }
     `)
   })
