@@ -25,9 +25,10 @@ function getSplits({
   // by default, at least 80% of the data must be in a split to count as a separate modality
   getSeparateModalityThreshold = (splitsCount: number) =>
     (1 / splitsCount) * DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO,
+  iterations,
 }: Pick<
   SplitMultiModalDistributionConfig,
-  'kernelStretchFactor' | 'noiseValuesPerSample' | 'random'
+  'kernelStretchFactor' | 'noiseValuesPerSample' | 'random' | 'iterations'
 > & {
   bandwidth: number
   threshold: number
@@ -47,12 +48,14 @@ function getSplits({
     | 'random'
     | 'getBandwidth'
     | 'getThreshold'
+    | 'iterations'
   > = {
     kernelStretchFactor,
     noiseValuesPerSample,
     random,
     getBandwidth: () => bandwidth,
     getThreshold: () => threshold,
+    iterations,
   }
   const splits = splitMultimodalDistribution({ sortedData, ...common })
   const splitsSortedBySize = [...splits].sort((a, b) => b.length - a.length)
@@ -128,6 +131,7 @@ export function compare({
   random,
   kernelStretchFactor,
   confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
+  iterations,
 }: {
   data1: number[]
   data2: number[]
@@ -137,7 +141,7 @@ export function compare({
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
-    'noiseValuesPerSample' | 'random' | 'kernelStretchFactor'
+    'noiseValuesPerSample' | 'random' | 'kernelStretchFactor' | 'iterations'
   >): ComparisonResult {
   const [sorted1, sorted2] = [utils.sort(data1), utils.sort(data2)]
   const [mean1, mean2] = [utils.mean(data1), utils.mean(data2)]
@@ -303,6 +307,7 @@ export function compare({
   const common = {
     kernelStretchFactor,
     noiseValuesPerSample,
+    iterations,
     random,
   }
   const [splits1band1, splits2band1, splits1band2, splits2band2] = [

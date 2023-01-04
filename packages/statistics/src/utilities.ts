@@ -110,3 +110,38 @@ export const getStableRandom = (seed: number = 1) =>
     const x = Math.sin(seed++) * 10_000
     return x - Math.floor(x)
   }
+
+export const histogramBy = <T, Comparable>(
+  iterable: Iterable<T>,
+  getValue: (i: T) => Comparable,
+): (readonly [T[], number])[] => {
+  const result = new Map<Comparable, number>()
+  const map = new Map<Comparable, T[]>()
+
+  for (const x of iterable) {
+    const value = getValue(x)
+    result.set(value, (result.get(value) ?? 0) + 1)
+    if (!map.get(value)?.includes(x)) {
+      map.set(value, [...(map.get(value) ?? []), x])
+    }
+  }
+
+  return [...map].map(([key, value]) => [value, result.get(key) ?? 0] as const)
+}
+
+export const mostCommonBy = <T, Comparable>(
+  iterable: Iterable<T>,
+  getValue: (i: T) => Comparable,
+) => {
+  let maxCount = 0
+  let match: T[] = []
+
+  for (const [keys, count] of histogramBy(iterable, getValue)) {
+    if (count > maxCount) {
+      maxCount = count
+      match = keys
+    }
+  }
+
+  return match
+}

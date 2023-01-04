@@ -11,6 +11,7 @@ export interface SplitMultiModalDistributionConfigBase
   extends KernelDensityEstimateConfigBase {
   noiseValuesPerSample?: number
   random?: () => number
+  iterations?: number
 }
 
 export type SplitMultiModalDistributionConfig =
@@ -76,37 +77,23 @@ export function generateNoise({
   })
 }
 
-/**
- * Splits a multimodal dataset into unimodal datasets.
- * Uses kernel density estimation for multimodal distribution detection.
- * See http://adereth.github.io/blog/2014/10/12/silvermans-mode-detection-method-explained/
- */
-export function splitMultimodalDistribution(
-  config: SplitMultiModalDistributionConfig,
-): number[][] {
-  const { data, sortedData = utilities.sort(data!), ...rest } = config
-
-  const noise = generateNoise({
-    ...rest,
-    sortedData,
-  })
-
-  const dataWithNoise = utilities.sort([...sortedData, ...noise])
-  const dataLength = dataWithNoise.length
-  const kde = kernelDensityEstimate({
-    ...rest,
-    sortedData: dataWithNoise,
-  })
-
+function getSplitIndexes({
+  kde,
+  sortedData,
+}: {
+  kde: number[]
+  sortedData: number[]
+}) {
+  const dataLength = sortedData.length
   const splitIndexes: number[] = []
   for (let i = 1; i < dataLength - 1; i++) {
     if (kde[i]! < kde[i - 1]! && kde[i]! < kde[i + 1]!) {
       const dataIndex = i
       const differenceBetweenPrevious = Math.abs(
-        dataWithNoise[dataIndex]! - dataWithNoise[dataIndex - 1]!,
+        sortedData[dataIndex]! - sortedData[dataIndex - 1]!,
       )
       const differenceBetweenNext = Math.abs(
-        dataWithNoise[dataIndex]! - dataWithNoise[dataIndex + 1]!,
+        sortedData[dataIndex]! - sortedData[dataIndex + 1]!,
       )
       const differenceBetweenPreviousIsBigger =
         differenceBetweenPrevious >= differenceBetweenNext
@@ -119,20 +106,63 @@ export function splitMultimodalDistribution(
   }
 
   splitIndexes.push(dataLength)
+  return splitIndexes
+}
 
-  const splits = splitIndexes
-    .map((dataIndex, i) =>
-      dataWithNoise
-        .slice(i > 0 ? splitIndexes[i - 1] : 0, dataIndex)
-        .filter((dataOrNoise) => {
-          // remove noise from final splits
-          const noiseIndex = noise.indexOf(dataOrNoise)
-          if (noiseIndex === -1) return true
-          noise.splice(noiseIndex, 1)
-          return false
-        }),
-    )
-    .filter((split) => split.length > 0)
+/**
+ * Splits a multimodal dataset into unimodal datasets.
+ * Uses kernel density estimation for multimodal distribution detection.
+ * See http://adereth.github.io/blog/2014/10/12/silvermans-mode-detection-method-explained/
+ */
+export function splitMultimodalDistribution(
+  config: SplitMultiModalDistributionConfig,
+): number[][] {
+  const {
+    data,
+    sortedData = utilities.sort(data!),
+    iterations = 1,
+    ...rest
+  } = config
 
-  return splits
+  function iterate() {
+    const noise = generateNoise({
+      ...rest,
+      sortedData,
+    })
+    const dataWithNoise = utilities.sort([...sortedData, ...noise])
+    const splitIndexes: number[] = getSplitIndexes({
+      kde: kernelDensityEstimate({
+        ...rest,
+        sortedData: dataWithNoise,
+      }),
+      sortedData: dataWithNoise,
+    })
+
+    // filter out noise from final splits
+    const splits = splitIndexes
+      .map((dataIndex, i) =>
+        dataWithNoise
+          .slice(i > 0 ? splitIndexes[i - 1] : 0, dataIndex)
+          .filter((dataOrNoise) => {
+            // remove noise from final splits
+            const noiseIndex = noise.indexOf(dataOrNoise)
+            if (noiseIndex === -1) return true
+            noise.splice(noiseIndex, 1)
+            return false
+          }),
+      )
+      .filter((split) => split.length > 0)
+
+    return splits
+  }
+
+  const splitIterations = Array.from({ length: iterations }, iterate)
+
+  const bestSplits = utilities.mostCommonBy(splitIterations, (splits) =>
+    splits.map((split) => split.join('-')).join('|'),
+  )
+
+  const [bestSplit = splitIterations[0]!] = bestSplits
+
+  return bestSplit
 }
