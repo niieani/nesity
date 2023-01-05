@@ -41,6 +41,15 @@ function getCohensDStats({
   }
 }
 
+interface GetSplitsReturnType {
+  rawSplitsSortedBySize: number[][]
+  rawSplits: number[][]
+  largestSplitIndex: number
+  modalityCount: number
+  modalities: number[][]
+  largestModalityIndex: number
+}
+
 function getSplits({
   kernelStretchFactor,
   noiseValuesPerSample,
@@ -49,7 +58,7 @@ function getSplits({
   threshold,
   sortedData,
   // by default, at least 80% of the data must be in a split to count as a separate modality
-  getSeparateModalityThreshold = (splitsCount: number) =>
+  getSeparateModalitySizeThreshold = (splitsCount: number) =>
     (1 / splitsCount) * DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO,
   iterations,
 }: Pick<
@@ -59,14 +68,8 @@ function getSplits({
   bandwidth: number
   threshold: number
   sortedData: number[]
-  getSeparateModalityThreshold?: (splitsCount: number) => number
-}): {
-  largestSplit: number[]
-  rejectedData: number[]
-  splitsSortedBySize: number[][]
-  splits: number[][]
-  modalityCount: number
-} {
+  getSeparateModalitySizeThreshold?: (splitsCount: number) => number
+}): GetSplitsReturnType {
   const common: Pick<
     SplitMultiModalDistributionConfig,
     | 'kernelStretchFactor'
@@ -83,27 +86,79 @@ function getSplits({
     getThreshold: () => threshold,
     iterations,
   }
-  const splits = splitMultimodalDistribution({ sortedData, ...common })
-  const splitsSortedBySize = [...splits].sort((a, b) => b.length - a.length)
-  const largestSplit = splitsSortedBySize[0] ?? []
-  const rejectedData = splitsSortedBySize.slice(1).flat()
+  const rawSplits = splitMultimodalDistribution({ sortedData, ...common })
+  const rawSplitsSortedBySize = [...rawSplits].sort(
+    (a, b) => b.length - a.length,
+  )
+  const largestSplitIndex = rawSplits.indexOf(rawSplitsSortedBySize[0]!)
+
   // in order to count as a separate modality,
   // each split must contain at least it's proportionate amount of the data
-  const separateModalityThreshold = getSeparateModalityThreshold(splits.length)
-  const modalityDistribution = splitsSortedBySize.map(
-    (split) => split.length / sortedData.length,
+  const separateModalitySizeThreshold = getSeparateModalitySizeThreshold(
+    rawSplits.length,
   )
-  const modalityCount = modalityDistribution.filter(
-    (modality) => modality >= separateModalityThreshold,
-  ).length
+  const splitsAndTheirDistribution = rawSplits.map(
+    (split) => [split, split.length / sortedData.length] as const,
+  )
+  const modalities = splitsAndTheirDistribution
+    .filter(
+      ([, modalitySizeRatio]) =>
+        modalitySizeRatio >= separateModalitySizeThreshold,
+    )
+    .map(([modality]) => modality)
+  const modalityCount = modalities.length
+  const largestModalityIndex = modalities.indexOf(rawSplitsSortedBySize[0]!)
 
   return {
-    largestSplit,
-    rejectedData,
-    splitsSortedBySize,
-    splits,
+    rawSplits,
+    rawSplitsSortedBySize,
+    largestSplitIndex,
     modalityCount,
+    modalities,
+    largestModalityIndex,
   }
+}
+
+function getMatchingModalities(
+  split1: GetSplitsReturnType,
+  split2: GetSplitsReturnType,
+) {
+  const sameModalityCount = split1.modalityCount === split2.modalityCount
+  const averageSizesOfModalities =
+    sameModalityCount && split1.modalityCount > 1
+      ? split1.modalities.map(
+          (data1, index) =>
+            (data1.length + split2.modalities[index]!.length) / 2,
+        )
+      : null
+
+  // if the modalities are the same, we need to compare the same one with the same,
+  // even if it is not the largest one in the 2nd case
+  // if the sizes of modalities are the same, we compare the largest one with the largest one (hence reversal)
+  const bestOverallModalityIndex1 = averageSizesOfModalities
+    ? averageSizesOfModalities.length -
+      1 -
+      [...averageSizesOfModalities]
+        .reverse()
+        .indexOf(Math.max(...averageSizesOfModalities))
+    : split1.largestModalityIndex
+  const bestOverallModalityIndex2 = sameModalityCount
+    ? bestOverallModalityIndex1
+    : split2.largestModalityIndex
+
+  const data1 = split1.modalities[bestOverallModalityIndex1]!
+  const data2 = split2.modalities[bestOverallModalityIndex2]!
+
+  const rawSplitIndex1 = split1.rawSplits.indexOf(data1)
+  const rawSplitIndex2 = split2.rawSplits.indexOf(data2)
+  const remainingData1 = [...split1.rawSplits]
+  remainingData1.splice(rawSplitIndex1, 1)
+  const remaining1 = remainingData1.flat()
+  const remainingData2 = [...split2.rawSplits]
+  remainingData2.splice(rawSplitIndex2, 1)
+  const remaining2 = remainingData2.flat()
+
+  return { data1, data2, remaining1, remaining2 }
 }
 
 export interface SampleStatistics {
@@ -131,7 +186,7 @@ export interface DenoiseSettings {
 }
 
 export interface ComparisonResult {
-  outcome: 'less' | 'greater' | 'equal' | 'invalid'
+  outcome: 'less' | 'greater' | 'similar' | 'invalid'
   ttest: {
     twoSided: SingleTTest
     greater: SingleTTest
@@ -222,7 +277,7 @@ export function compare({
     variance2,
   })
   const pooledStDev = Math.sqrt(pooledVariance)
-  const meanDifference = mean1 - mean2
+  const meanDifference = mean2 - mean1
 
   const [twoSided, greater, less] = [
     ttest2(data1, data2, {
@@ -248,7 +303,7 @@ export function compare({
 
   // hypothesis: Actual difference in means is not equal to 0
   const outcome = bothAreExactlyEqual
-    ? 'equal'
+    ? 'similar'
     : isInvalid
     ? 'invalid'
     : // first is greater than second
@@ -257,7 +312,7 @@ export function compare({
     : // first is less than second
     less.rejected
     ? 'greater'
-    : 'equal'
+    : 'similar'
 
   const result = {
     outcome,
@@ -404,20 +459,23 @@ export function compare({
       ? optimizationIterations * 2
       : optimizationIterations,
     compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
+      const matchingA = getMatchingModalities(splitA1, splitA2)
+      const matchingB = getMatchingModalities(splitB1, splitB2)
+
       const [comparisonA, comparisonB] = [
         compare({
-          data1: splitA1.largestSplit,
-          rejectedData1: splitA1.rejectedData,
-          data2: splitA2.largestSplit,
-          rejectedData2: splitA2.rejectedData,
+          data1: matchingA.data1,
+          rejectedData1: matchingA.remaining1,
+          data2: matchingA.data2,
+          rejectedData2: matchingA.remaining2,
           confidenceLevel,
           precisionDelta,
         }),
         compare({
-          data1: splitB1.largestSplit,
-          rejectedData1: splitB1.rejectedData,
-          data2: splitB2.largestSplit,
-          rejectedData2: splitB2.rejectedData,
+          data1: matchingB.data1,
+          rejectedData1: matchingB.remaining1,
+          data2: matchingB.data2,
+          rejectedData2: matchingB.remaining2,
           confidenceLevel,
           precisionDelta,
         }),
@@ -433,13 +491,12 @@ export function compare({
       // const valueA = stdevDiffA
       // const valueB = stdevDiffB
 
-      const valueA = comparisonA.pooledStDev - comparisonB.pooledStDev
-      const valueB = comparisonA.pooledStDev - comparisonB.pooledStDev
+      const valueA = comparisonA.pooledStDev
+      const valueB = comparisonB.pooledStDev
 
       // the more similar the pooledStDev between the two, the better
       // another option would be to sort by the lowest mean difference,
       // though this might introduce bias towards "equality"
-
       return [
         valueA - valueB,
         // return lower first -- it will be one representing the ranking
@@ -462,28 +519,31 @@ export function compare({
   const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
     bestComparisonsFromMostCommonOutcome[0]!
 
-  return Math.abs(meanDifference) <= Math.abs(betterBand.meanDifference)
-    ? result
-    : {
-        ...betterBand,
-        data1: {
-          ...betterBand.data1,
-          modalityCount: splitMetadata1.modalityCount,
-        },
-        data2: {
-          ...betterBand.data2,
-          modalityCount: splitMetadata2.modalityCount,
-        },
-        // Calculate the effect size using Cohen's d;
-        // this is delayed to the last moment for performance
-        effectSize: getCohensDStats({
-          mean1,
-          mean2,
-          pooledStDev,
-          data1,
-          data2,
-        }),
-        originalResult: result,
-        denoiseSettings,
-      }
+  const betterResult =
+    Math.abs(meanDifference) < Math.abs(betterBand.meanDifference)
+      ? result
+      : betterBand
+
+  return {
+    ...betterResult,
+    data1: {
+      ...betterResult.data1,
+      modalityCount: splitMetadata1.modalityCount,
+    },
+    data2: {
+      ...betterResult.data2,
+      modalityCount: splitMetadata2.modalityCount,
+    },
+    // Calculate the effect size using Cohen's d;
+    // this is delayed to the last moment for performance
+    effectSize: getCohensDStats({
+      mean1: betterResult.data1.mean,
+      mean2: betterResult.data2.mean,
+      pooledStDev: betterResult.pooledStDev,
+      data1: betterResult.data1.data,
+      data2: betterResult.data2.data,
+    }),
+    originalResult: result !== betterResult ? result : undefined,
+    denoiseSettings: result !== betterResult ? denoiseSettings : undefined,
+  }
 }

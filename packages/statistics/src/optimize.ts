@@ -35,12 +35,12 @@ export function optimize<T, ArgT, CompareT>({
       const compareResult =
         compareResults[i]?.[j] ?? compare(resultsI[1], resultsJ[1])
       const [compareValue, compareMeta] = compareResult
-      resultsI[3] += compareValue
       resultsI[2] = compareMeta
+      resultsI[3] += compareValue
       const reversedCompareMeta =
         reverseCompareMeta?.(compareMeta) ?? compareMeta
-      resultsJ[3] -= compareValue
       resultsJ[2] = reversedCompareMeta
+      resultsJ[3] -= compareValue
       compareResults[i]![j] = compareResult
       compareResults[j]![i] = [-compareValue, reversedCompareMeta]
     }
