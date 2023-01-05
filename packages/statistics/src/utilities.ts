@@ -132,7 +132,7 @@ export const histogramBy = <T, Comparable>(
 export const mostCommonBy = <T, Comparable>(
   iterable: Iterable<T>,
   getValue: (i: T) => Comparable,
-) => {
+): T[] => {
   let maxCount = 0
   let match: T[] = []
 

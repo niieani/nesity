@@ -6,6 +6,7 @@ import {
   OptimalThresholdConfigBase,
 } from './kernelDensityEstimate'
 import { calcShapiroWilk } from './normality'
+import { optimize } from './optimize'
 import {
   splitMultimodalDistribution,
   SplitMultiModalDistributionConfig,
@@ -14,6 +15,31 @@ import * as utils from './utilities'
 
 const DEFAULT_CONFIDENCE_LEVEL = 0.95
 const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
+
+function getCohensDStats({
+  mean1,
+  mean2,
+  pooledStDev,
+  data1,
+  data2,
+}: {
+  mean1: number
+  mean2: number
+  pooledStDev: number
+  data1: number[]
+  data2: number[]
+}) {
+  const cohensD = calcCohensD({ mean1, mean2, pooledStDev, data1, data2 })
+  const overlappingCoefficient = calcGaussOverlap(cohensD)
+  const probabilityOfSuperiority = calcCL(cohensD)
+  const nonOverlapMeasure = calcU3(cohensD)
+  return {
+    cohensD,
+    overlappingCoefficient,
+    probabilityOfSuperiority,
+    nonOverlapMeasure,
+  }
+}
 
 function getSplits({
   kernelStretchFactor,
@@ -61,7 +87,8 @@ function getSplits({
   const splitsSortedBySize = [...splits].sort((a, b) => b.length - a.length)
   const largestSplit = splitsSortedBySize[0] ?? []
   const rejectedData = splitsSortedBySize.slice(1).flat()
-  // in order to count as a separate modality, each split must contain at least it's proportionate amount of the data
+  // in order to count as a separate modality,
+  // each split must contain at least it's proportionate amount of the data
   const separateModalityThreshold = getSeparateModalityThreshold(splits.length)
   const modalityDistribution = splitsSortedBySize.map(
     (split) => split.length / sortedData.length,
@@ -97,6 +124,12 @@ export interface SingleTTest {
   confidenceInterval: ConfidenceInterval
 }
 
+export interface DenoiseSettings {
+  kernelStretchFactor: number
+  bandwidth: number
+  threshold: number
+}
+
 export interface ComparisonResult {
   outcome: 'less' | 'greater' | 'equal' | 'invalid'
   ttest: {
@@ -109,17 +142,26 @@ export interface ComparisonResult {
   meanDifference: number
   pooledVariance: number
   pooledStDev: number
-  cohensD: number
-  overlappingCoefficient: number
-  probabilityOfSuperiority: number
-  nonOverlapMeasure: number
   data1: SampleStatistics
   data2: SampleStatistics
+  // present when denoising:
   originalResult?: ComparisonResult
+  denoiseSettings?: DenoiseSettings
+  effectSize?: {
+    cohensD: number
+    overlappingCoefficient: number
+    probabilityOfSuperiority: number
+    nonOverlapMeasure: number
+  }
 }
 
 export type ConfidenceInterval = [number | null, number | null]
 
+// eslint-disable-next-line no-magic-numbers
+const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
+const MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO = 0.5
+
+const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
 export function compare({
   data1,
   data2,
@@ -129,19 +171,25 @@ export function compare({
   precisionDelta,
   noiseValuesPerSample = 0,
   random,
-  kernelStretchFactor,
+  kernelStretchFactorRange: [
+    kernelStretchFactorLowerRange,
+    kernelStretchFactorUpperRange,
+  ] = DEFAULT_KERNEL_STRETCH_FACTOR_RANGE,
   confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
   iterations,
+  kernelStretchFactorSearchStepSize = DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
 }: {
   data1: number[]
   data2: number[]
   rejectedData1?: number[]
   rejectedData2?: number[]
   confidenceLevel?: number
+  kernelStretchFactorRange?: readonly [lower: number, upper: number]
+  kernelStretchFactorSearchStepSize?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
-    'noiseValuesPerSample' | 'random' | 'kernelStretchFactor' | 'iterations'
+    'noiseValuesPerSample' | 'random' | 'iterations'
   >): ComparisonResult {
   const [sorted1, sorted2] = [utils.sort(data1), utils.sort(data2)]
   const [mean1, mean2] = [utils.mean(data1), utils.mean(data2)]
@@ -175,12 +223,6 @@ export function compare({
   })
   const pooledStDev = Math.sqrt(pooledVariance)
   const meanDifference = mean1 - mean2
-
-  // Calculate the effect size using Cohen's d
-  const cohensD = calcCohensD({ mean1, mean2, pooledStDev, data1, data2 })
-  const overlappingCoefficient = calcGaussOverlap(cohensD)
-  const probabilityOfSuperiority = calcCL(cohensD)
-  const nonOverlapMeasure = calcU3(cohensD)
 
   const [twoSided, greater, less] = [
     ttest2(data1, data2, {
@@ -222,10 +264,6 @@ export function compare({
     meanDifference,
     pooledVariance,
     pooledStDev,
-    cohensD,
-    overlappingCoefficient,
-    probabilityOfSuperiority,
-    nonOverlapMeasure,
     ttest: {
       // how many standard deviations away from the mean of the distribution:
       tValue: twoSided.statistic,
@@ -274,8 +312,6 @@ export function compare({
     },
   } as const
 
-  // TODO: might want to reject 1st and 4th quartile outliers in the first pass,
-  // or as a 2nd pass before advanced denoising
   if (noiseValuesPerSample === 0) return result
 
   // denoising logic:
@@ -304,68 +340,127 @@ export function compare({
     }),
   ]
 
-  const common = {
-    kernelStretchFactor,
-    noiseValuesPerSample,
-    iterations,
-    random,
+  const thresholdDifference = Math.abs(threshold1.value - threshold2.value)
+  const thresholdToStdevRatio = thresholdDifference / pooledStDev
+  // little performance optimization
+  const itIsWorthTestingBothThresholds =
+    thresholdToStdevRatio >
+    MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO
+
+  const kernelStretchOptimization = (iterationSettings: {
+    kernelStretchFactor: number
+    bandwidth: number
+    threshold: number
+  }) => {
+    const common = {
+      ...iterationSettings,
+      noiseValuesPerSample,
+      iterations,
+      random,
+    }
+    return [
+      getSplits({
+        ...common,
+        sortedData: sorted1,
+      }),
+      getSplits({
+        ...common,
+        sortedData: sorted2,
+      }),
+    ] as const
   }
-  const [splits1band1, splits2band1, splits1band2, splits2band2] = [
-    getSplits({
-      ...common,
-      bandwidth: bandwidth1,
-      threshold: threshold1.value,
-      sortedData: sorted1,
-    }),
-    getSplits({
-      ...common,
-      bandwidth: bandwidth1,
-      threshold: threshold1.value,
-      sortedData: sorted2,
-    }),
-    getSplits({
-      ...common,
-      bandwidth: bandwidth2,
-      threshold: threshold2.value,
-      sortedData: sorted1,
-    }),
-    getSplits({
-      ...common,
-      bandwidth: bandwidth2,
-      threshold: threshold2.value,
-      sortedData: sorted2,
-    }),
-  ]
 
-  const [comparedBand1, comparedBand2] = [
-    compare({
-      data1: splits1band1.largestSplit,
-      rejectedData1: splits1band1.rejectedData,
-      data2: splits2band1.largestSplit,
-      rejectedData2: splits2band1.rejectedData,
-      confidenceLevel,
-      precisionDelta,
-    }),
-    compare({
-      data1: splits1band2.largestSplit,
-      rejectedData1: splits1band2.rejectedData,
-      data2: splits2band2.largestSplit,
-      rejectedData2: splits2band2.rejectedData,
-      confidenceLevel,
-      precisionDelta,
-    }),
-  ]
+  const numerator = 1 / kernelStretchFactorSearchStepSize
+  const optimizationIterations =
+    (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) * numerator
 
-  const betterBand =
-    Math.abs(comparedBand1.meanDifference) <=
-    Math.abs(comparedBand2.meanDifference)
-      ? comparedBand1
-      : comparedBand2
+  // try out different kernelStretchFactors automatically to find the best one
+  // optimizing for lowest pooled stdev difference
+  const bestComparisons = optimize({
+    iterate: kernelStretchOptimization,
+    getNextIterationArgument(iteration) {
+      const actualIteration = itIsWorthTestingBothThresholds
+        ? Math.floor(iteration / 2)
+        : iteration
+      // go up in increments of e.g. 0.1 every other iteration
+      const kernelStretchFactorAdjustment = actualIteration / numerator
+      return {
+        kernelStretchFactor:
+          kernelStretchFactorLowerRange + kernelStretchFactorAdjustment,
+        bandwidth: itIsWorthTestingBothThresholds
+          ? iteration % 2 === 0
+            ? bandwidth1
+            : bandwidth2
+          : Math.min(bandwidth1, bandwidth2),
+        threshold: itIsWorthTestingBothThresholds
+          ? iteration % 2 === 0
+            ? threshold1.value
+            : threshold2.value
+          : Math.min(threshold1.value, threshold2.value),
+      }
+    },
+    // we multiply by two if we test both bandwidth/threshold pairs
+    iterations: itIsWorthTestingBothThresholds
+      ? optimizationIterations * 2
+      : optimizationIterations,
+    compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
+      const [comparisonA, comparisonB] = [
+        compare({
+          data1: splitA1.largestSplit,
+          rejectedData1: splitA1.rejectedData,
+          data2: splitA2.largestSplit,
+          rejectedData2: splitA2.rejectedData,
+          confidenceLevel,
+          precisionDelta,
+        }),
+        compare({
+          data1: splitB1.largestSplit,
+          rejectedData1: splitB1.rejectedData,
+          data2: splitB2.largestSplit,
+          rejectedData2: splitB2.rejectedData,
+          confidenceLevel,
+          precisionDelta,
+        }),
+      ]
 
-  const [splitMetadata1, splitMetadata2] = [
-    betterBand === comparedBand1 ? splits1band1 : splits1band2,
-    betterBand === comparedBand1 ? splits2band1 : splits2band2,
-  ]
+      // an alternative would be to compare stdevDifference:
+      // const stdevDiffA = Math.abs(
+      //   comparisonA.data1.stdev - comparisonA.data2.stdev,
+      // )
+      // const stdevDiffB = Math.abs(
+      //   comparisonB.data1.stdev - comparisonB.data2.stdev,
+      // )
+      // const valueA = stdevDiffA
+      // const valueB = stdevDiffB
+
+      const valueA = comparisonA.pooledStDev - comparisonB.pooledStDev
+      const valueB = comparisonA.pooledStDev - comparisonB.pooledStDev
+
+      // the more similar the pooledStDev between the two, the better
+      // another option would be to sort by the lowest mean difference,
+      // though this might introduce bias towards "equality"
+
+      return [
+        valueA - valueB,
+        // return lower first -- it will be one representing the ranking
+        valueA < valueB
+          ? ([comparisonA, comparisonB] as const)
+          : ([comparisonB, comparisonA] as const),
+      ]
+    },
+    reverseCompareMeta: ([comparisonA, comparisonB]) =>
+      [comparisonB, comparisonA] as const,
+  })
+
+  // we want to count the number of times the comparison was equal/greater/less,
+  // and choose the best one from those
+  const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
+    bestComparisons,
+    ([_settings, _split, [comparison]]) => comparison.outcome,
+  )
+
+  const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
+    bestComparisonsFromMostCommonOutcome[0]!
 
   return Math.abs(meanDifference) <= Math.abs(betterBand.meanDifference)
     ? result
@@ -379,6 +474,16 @@ export function compare({
           ...betterBand.data2,
           modalityCount: splitMetadata2.modalityCount,
         },
+        // Calculate the effect size using Cohen's d;
+        // this is delayed to the last moment for performance
+        effectSize: getCohensDStats({
+          mean1,
+          mean2,
+          pooledStDev,
+          data1,
+          data2,
+        }),
         originalResult: result,
+        denoiseSettings,
       }
 }
