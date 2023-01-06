@@ -751,9 +751,10 @@ export function compare({
   )
 
   const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
-    bestComparisonsFromMostCommonOutcome[0]!
+    bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], []]
 
   const betterResult =
+    !betterBand ||
     Math.abs(meanDifference) < Math.abs(betterBand.meanDifference)
       ? result
       : betterBand
@@ -761,11 +762,11 @@ export function compare({
   return {
     ...betterResult,
     data1: {
-      modalityCount: splitMetadata1.modalityCount,
+      modalityCount: splitMetadata1?.modalityCount,
       ...betterResult.data1,
     },
     data2: {
-      modalityCount: splitMetadata2.modalityCount,
+      modalityCount: splitMetadata2?.modalityCount,
       ...betterResult.data2,
     },
     // Calculate the effect size using Cohen's d;

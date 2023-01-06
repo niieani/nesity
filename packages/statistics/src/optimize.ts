@@ -41,7 +41,7 @@ export function optimize<T, ArgT, CompareT>({
   })
 
   for (let i = 0; i < results.length; i++) {
-    for (let j = i + 1; j < results.length; j++) {
+    for (let j = 0; j < results.length; j++) {
       const resultsI = results[i]!
       const resultsJ = results[j]!
       const compareResult =
