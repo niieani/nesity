@@ -1,3 +1,4 @@
+import type { GetSplitsReturnType } from './getSplits'
 import * as utils from './utilities'
 
 export interface MappedSplit {
@@ -130,6 +131,7 @@ export function matchModalities({
   return matched
 }
 
+// helper that only returns data
 export const getModalityData = (
   input:
     | readonly [MappedSplit | undefined, MappedSplit]
@@ -138,3 +140,46 @@ export const getModalityData = (
   input[0]?.data,
   input[1]?.data,
 ]
+
+// simpler version that only matches the largest modality:
+export function getBestMatchingModality(
+  split1: GetSplitsReturnType,
+  split2: GetSplitsReturnType,
+) {
+  const sameModalityCount = split1.modalityCount === split2.modalityCount
+  const averageSizesOfModalities =
+    sameModalityCount && split1.modalityCount > 1
+      ? split1.modalities.map(
+          (data1, index) =>
+            (data1.length + split2.modalities[index]!.length) / 2,
+        )
+      : null
+
+  // if the modalities are the same, we need to compare the same one with the same,
+  // even if it is not the largest one in the 2nd case
+  // if the sizes of modalities are the same, we compare the largest one with the largest one (hence reversal)
+  const bestOverallModalityIndex1 = averageSizesOfModalities
+    ? averageSizesOfModalities.length -
+      1 -
+      [...averageSizesOfModalities]
+        .reverse()
+        .indexOf(Math.max(...averageSizesOfModalities))
+    : split1.largestModalityIndex
+  const bestOverallModalityIndex2 = sameModalityCount
+    ? bestOverallModalityIndex1
+    : split2.largestModalityIndex
+
+  const data1 = split1.modalities[bestOverallModalityIndex1]!
+  const data2 = split2.modalities[bestOverallModalityIndex2]!
+
+  const rawSplitIndex1 = split1.rawSplits.indexOf(data1)
+  const rawSplitIndex2 = split2.rawSplits.indexOf(data2)
+  const remainingData1 = [...split1.rawSplits]
+  remainingData1.splice(rawSplitIndex1, 1)
+  const remaining1 = remainingData1.flat()
+  const remainingData2 = [...split2.rawSplits]
+  remainingData2.splice(rawSplitIndex2, 1)
+  const remaining2 = remainingData2.flat()
+
+  return { data1, data2, remaining1, remaining2 }
+}

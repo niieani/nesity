@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/prefer-native-coercion-functions */
 import ttest2 from '@stdlib/stats-ttest2'
 import { calcCL, calcCohensD, calcGaussOverlap, calcU3 } from './cohensd'
+import { getSplits } from './getSplits'
 import {
   calculateSilvermansRuleOfThumbBandwidth,
   optimalThreshold,
@@ -9,14 +10,11 @@ import {
 import { getModalityData, matchModalities } from './matchModalities'
 import { calcShapiroWilk } from './normality'
 import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
-import {
-  splitMultimodalDistribution,
-  SplitMultiModalDistributionConfig,
-} from './splitMultimodalDistribution'
+import type { SplitMultiModalDistributionConfig } from './splitMultimodalDistribution'
 import * as utils from './utilities'
 
 const DEFAULT_CONFIDENCE_LEVEL = 0.95
-const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
+export const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
 
 function getCohensDStats({
   mean1,
@@ -43,130 +41,6 @@ function getCohensDStats({
   }
 }
 
-interface GetSplitsReturnType {
-  rawSplitsSortedBySize: number[][]
-  rawSplits: number[][]
-  largestSplitIndex: number
-  splitsAndTheirDistribution: (readonly [number[], number])[]
-  separateModalitySizeThreshold: number
-  modalityCount: number
-  modalities: number[][]
-  largestModalityIndex: number
-}
-
-function getSplits({
-  kernelStretchFactor,
-  noiseValuesPerSample,
-  random,
-  bandwidth,
-  threshold,
-  sortedData,
-  // by default, at least 80% of the data must be in a split to count as a separate modality
-  getSeparateModalitySizeThreshold = (splitsCount: number) =>
-    (1 / splitsCount) * DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO,
-  iterations,
-}: Pick<
-  SplitMultiModalDistributionConfig,
-  'kernelStretchFactor' | 'noiseValuesPerSample' | 'random' | 'iterations'
-> & {
-  bandwidth: number
-  threshold: number
-  sortedData: number[]
-  getSeparateModalitySizeThreshold?: (splitsCount: number) => number
-}): GetSplitsReturnType {
-  const common: Pick<
-    SplitMultiModalDistributionConfig,
-    | 'kernelStretchFactor'
-    | 'noiseValuesPerSample'
-    | 'random'
-    | 'getBandwidth'
-    | 'getThreshold'
-    | 'iterations'
-  > = {
-    kernelStretchFactor,
-    noiseValuesPerSample,
-    random,
-    getBandwidth: () => bandwidth,
-    getThreshold: () => threshold,
-    iterations,
-  }
-  const rawSplits = splitMultimodalDistribution({ sortedData, ...common })
-  const rawSplitsSortedBySize = [...rawSplits].sort(
-    (a, b) => b.length - a.length,
-  )
-  const largestSplitIndex = rawSplits.indexOf(rawSplitsSortedBySize[0]!)
-
-  // in order to count as a separate modality,
-  // each split must contain at least it's proportionate amount of the data
-  const separateModalitySizeThreshold = getSeparateModalitySizeThreshold(
-    rawSplits.length,
-  )
-  const splitsAndTheirDistribution = rawSplits.map(
-    (split) => [split, split.length / sortedData.length] as const,
-  )
-  const modalities = splitsAndTheirDistribution
-    .filter(
-      ([, modalitySizeRatio]) =>
-        modalitySizeRatio >= separateModalitySizeThreshold,
-    )
-    .map(([modality]) => modality)
-  const modalityCount = modalities.length
-  const largestModalityIndex = modalities.indexOf(rawSplitsSortedBySize[0]!)
-
-  return {
-    rawSplits,
-    rawSplitsSortedBySize,
-    largestSplitIndex,
-    splitsAndTheirDistribution,
-    separateModalitySizeThreshold,
-    modalityCount,
-    modalities,
-    largestModalityIndex,
-  }
-}
-
-export function getMatchingModalities(
-  split1: GetSplitsReturnType,
-  split2: GetSplitsReturnType,
-) {
-  const sameModalityCount = split1.modalityCount === split2.modalityCount
-  const averageSizesOfModalities =
-    sameModalityCount && split1.modalityCount > 1
-      ? split1.modalities.map(
-          (data1, index) =>
-            (data1.length + split2.modalities[index]!.length) / 2,
-        )
-      : null
-
-  // if the modalities are the same, we need to compare the same one with the same,
-  // even if it is not the largest one in the 2nd case
-  // if the sizes of modalities are the same, we compare the largest one with the largest one (hence reversal)
-  const bestOverallModalityIndex1 = averageSizesOfModalities
-    ? averageSizesOfModalities.length -
-      1 -
-      [...averageSizesOfModalities]
-        .reverse()
-        .indexOf(Math.max(...averageSizesOfModalities))
-    : split1.largestModalityIndex
-  const bestOverallModalityIndex2 = sameModalityCount
-    ? bestOverallModalityIndex1
-    : split2.largestModalityIndex
-
-  const data1 = split1.modalities[bestOverallModalityIndex1]!
-  const data2 = split2.modalities[bestOverallModalityIndex2]!
-
-  const rawSplitIndex1 = split1.rawSplits.indexOf(data1)
-  const rawSplitIndex2 = split2.rawSplits.indexOf(data2)
-  const remainingData1 = [...split1.rawSplits]
-  remainingData1.splice(rawSplitIndex1, 1)
-  const remaining1 = remainingData1.flat()
-  const remainingData2 = [...split2.rawSplits]
-  remainingData2.splice(rawSplitIndex2, 1)
-  const remaining2 = remainingData2.flat()
-
-  return { data1, data2, remaining1, remaining2 }
-}
-
 export interface SampleStatistics {
   mean: number
   variance: number
@@ -179,7 +53,12 @@ export interface SampleStatistics {
   modalityCount?: number
 }
 
-export interface SingleTTest {
+interface TTestResultBase {
+  pValue: number
+  rejected: boolean
+}
+
+export interface TTestResult extends TTestResultBase {
   rejected: boolean
   pValue: number
   confidenceInterval: ConfidenceInterval
@@ -193,12 +72,39 @@ export interface DenoiseSettings {
 
 export type ComparisonOutcome = 'less' | 'greater' | 'similar' | 'invalid'
 
+export function getOutcome({
+  twoSided,
+  greater,
+  less,
+}: {
+  twoSided: TTestResultBase
+  greater: TTestResultBase
+  less: TTestResultBase
+}): ComparisonOutcome {
+  const isInvalid =
+    Number.isNaN(twoSided.pValue) ||
+    Number.isNaN(greater.pValue) ||
+    Number.isNaN(less.pValue)
+
+  // hypothesis: Actual difference in means is not equal to 0
+  const outcome = isInvalid
+    ? 'invalid'
+    : // first is greater than second
+    greater.rejected
+    ? 'less'
+    : // first is less than second
+    less.rejected
+    ? 'greater'
+    : 'similar'
+  return outcome
+}
+
 export interface ComparisonResult {
   outcome: ComparisonOutcome
   ttest: {
-    twoSided: SingleTTest
-    greater: SingleTTest
-    less: SingleTTest
+    twoSided: TTestResult
+    greater: TTestResult
+    less: TTestResult
     degreesOfFreedom: number
     tValue: number
   }
@@ -261,11 +167,6 @@ export const mergeComparisons = ({
   if (comparisons.length === 1) {
     return comparisons[0]!
   }
-  const comparisonsWithMostCommonOutcome = utils.mostCommonBy(
-    comparisons,
-    (c) => c.outcome,
-  )
-  const outcome = comparisonsWithMostCommonOutcome[0]?.outcome ?? 'invalid'
   const totalData1Length = comparisons.reduce(
     (sum, c) => sum + c.data1.data.length,
     0,
@@ -301,7 +202,7 @@ export const mergeComparisons = ({
     (sum, c) => sum + c.ttest.degreesOfFreedom * c.weight,
     0,
   )
-  function mergeTTest(type: 'twoSided' | 'greater' | 'less'): SingleTTest {
+  function mergeTTest(type: 'twoSided' | 'greater' | 'less'): TTestResult {
     const weightedTwoSidedPValue = comparisonsWithWeights.reduce(
       (sum, c) => sum + c.ttest[type].pValue * c.weight,
       0,
@@ -332,6 +233,9 @@ export const mergeComparisons = ({
 
   const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
   const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
+  const bothAreExactlyEqual =
+    weightedMeanDifference === 0 && allUsedData1[0] === allUsedData2[0]
+  const outcome = bothAreExactlyEqual ? 'similar' : getOutcome(ttest)
 
   const largestSampleSplitComparison = comparisonsWithWeights
     .reverse()
@@ -472,25 +376,9 @@ export function compare({
     }),
   ]
 
-  const isInvalid =
-    Number.isNaN(twoSided.pValue) ||
-    Number.isNaN(greater.pValue) ||
-    Number.isNaN(less.pValue)
-
   const bothAreExactlyEqual = meanDifference === 0 && data1[0] === data2[0]
-
-  // hypothesis: Actual difference in means is not equal to 0
-  const outcome = bothAreExactlyEqual
-    ? 'similar'
-    : isInvalid
-    ? 'invalid'
-    : // first is greater than second
-    greater.rejected
-    ? 'less'
-    : // first is less than second
-    less.rejected
-    ? 'greater'
-    : 'similar'
+  const tTestOutcome = getOutcome({ twoSided, greater, less })
+  const outcome = bothAreExactlyEqual ? 'similar' : tTestOutcome
 
   const result = {
     outcome,
