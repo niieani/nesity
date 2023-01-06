@@ -75,7 +75,7 @@ export function optimize<T, ArgT, CompareT>({
   const sortedResults: OptimizationResult<ArgT, T, CompareT>[] = results
     .filter(
       (result): result is OptimizationResult<ArgT, T, CompareT> =>
-        result[2] !== INVALID,
+        typeof result[1] !== 'undefined' && result[2] !== INVALID,
     )
     .sort(([_iArgA, _iResA, , a], [_iArgB, _iResB, , b]) => a - b) as [
     iterationArg: ArgT,
