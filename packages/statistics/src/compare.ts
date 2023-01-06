@@ -72,22 +72,49 @@ export interface DenoiseSettings {
 
 export type ComparisonOutcome = 'less' | 'greater' | 'similar' | 'invalid'
 
-export function getOutcome({
-  twoSided,
-  greater,
-  less,
-}: {
-  twoSided: TTestResultBase
-  greater: TTestResultBase
-  less: TTestResultBase
-}): ComparisonOutcome {
-  const isInvalid =
+export function getOutcome(
+  {
+    twoSided,
+    greater,
+    less,
+  }: {
+    twoSided: TTestResultBase
+    greater: TTestResultBase
+    less: TTestResultBase
+  },
+  {
+    data1,
+    data2,
+    meanDifference,
+  }: {
+    data1: number[]
+    data2: number[]
+    meanDifference: number
+  },
+): ComparisonOutcome {
+  const isSimpleComparison = data1.length === 1 && data2.length === 1
+  if (isSimpleComparison) {
+    return meanDifference === 0
+      ? 'similar'
+      : meanDifference > 0
+      ? 'greater'
+      : 'less'
+  }
+
+  const isTTestInvalid =
     Number.isNaN(twoSided.pValue) ||
     Number.isNaN(greater.pValue) ||
     Number.isNaN(less.pValue)
 
+  const bothAreExactlyEqual =
+    meanDifference === 0 &&
+    data1.reduce((a, b) => Math.abs(a) + Math.abs(b), 0) ===
+      data2.reduce((a, b) => Math.abs(a) + Math.abs(b), 0)
+
   // hypothesis: Actual difference in means is not equal to 0
-  const outcome = isInvalid
+  const outcome = bothAreExactlyEqual
+    ? 'similar'
+    : isTTestInvalid
     ? 'invalid'
     : // first is greater than second
     greater.rejected
@@ -233,9 +260,11 @@ export const mergeComparisons = ({
 
   const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
   const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
-  const bothAreExactlyEqual =
-    weightedMeanDifference === 0 && allUsedData1[0] === allUsedData2[0]
-  const outcome = bothAreExactlyEqual ? 'similar' : getOutcome(ttest)
+  const outcome = getOutcome(ttest, {
+    data1: allUsedData1,
+    data2: allUsedData2,
+    meanDifference: weightedMeanDifference,
+  })
 
   const largestSampleSplitComparison = comparisonsWithWeights
     .reverse()
@@ -376,11 +405,12 @@ export function compare({
     }),
   ]
 
-  const bothAreExactlyEqual = meanDifference === 0 && data1[0] === data2[0]
-  const tTestOutcome = getOutcome({ twoSided, greater, less })
-  const outcome = bothAreExactlyEqual ? 'similar' : tTestOutcome
+  const outcome = getOutcome(
+    { twoSided, greater, less },
+    { meanDifference, data1, data2 },
+  )
 
-  const result = {
+  let result: ComparisonResult = {
     outcome,
     meanDifference,
     pooledVariance,
@@ -433,238 +463,240 @@ export function compare({
     },
   } as const
 
-  if (noiseValuesPerSample === 0) return result
-
-  // denoising logic:
-  const [threshold1, threshold2] = [
-    optimalThreshold({
-      sortedData: sorted1,
-      stdev: stdev1,
-      minimumVelocityToFirstQuartileRatio,
-      precisionDelta,
-    }),
-    optimalThreshold({
-      sortedData: sorted2,
-      stdev: stdev2,
-      minimumVelocityToFirstQuartileRatio,
-      precisionDelta,
-    }),
-  ]
-  const [bandwidth1, bandwidth2] = [
-    calculateSilvermansRuleOfThumbBandwidth({
-      sortedData: sorted1,
-      threshold: threshold1.value,
-    }),
-    calculateSilvermansRuleOfThumbBandwidth({
-      sortedData: sorted2,
-      threshold: threshold2.value,
-    }),
-  ]
-
-  const thresholdDifference = Math.abs(threshold1.value - threshold2.value)
-  const thresholdToStdevRatio = thresholdDifference / pooledStDev
-  // little performance optimization
-  const itIsWorthTestingBothThresholds =
-    thresholdToStdevRatio >
-    MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO
-
-  const kernelStretchOptimization = (iterationSettings: {
-    kernelStretchFactor: number
-    bandwidth: number
-    threshold: number
-  }) => {
-    const common = {
-      ...iterationSettings,
-      noiseValuesPerSample,
-      iterations,
-      random,
-    }
-    return [
-      getSplits({
-        ...common,
+  if (
+    !(noiseValuesPerSample === 0 || data1.length === 1 || data2.length === 1)
+  ) {
+    // apply denoising logic:
+    const [threshold1, threshold2] = [
+      optimalThreshold({
         sortedData: sorted1,
+        stdev: stdev1,
+        minimumVelocityToFirstQuartileRatio,
+        precisionDelta,
       }),
-      getSplits({
-        ...common,
+      optimalThreshold({
         sortedData: sorted2,
+        stdev: stdev2,
+        minimumVelocityToFirstQuartileRatio,
+        precisionDelta,
       }),
-    ] as const
+    ]
+    const [bandwidth1, bandwidth2] = [
+      calculateSilvermansRuleOfThumbBandwidth({
+        sortedData: sorted1,
+        threshold: threshold1.value,
+      }),
+      calculateSilvermansRuleOfThumbBandwidth({
+        sortedData: sorted2,
+        threshold: threshold2.value,
+      }),
+    ]
+
+    const thresholdDifference = Math.abs(threshold1.value - threshold2.value)
+    const thresholdToStdevRatio = thresholdDifference / pooledStDev
+    // little performance optimization
+    const itIsWorthTestingBothThresholds =
+      thresholdToStdevRatio >
+      MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO
+
+    const kernelStretchOptimization = (iterationSettings: {
+      kernelStretchFactor: number
+      bandwidth: number
+      threshold: number
+    }) => {
+      const common = {
+        ...iterationSettings,
+        noiseValuesPerSample,
+        iterations,
+        random,
+      }
+      return [
+        getSplits({
+          ...common,
+          sortedData: sorted1,
+        }),
+        getSplits({
+          ...common,
+          sortedData: sorted2,
+        }),
+      ] as const
+    }
+
+    const numerator = 1 / kernelStretchFactorSearchStepSize
+    const optimizationIterations =
+      (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) *
+      numerator
+
+    // try out different kernelStretchFactors automatically to find the best one
+    // optimizing for lowest pooled stdev difference
+    const bestComparisons = optimize({
+      iterate: kernelStretchOptimization,
+      getNextIterationArgument(iteration) {
+        const actualIteration = itIsWorthTestingBothThresholds
+          ? Math.floor(iteration / 2)
+          : iteration
+        // go up in increments of e.g. 0.1 every other iteration
+        const kernelStretchFactorAdjustment = actualIteration / numerator
+        return {
+          kernelStretchFactor:
+            kernelStretchFactorLowerRange + kernelStretchFactorAdjustment,
+          bandwidth: itIsWorthTestingBothThresholds
+            ? iteration % 2 === 0
+              ? bandwidth1
+              : bandwidth2
+            : Math.min(bandwidth1, bandwidth2),
+          threshold: itIsWorthTestingBothThresholds
+            ? iteration % 2 === 0
+              ? threshold1.value
+              : threshold2.value
+            : Math.min(threshold1.value, threshold2.value),
+        }
+      },
+      // we multiply by two if we test both bandwidth/threshold pairs
+      iterations: itIsWorthTestingBothThresholds
+        ? optimizationIterations * 2
+        : optimizationIterations,
+      compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
+        const matchingA = matchModalities({
+          rawSplits1: splitA1.rawSplits,
+          rawSplits2: splitA2.rawSplits,
+        }).map(getModalityData)
+        const matchingB = matchModalities({
+          rawSplits1: splitB1.rawSplits,
+          rawSplits2: splitB2.rawSplits,
+        }).map(getModalityData)
+
+        const [usableModalitiesA, discardedModalitiesA] = utils.partition(
+          matchingA,
+          getIsUsableModality(minimalModalitySize),
+        )
+        const [usableModalitiesB, discardedModalitiesB] = utils.partition(
+          matchingB,
+          getIsUsableModality(minimalModalitySize),
+        )
+        if (usableModalitiesA.length === 0) {
+          return INVALID_LEFT
+        }
+        if (usableModalitiesB.length === 0) {
+          return INVALID_RIGHT
+        }
+        const comparisonsA = usableModalitiesA.map(([d1, d2]) =>
+          compare({
+            data1: d1,
+            data2: d2,
+            confidenceLevel,
+            precisionDelta,
+          }),
+        )
+        const comparisonsB = usableModalitiesB.map(([d1, d2]) =>
+          compare({
+            data1: d1,
+            data2: d2,
+            confidenceLevel,
+            precisionDelta,
+          }),
+        )
+
+        const [comparisonA, comparisonB] = [
+          mergeComparisons({
+            comparisons: comparisonsA,
+            confidenceLevel,
+            discardedModalities1: discardedModalitiesA
+              .map(([a, b]) => a)
+              .filter((arr): arr is number[] => Boolean(arr)),
+            discardedModalities2: discardedModalitiesA
+              .map(([a, b]) => b)
+              .filter((arr): arr is number[] => Boolean(arr)),
+          }),
+          mergeComparisons({
+            comparisons: comparisonsB,
+            confidenceLevel,
+            discardedModalities1: discardedModalitiesB
+              .map(([a, b]) => a)
+              .filter((arr): arr is number[] => Boolean(arr)),
+            discardedModalities2: discardedModalitiesB
+              .map(([a, b]) => b)
+              .filter((arr): arr is number[] => Boolean(arr)),
+          }),
+        ]
+
+        if (
+          comparisonA.data1.validCount / data1.length <
+          minimumUsedToTotalSamplesRatio
+        ) {
+          return INVALID_LEFT
+        }
+        if (
+          comparisonB.data1.validCount / data2.length <
+          minimumUsedToTotalSamplesRatio
+        ) {
+          return INVALID_RIGHT
+        }
+
+        const stdevDiffA = Math.abs(
+          comparisonA.data1.stdev - comparisonA.data2.stdev,
+        )
+        const stdevDiffB = Math.abs(
+          comparisonB.data1.stdev - comparisonB.data2.stdev,
+        )
+        const valueA = stdevDiffA
+        const valueB = stdevDiffB
+
+        // an alternative would be to compare pooledStDev:
+        // const valueA = comparisonA.pooledStDev
+        // const valueB = comparisonB.pooledStDev
+
+        // the more similar the pooledStDev between the two, the better
+        // another option would be to sort by the lowest mean difference,
+        // though this might introduce bias towards "equality"
+        return [
+          valueA - valueB,
+          // return lower first -- it will be one representing the ranking
+          valueA < valueB
+            ? ([comparisonA, comparisonB] as const)
+            : ([comparisonB, comparisonA] as const),
+        ]
+      },
+      reverseCompareMeta: ([comparisonA, comparisonB]) =>
+        [comparisonB, comparisonA] as const,
+    })
+
+    // we want to count the number of times the comparison was equal/greater/less,
+    // and choose the best one from those
+    const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
+      bestComparisons,
+      ([_settings, _split, [comparison]]) => comparison.outcome,
+    )
+
+    const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
+      bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], []]
+
+    if (
+      !(
+        !betterBand ||
+        Math.abs(meanDifference) < Math.abs(betterBand.meanDifference)
+      )
+    ) {
+      result = {
+        ...betterBand,
+        originalResult: result,
+        denoiseSettings,
+      }
+    }
+    result.data1.modalityCount = splitMetadata1?.modalityCount
+    result.data2.modalityCount = splitMetadata2?.modalityCount
   }
 
-  const numerator = 1 / kernelStretchFactorSearchStepSize
-  const optimizationIterations =
-    (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) * numerator
-
-  // try out different kernelStretchFactors automatically to find the best one
-  // optimizing for lowest pooled stdev difference
-  const bestComparisons = optimize({
-    iterate: kernelStretchOptimization,
-    getNextIterationArgument(iteration) {
-      const actualIteration = itIsWorthTestingBothThresholds
-        ? Math.floor(iteration / 2)
-        : iteration
-      // go up in increments of e.g. 0.1 every other iteration
-      const kernelStretchFactorAdjustment = actualIteration / numerator
-      return {
-        kernelStretchFactor:
-          kernelStretchFactorLowerRange + kernelStretchFactorAdjustment,
-        bandwidth: itIsWorthTestingBothThresholds
-          ? iteration % 2 === 0
-            ? bandwidth1
-            : bandwidth2
-          : Math.min(bandwidth1, bandwidth2),
-        threshold: itIsWorthTestingBothThresholds
-          ? iteration % 2 === 0
-            ? threshold1.value
-            : threshold2.value
-          : Math.min(threshold1.value, threshold2.value),
-      }
-    },
-    // we multiply by two if we test both bandwidth/threshold pairs
-    iterations: itIsWorthTestingBothThresholds
-      ? optimizationIterations * 2
-      : optimizationIterations,
-    compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
-      const matchingA = matchModalities({
-        rawSplits1: splitA1.rawSplits,
-        rawSplits2: splitA2.rawSplits,
-      }).map(getModalityData)
-      const matchingB = matchModalities({
-        rawSplits1: splitB1.rawSplits,
-        rawSplits2: splitB2.rawSplits,
-      }).map(getModalityData)
-
-      const [usableModalitiesA, discardedModalitiesA] = utils.partition(
-        matchingA,
-        getIsUsableModality(minimalModalitySize),
-      )
-      const [usableModalitiesB, discardedModalitiesB] = utils.partition(
-        matchingB,
-        getIsUsableModality(minimalModalitySize),
-      )
-      if (usableModalitiesA.length === 0) {
-        return INVALID_LEFT
-      }
-      if (usableModalitiesB.length === 0) {
-        return INVALID_RIGHT
-      }
-      const comparisonsA = usableModalitiesA.map(([d1, d2]) =>
-        compare({
-          data1: d1,
-          data2: d2,
-          confidenceLevel,
-          precisionDelta,
-        }),
-      )
-      const comparisonsB = usableModalitiesB.map(([d1, d2]) =>
-        compare({
-          data1: d1,
-          data2: d2,
-          confidenceLevel,
-          precisionDelta,
-        }),
-      )
-
-      const [comparisonA, comparisonB] = [
-        mergeComparisons({
-          comparisons: comparisonsA,
-          confidenceLevel,
-          discardedModalities1: discardedModalitiesA
-            .map(([a, b]) => a)
-            .filter((arr): arr is number[] => Boolean(arr)),
-          discardedModalities2: discardedModalitiesA
-            .map(([a, b]) => b)
-            .filter((arr): arr is number[] => Boolean(arr)),
-        }),
-        mergeComparisons({
-          comparisons: comparisonsB,
-          confidenceLevel,
-          discardedModalities1: discardedModalitiesB
-            .map(([a, b]) => a)
-            .filter((arr): arr is number[] => Boolean(arr)),
-          discardedModalities2: discardedModalitiesB
-            .map(([a, b]) => b)
-            .filter((arr): arr is number[] => Boolean(arr)),
-        }),
-      ]
-
-      if (
-        comparisonA.data1.validCount / data1.length <
-        minimumUsedToTotalSamplesRatio
-      ) {
-        return INVALID_LEFT
-      }
-      if (
-        comparisonB.data1.validCount / data2.length <
-        minimumUsedToTotalSamplesRatio
-      ) {
-        return INVALID_RIGHT
-      }
-
-      const stdevDiffA = Math.abs(
-        comparisonA.data1.stdev - comparisonA.data2.stdev,
-      )
-      const stdevDiffB = Math.abs(
-        comparisonB.data1.stdev - comparisonB.data2.stdev,
-      )
-      const valueA = stdevDiffA
-      const valueB = stdevDiffB
-
-      // an alternative would be to compare pooledStDev:
-      // const valueA = comparisonA.pooledStDev
-      // const valueB = comparisonB.pooledStDev
-
-      // the more similar the pooledStDev between the two, the better
-      // another option would be to sort by the lowest mean difference,
-      // though this might introduce bias towards "equality"
-      return [
-        valueA - valueB,
-        // return lower first -- it will be one representing the ranking
-        valueA < valueB
-          ? ([comparisonA, comparisonB] as const)
-          : ([comparisonB, comparisonA] as const),
-      ]
-    },
-    reverseCompareMeta: ([comparisonA, comparisonB]) =>
-      [comparisonB, comparisonA] as const,
-  })
-
-  // we want to count the number of times the comparison was equal/greater/less,
-  // and choose the best one from those
-  const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
-    bestComparisons,
-    ([_settings, _split, [comparison]]) => comparison.outcome,
-  )
-
-  const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
-    bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], []]
-
-  const betterResult =
-    !betterBand ||
-    Math.abs(meanDifference) < Math.abs(betterBand.meanDifference)
-      ? result
-      : betterBand
-
   return {
-    ...betterResult,
-    data1: {
-      modalityCount: splitMetadata1?.modalityCount,
-      ...betterResult.data1,
-    },
-    data2: {
-      modalityCount: splitMetadata2?.modalityCount,
-      ...betterResult.data2,
-    },
+    ...result,
     // Calculate the effect size using Cohen's d;
     // this is delayed to the last moment for performance
     effectSize: getCohensDStats({
-      mean1: betterResult.data1.mean,
-      mean2: betterResult.data2.mean,
-      pooledStDev: betterResult.pooledStDev,
-      data1: betterResult.data1.data,
-      data2: betterResult.data2.data,
+      mean1: result.data1.mean,
+      mean2: result.data2.mean,
+      pooledStDev: result.pooledStDev,
+      data1: result.data1.data,
+      data2: result.data2.data,
     }),
-    originalResult: result !== betterResult ? result : undefined,
-    denoiseSettings: result !== betterResult ? denoiseSettings : undefined,
   }
 }
