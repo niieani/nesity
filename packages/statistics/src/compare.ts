@@ -8,7 +8,7 @@ import {
 } from './kernelDensityEstimate'
 import { getModalityData, matchModalities } from './matchModalities'
 import { calcShapiroWilk } from './normality'
-import { optimize } from './optimize'
+import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
 import {
   splitMultimodalDistribution,
   SplitMultiModalDistributionConfig,
@@ -332,6 +332,10 @@ export const mergeComparisons = ({
   const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
   const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
 
+  const largestSampleSplitComparison = comparisonsWithWeights
+    .reverse()
+    .sort((a, b) => b.weight - a.weight)[0]!
+
   return {
     outcome,
     ttest,
@@ -340,10 +344,9 @@ export const mergeComparisons = ({
     pooledStDev: weightedPooledStDev,
     data1: {
       data: allUsedData1,
-      mean: comparisonsWithWeights.reduce(
-        (sum, c) => sum + c.data1.mean * c.weight1,
-        0,
-      ),
+      // we don't weight the mean, because it would be even more misleading
+      // we use the largest sample split instead
+      mean: largestSampleSplitComparison.data1.mean,
       stdev: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.stdev * c.weight1,
         0,
@@ -355,7 +358,6 @@ export const mergeComparisons = ({
         0,
       ),
       validCount: allUsedData1.length,
-      modalityCount: comparisonsWithWeights.length,
       variance: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.variance * c.weight1,
         0,
@@ -363,10 +365,7 @@ export const mergeComparisons = ({
     },
     data2: {
       data: allUsedData2,
-      mean: comparisonsWithWeights.reduce(
-        (sum, c) => sum + c.data2.mean * c.weight2,
-        0,
-      ),
+      mean: largestSampleSplitComparison.data2.mean,
       stdev: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.stdev * c.weight2,
         0,
@@ -378,7 +377,6 @@ export const mergeComparisons = ({
         0,
       ),
       validCount: allUsedData2.length,
-      modalityCount: comparisonsWithWeights.length,
       variance: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.variance * c.weight2,
         0,
@@ -416,6 +414,7 @@ export function compare({
   confidenceLevel?: number
   kernelStretchFactorRange?: readonly [lower: number, upper: number]
   kernelStretchFactorSearchStepSize?: number
+  minimalModalitySize?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -652,6 +651,12 @@ export function compare({
         matchingB,
         getIsUsableModality(minimalModalitySize),
       )
+      if (usableModalitiesA.length === 0) {
+        return INVALID_LEFT
+      }
+      if (usableModalitiesB.length === 0) {
+        return INVALID_RIGHT
+      }
       const comparisonsA = usableModalitiesA.map(([d1, d2]) =>
         compare({
           data1: d1,
@@ -756,12 +761,12 @@ export function compare({
   return {
     ...betterResult,
     data1: {
-      ...betterResult.data1,
       modalityCount: splitMetadata1.modalityCount,
+      ...betterResult.data1,
     },
     data2: {
-      ...betterResult.data2,
       modalityCount: splitMetadata2.modalityCount,
+      ...betterResult.data2,
     },
     // Calculate the effect size using Cohen's d;
     // this is delayed to the last moment for performance

@@ -1,4 +1,4 @@
-import { findMatchingArrays, matchModalities } from './matchModalities'
+import { matchModalities } from './matchModalities'
 
 describe('matchModalities', () => {
   it('should return an array of matched split pairs', () => {
