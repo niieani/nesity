@@ -5,6 +5,7 @@ import {
   REAL_WORLD_DATA_4_SIMILAR,
   REAL_WORLD_DATA_5_BIMODAL,
   REAL_WORLD_DATA_6_GREATER,
+  REAL_WORLD_DATA_7_BIMODAL,
 } from './__fixtures__/testSamples'
 import { compare } from './compare'
 import { getStableRandom } from './utilities'
@@ -403,6 +404,9 @@ describe('compare', () => {
         },
         "data2": Object {
           "data": Array [
+            8447.615000000002,
+            8504.422999999988,
+            8551.507999999989,
             8672.03300000001,
             8672.610999999995,
             8751.861000000015,
@@ -417,59 +421,55 @@ describe('compare', () => {
             9378.695000000009,
             9492.404999999995,
           ],
-          "mean": 9004.109,
+          "mean": 8909.8101875,
           "modalityCount": 1,
-          "normalityProbability": 0.48236056387847337,
-          "rejectedCount": 3,
-          "rejectedData": Array [
-            8447.615000000002,
-            8504.422999999988,
-            8551.507999999989,
-          ],
-          "stdev": 264.57079484893745,
-          "validCount": 13,
-          "variance": 69997.70548699856,
+          "normalityProbability": 0.19957423060483725,
+          "rejectedCount": 0,
+          "rejectedData": Array [],
+          "stdev": 312.1875018910312,
+          "validCount": 16,
+          "variance": 97461.03633696263,
         },
         "denoiseSettings": Object {
-          "bandwidth": 161.37417144278757,
+          "bandwidth": 197.36943707934827,
           "kernelStretchFactor": 0.8,
-          "threshold": 312.1875018910312,
+          "threshold": 968.6810179447152,
         },
         "effectSize": Object {
-          "cohensD": -0.35177594218517105,
-          "nonOverlapMeasure": 0.3625031510819295,
-          "overlappingCoefficient": 0.8603819557030646,
-          "probabilityOfSuperiority": 0.4017797327550121,
+          "cohensD": -0.06963521727873759,
+          "nonOverlapMeasure": 0.4722420028150469,
+          "overlappingCoefficient": 0.9722251794804171,
+          "probabilityOfSuperiority": 0.4803642028043161,
         },
-        "meanDifference": 119.23228571428263,
+        "meanDifference": 24.93347321428155,
         "outcome": "similar",
-        "pooledStDev": 291.9063319874262,
-        "pooledVariance": 85209.30665435348,
+        "pooledStDev": 313.5155353617888,
+        "pooledVariance": 98291.99091318905,
         "ttest": Object {
-          "degreesOfFreedom": 24.768125941714196,
+          "degreesOfFreedom": 27.403602652184716,
           "greater": Object {
             "confidenceInterval": Array [
-              -310.0765398756139,
+              -220.38075704079165,
               Infinity,
             ],
-            "pValue": 0.8519941372426528,
+            "pValue": 0.5851604482916946,
             "rejected": false,
           },
           "less": Object {
             "confidenceInterval": Array [
               -Infinity,
-              71.61196844704497,
+              170.5138106122249,
             ],
-            "pValue": 0.1480058627573472,
+            "pValue": 0.4148395517083054,
             "rejected": false,
           },
-          "tValue": -1.0675662075271293,
+          "tValue": -0.21717721422878858,
           "twoSided": Object {
             "confidenceInterval": Array [
-              -349.36331456819096,
-              110.8987431396221,
+              -260.3358314395426,
+              210.46888501097587,
             ],
-            "pValue": 0.2960117255146944,
+            "pValue": 0.8296791034166108,
             "rejected": false,
           },
         },
@@ -593,6 +593,122 @@ describe('compare', () => {
     `)
   })
 
+  it('should compare two small datasets with noise iterations (bimodal 2)', () => {
+    const { originalResult, ...result } = compare({
+      ...REAL_WORLD_DATA_7_BIMODAL,
+      noiseValuesPerSample: 2,
+      random: getStableRandom(5_000),
+      iterations: 15,
+    })
+
+    expect(result.outcome).toBe('greater')
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data1": Object {
+          "data": Array [
+            10.239,
+            10.293,
+            10.4,
+            10.856,
+            11.11,
+            11.706,
+            11.935,
+            13.279,
+            66.587,
+            68.986,
+            127.194,
+          ],
+          "mean": 32.05318181818182,
+          "modalityCount": 1,
+          "normalityProbability": 0.9999253355179418,
+          "rejectedCount": 5,
+          "rejectedData": Array [
+            578.245,
+            586.523,
+            593.91,
+            608.943,
+            706.821,
+          ],
+          "stdev": 38.840408851653926,
+          "validCount": 11,
+          "variance": 1508.5773597636367,
+        },
+        "data2": Object {
+          "data": Array [
+            24.992,
+            28.01,
+            29.373,
+            32.647,
+            93.469,
+            95.761,
+            98.026,
+            99.019,
+            102.28,
+          ],
+          "mean": 67.06411111111112,
+          "modalityCount": 2,
+          "normalityProbability": 0.9968319858295895,
+          "rejectedCount": 7,
+          "rejectedData": Array [
+            566.367,
+            607.782,
+            609.666,
+            610.453,
+            612.29,
+            621.299,
+            625.553,
+          ],
+          "stdev": 36.47102519276241,
+          "validCount": 9,
+          "variance": 1330.1356786111107,
+        },
+        "denoiseSettings": Object {
+          "bandwidth": 20.433103773604955,
+          "kernelStretchFactor": 1.4,
+          "threshold": 39.5289999999999,
+        },
+        "effectSize": Object {
+          "cohensD": -0.7461568176129151,
+          "nonOverlapMeasure": 0.22778634513148888,
+          "overlappingCoefficient": 0.7090900877504615,
+          "probabilityOfSuperiority": 0.2988841418543436,
+        },
+        "meanDifference": 35.0109292929293,
+        "outcome": "greater",
+        "pooledStDev": 37.80568668756156,
+        "pooledVariance": 1429.2699459180694,
+        "ttest": Object {
+          "degreesOfFreedom": 17.60694796400012,
+          "greater": Object {
+            "confidenceInterval": Array [
+              -64.3174595348114,
+              Infinity,
+            ],
+            "pValue": 0.9734870325826235,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              -5.704399051047179,
+            ],
+            "pValue": 0.026512967417376555,
+            "rejected": true,
+          },
+          "tValue": -2.074100454074408,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              -70.53144089906841,
+              0.5095823132098385,
+            ],
+            "pValue": 0.05302593483475311,
+            "rejected": false,
+          },
+        },
+      }
+    `)
+  })
+
   it('should compare two small datasets with noise iterations (greater)', () => {
     const { originalResult, ...result } = compare({
       ...REAL_WORLD_DATA_6_GREATER,
@@ -624,7 +740,7 @@ describe('compare', () => {
             2270.812,
           ],
           "mean": 1734.6108124999996,
-          "modalityCount": 2,
+          "modalityCount": 1,
           "normalityProbability": 0.997441432776035,
           "rejectedCount": 0,
           "rejectedData": Array [],
@@ -660,7 +776,11 @@ describe('compare', () => {
           "validCount": 16,
           "variance": 142477.22650822916,
         },
-        "denoiseSettings": undefined,
+        "denoiseSettings": Object {
+          "bandwidth": 192.22324701802228,
+          "kernelStretchFactor": 1.4,
+          "threshold": 377.4615563315411,
+        },
         "effectSize": Object {
           "cohensD": -0.5864643643728225,
           "nonOverlapMeasure": 0.2787817510409292,

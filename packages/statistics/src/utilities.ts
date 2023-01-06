@@ -145,3 +145,19 @@ export const mostCommonBy = <T, Comparable>(
 
   return match
 }
+
+export const partition = <T, U extends T>(
+  iterable: Iterable<T>,
+  predicate: (val: T) => val is U,
+): [U[], T[]] => {
+  const left: U[] = []
+  const right: T[] = []
+  for (const val of iterable) {
+    if (predicate(val)) {
+      left.push(val)
+    } else {
+      right.push(val)
+    }
+  }
+  return [left, right]
+}

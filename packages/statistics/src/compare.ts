@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-native-coercion-functions */
 import ttest2 from '@stdlib/stats-ttest2'
 import { calcCL, calcCohensD, calcGaussOverlap, calcU3 } from './cohensd'
 import {
@@ -5,6 +6,7 @@ import {
   optimalThreshold,
   OptimalThresholdConfigBase,
 } from './kernelDensityEstimate'
+import { getModalityData, matchModalities } from './matchModalities'
 import { calcShapiroWilk } from './normality'
 import { optimize } from './optimize'
 import {
@@ -45,6 +47,8 @@ interface GetSplitsReturnType {
   rawSplitsSortedBySize: number[][]
   rawSplits: number[][]
   largestSplitIndex: number
+  splitsAndTheirDistribution: (readonly [number[], number])[]
+  separateModalitySizeThreshold: number
   modalityCount: number
   modalities: number[][]
   largestModalityIndex: number
@@ -113,13 +117,15 @@ function getSplits({
     rawSplits,
     rawSplitsSortedBySize,
     largestSplitIndex,
+    splitsAndTheirDistribution,
+    separateModalitySizeThreshold,
     modalityCount,
     modalities,
     largestModalityIndex,
   }
 }
 
-function getMatchingModalities(
+export function getMatchingModalities(
   split1: GetSplitsReturnType,
   split2: GetSplitsReturnType,
 ) {
@@ -185,8 +191,10 @@ export interface DenoiseSettings {
   threshold: number
 }
 
+export type ComparisonOutcome = 'less' | 'greater' | 'similar' | 'invalid'
+
 export interface ComparisonResult {
-  outcome: 'less' | 'greater' | 'similar' | 'invalid'
+  outcome: ComparisonOutcome
   ttest: {
     twoSided: SingleTTest
     greater: SingleTTest
@@ -208,15 +216,181 @@ export interface ComparisonResult {
     probabilityOfSuperiority: number
     nonOverlapMeasure: number
   }
+  // present when multimodal
+  comparedModalities1?: SampleStatistics[]
+  comparedModalities2?: SampleStatistics[]
+  discardedModalities1?: number[][]
+  discardedModalities2?: number[][]
 }
 
-export type ConfidenceInterval = [number | null, number | null]
+export type ConfidenceInterval = readonly [number | null, number | null]
 
 // eslint-disable-next-line no-magic-numbers
 const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
 const MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO = 0.5
-
 const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
+const DEFAULT_MINIMAL_MODALITY_SIZE = 3
+
+const getIsUsableModality =
+  (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
+  (
+    split: [number[] | undefined, number[] | undefined],
+  ): split is [number[], number[]] =>
+    Boolean(
+      split[0] &&
+        split[1] &&
+        split[0].length >= minimalSplitLength &&
+        split[1].length >= minimalSplitLength,
+    )
+
+export const mergeComparisons = ({
+  comparisons,
+  confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
+  discardedModalities1,
+  discardedModalities2,
+}: {
+  comparisons: ComparisonResult[]
+  confidenceLevel?: number
+  discardedModalities1: number[][]
+  discardedModalities2: number[][]
+}): ComparisonResult => {
+  if (comparisons.length === 0) {
+    throw new Error('No comparisons to merge')
+  }
+  if (comparisons.length === 1) {
+    return comparisons[0]!
+  }
+  const comparisonsWithMostCommonOutcome = utils.mostCommonBy(
+    comparisons,
+    (c) => c.outcome,
+  )
+  const outcome = comparisonsWithMostCommonOutcome[0]?.outcome ?? 'invalid'
+  const totalData1Length = comparisons.reduce(
+    (sum, c) => sum + c.data1.data.length,
+    0,
+  )
+  const totalData2Length = comparisons.reduce(
+    (sum, c) => sum + c.data2.data.length,
+    0,
+  )
+  const alpha = 1 - confidenceLevel
+  const comparisonsWithWeights = comparisons.map((c) => ({
+    ...c,
+    weight:
+      (c.data1.data.length / totalData1Length +
+        c.data2.data.length / totalData2Length) /
+      2,
+    weight1: c.data1.data.length / totalData1Length,
+    weight2: c.data2.data.length / totalData2Length,
+  }))
+  const weightedMeanDifference = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.meanDifference * c.weight,
+    0,
+  )
+  const weightedPooledVariance = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.pooledVariance * c.weight,
+    0,
+  )
+  const weightedPooledStDev = Math.sqrt(weightedPooledVariance)
+  const weightedTValue = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.ttest.tValue * c.weight,
+    0,
+  )
+  const weightedDegreesOfFreedom = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.ttest.degreesOfFreedom * c.weight,
+    0,
+  )
+  function mergeTTest(type: 'twoSided' | 'greater' | 'less'): SingleTTest {
+    const weightedTwoSidedPValue = comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.ttest[type].pValue * c.weight,
+      0,
+    )
+    return {
+      pValue: weightedTwoSidedPValue,
+      rejected: weightedTwoSidedPValue < alpha,
+      confidenceInterval: [
+        comparisonsWithWeights.reduce<number | null>((sum, c) => {
+          const ci = c.ttest[type].confidenceInterval
+          return ci[0] === null ? sum : (sum ?? 0) + ci[0] * c.weight
+        }, null),
+        comparisonsWithWeights.reduce<number | null>((sum, c) => {
+          const ci = c.ttest[type].confidenceInterval
+          return ci[1] === null ? sum : (sum ?? 0) + ci[1] * c.weight
+        }, null),
+      ] as const,
+    }
+  }
+
+  const ttest = {
+    twoSided: mergeTTest('twoSided'),
+    greater: mergeTTest('greater'),
+    less: mergeTTest('less'),
+    degreesOfFreedom: weightedDegreesOfFreedom,
+    tValue: weightedTValue,
+  }
+
+  const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
+  const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
+
+  return {
+    outcome,
+    ttest,
+    meanDifference: weightedMeanDifference,
+    pooledVariance: weightedPooledVariance,
+    pooledStDev: weightedPooledStDev,
+    data1: {
+      data: allUsedData1,
+      mean: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data1.mean * c.weight1,
+        0,
+      ),
+      stdev: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data1.stdev * c.weight1,
+        0,
+      ),
+      rejectedCount: discardedModalities1.length,
+      rejectedData: discardedModalities1.flat(),
+      normalityProbability: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data1.normalityProbability * c.weight1,
+        0,
+      ),
+      validCount: allUsedData1.length,
+      modalityCount: comparisonsWithWeights.length,
+      variance: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data1.variance * c.weight1,
+        0,
+      ),
+    },
+    data2: {
+      data: allUsedData2,
+      mean: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data2.mean * c.weight2,
+        0,
+      ),
+      stdev: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data2.stdev * c.weight2,
+        0,
+      ),
+      rejectedCount: discardedModalities2.length,
+      rejectedData: discardedModalities2.flat(),
+      normalityProbability: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data2.normalityProbability * c.weight2,
+        0,
+      ),
+      validCount: allUsedData2.length,
+      modalityCount: comparisonsWithWeights.length,
+      variance: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data2.variance * c.weight2,
+        0,
+      ),
+    },
+    comparedModalities1: comparisons.map((c) => c.data1),
+    comparedModalities2: comparisons.map((c) => c.data2),
+    discardedModalities1,
+    discardedModalities2,
+  }
+}
+
 export function compare({
   data1,
   data2,
@@ -233,6 +407,7 @@ export function compare({
   confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
   iterations,
   kernelStretchFactorSearchStepSize = DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
+  minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
 }: {
   data1: number[]
   data2: number[]
@@ -279,18 +454,19 @@ export function compare({
   const pooledStDev = Math.sqrt(pooledVariance)
   const meanDifference = mean2 - mean1
 
+  const alpha = 1 - confidenceLevel
   const [twoSided, greater, less] = [
     ttest2(data1, data2, {
       alternative: 'two-sided',
-      alpha: 1 - confidenceLevel,
+      alpha,
     }),
     ttest2(data1, data2, {
       alternative: 'greater',
-      alpha: 1 - confidenceLevel,
+      alpha,
     }),
     ttest2(data1, data2, {
       alternative: 'less',
-      alpha: 1 - confidenceLevel,
+      alpha,
     }),
   ]
 
@@ -326,17 +502,17 @@ export function compare({
       twoSided: {
         rejected: twoSided.rejected,
         pValue: twoSided.pValue,
-        confidenceInterval: twoSided.ci as ConfidenceInterval,
+        confidenceInterval: [twoSided.ci[0] ?? null, twoSided.ci[1] ?? null],
       },
       greater: {
         rejected: greater.rejected,
         pValue: greater.pValue,
-        confidenceInterval: greater.ci as ConfidenceInterval,
+        confidenceInterval: [greater.ci[0] ?? null, greater.ci[1] ?? null],
       },
       less: {
         rejected: less.rejected,
         pValue: less.pValue,
-        confidenceInterval: less.ci as ConfidenceInterval,
+        confidenceInterval: [less.ci[0] ?? null, less.ci[1] ?? null],
       },
     },
     data1: {
@@ -459,40 +635,93 @@ export function compare({
       ? optimizationIterations * 2
       : optimizationIterations,
     compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
-      const matchingA = getMatchingModalities(splitA1, splitA2)
-      const matchingB = getMatchingModalities(splitB1, splitB2)
+      const matchingA = matchModalities({
+        rawSplits1: splitA1.rawSplits,
+        rawSplits2: splitA2.rawSplits,
+      }).map(getModalityData)
+      const matchingB = matchModalities({
+        rawSplits1: splitB1.rawSplits,
+        rawSplits2: splitB2.rawSplits,
+      }).map(getModalityData)
+
+      const [usableModalitiesA, discardedModalitiesA] = utils.partition(
+        matchingA,
+        getIsUsableModality(minimalModalitySize),
+      )
+      const [usableModalitiesB, discardedModalitiesB] = utils.partition(
+        matchingB,
+        getIsUsableModality(minimalModalitySize),
+      )
+      const comparisonsA = usableModalitiesA.map(([d1, d2]) =>
+        compare({
+          data1: d1,
+          data2: d2,
+          confidenceLevel,
+          precisionDelta,
+        }),
+      )
+      const comparisonsB = usableModalitiesB.map(([d1, d2]) =>
+        compare({
+          data1: d1,
+          data2: d2,
+          confidenceLevel,
+          precisionDelta,
+        }),
+      )
 
       const [comparisonA, comparisonB] = [
-        compare({
-          data1: matchingA.data1,
-          rejectedData1: matchingA.remaining1,
-          data2: matchingA.data2,
-          rejectedData2: matchingA.remaining2,
+        mergeComparisons({
+          comparisons: comparisonsA,
           confidenceLevel,
-          precisionDelta,
+          discardedModalities1: discardedModalitiesA
+            .map(([a, b]) => a)
+            .filter((arr): arr is number[] => Boolean(arr)),
+          discardedModalities2: discardedModalitiesA
+            .map(([a, b]) => b)
+            .filter((arr): arr is number[] => Boolean(arr)),
         }),
-        compare({
-          data1: matchingB.data1,
-          rejectedData1: matchingB.remaining1,
-          data2: matchingB.data2,
-          rejectedData2: matchingB.remaining2,
+        mergeComparisons({
+          comparisons: comparisonsB,
           confidenceLevel,
-          precisionDelta,
+          discardedModalities1: discardedModalitiesB
+            .map(([a, b]) => a)
+            .filter((arr): arr is number[] => Boolean(arr)),
+          discardedModalities2: discardedModalitiesB
+            .map(([a, b]) => b)
+            .filter((arr): arr is number[] => Boolean(arr)),
         }),
       ]
+      // const [comparisonA, comparisonB] = [
+      //   compare({
+      //     data1: matchingA.data1,
+      //     rejectedData1: matchingA.remaining1,
+      //     data2: matchingA.data2,
+      //     rejectedData2: matchingA.remaining2,
+      //     confidenceLevel,
+      //     precisionDelta,
+      //   }),
+      //   compare({
+      //     data1: matchingB.data1,
+      //     rejectedData1: matchingB.remaining1,
+      //     data2: matchingB.data2,
+      //     rejectedData2: matchingB.remaining2,
+      //     confidenceLevel,
+      //     precisionDelta,
+      //   }),
+      // ]
 
-      // an alternative would be to compare stdevDifference:
-      // const stdevDiffA = Math.abs(
-      //   comparisonA.data1.stdev - comparisonA.data2.stdev,
-      // )
-      // const stdevDiffB = Math.abs(
-      //   comparisonB.data1.stdev - comparisonB.data2.stdev,
-      // )
-      // const valueA = stdevDiffA
-      // const valueB = stdevDiffB
+      const stdevDiffA = Math.abs(
+        comparisonA.data1.stdev - comparisonA.data2.stdev,
+      )
+      const stdevDiffB = Math.abs(
+        comparisonB.data1.stdev - comparisonB.data2.stdev,
+      )
+      const valueA = stdevDiffA
+      const valueB = stdevDiffB
 
-      const valueA = comparisonA.pooledStDev
-      const valueB = comparisonB.pooledStDev
+      // an alternative would be to compare pooledStDev:
+      // const valueA = comparisonA.pooledStDev
+      // const valueB = comparisonB.pooledStDev
 
       // the more similar the pooledStDev between the two, the better
       // another option would be to sort by the lowest mean difference,
