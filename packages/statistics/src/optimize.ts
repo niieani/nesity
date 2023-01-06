@@ -7,6 +7,7 @@ type OptimizationResult<ArgT, T, CompareT> = [
   iterationResult: T,
   comparisonMeta: CompareT,
   rank: number,
+  done: boolean,
 ]
 
 export function optimize<T, ArgT, CompareT>({
@@ -37,37 +38,47 @@ export function optimize<T, ArgT, CompareT>({
     OptimizationResult<ArgT, T, CompareT | typeof INVALID | undefined>
   >({ length: iterations }, (_, i) => {
     const arg = getNextIterationArgument(i)
-    return [arg, iterate(arg), undefined, 0]
+    return [arg, iterate(arg), undefined, 0, false]
   })
 
   for (let i = 0; i < results.length; i++) {
     for (let j = 0; j < results.length; j++) {
       const resultsI = results[i]!
       const resultsJ = results[j]!
+      if (resultsI[4] && resultsJ[4]) {
+        // eslint-disable-next-line no-continue
+        continue
+      }
+
       const compareResult =
         compareResults[i]?.[j] ?? compare(resultsI[1], resultsJ[1])
       if (compareResult === INVALID_LEFT) {
         resultsI[2] = INVALID
         resultsI[3] = Number.NEGATIVE_INFINITY
+        resultsI[4] = true
         // eslint-disable-next-line no-continue
         continue
       }
       if (compareResult === INVALID_RIGHT) {
         resultsJ[2] = INVALID
         resultsJ[3] = Number.NEGATIVE_INFINITY
+        resultsJ[4] = true
         // eslint-disable-next-line no-continue
         continue
       }
       const [compareValue, compareMeta] = compareResult
       resultsI[2] = compareMeta
       resultsI[3] += compareValue
+      resultsI[4] = true
+      compareResults[i]![j] = compareResult
+
       const reversedCompareMeta =
         compareMeta !== INVALID
           ? reverseCompareMeta?.(compareMeta) ?? compareMeta
           : compareMeta
       resultsJ[2] = reversedCompareMeta
       resultsJ[3] -= compareValue
-      compareResults[i]![j] = compareResult
+      resultsJ[4] = true
       compareResults[j]![i] = [-compareValue, reversedCompareMeta]
     }
   }
@@ -77,11 +88,6 @@ export function optimize<T, ArgT, CompareT>({
       (result): result is OptimizationResult<ArgT, T, CompareT> =>
         typeof result[1] !== 'undefined' && result[2] !== INVALID,
     )
-    .sort(([_iArgA, _iResA, , a], [_iArgB, _iResB, , b]) => a - b) as [
-    iterationArg: ArgT,
-    iterationResult: T,
-    comparisonMeta: CompareT,
-    rank: number,
-  ][]
+    .sort(([_iArgA, _iResA, , a], [_iArgB, _iResB, , b]) => a - b)
   return sortedResults
 }

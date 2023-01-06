@@ -230,6 +230,7 @@ const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
 const MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO = 0.5
 const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
 const DEFAULT_MINIMAL_MODALITY_SIZE = 3
+const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
 
 const getIsUsableModality =
   (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
@@ -406,6 +407,7 @@ export function compare({
   iterations,
   kernelStretchFactorSearchStepSize = DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
   minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
+  minimumUsedToTotalSamplesRatio = DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
 }: {
   data1: number[]
   data2: number[]
@@ -415,6 +417,7 @@ export function compare({
   kernelStretchFactorRange?: readonly [lower: number, upper: number]
   kernelStretchFactorSearchStepSize?: number
   minimalModalitySize?: number
+  minimumUsedToTotalSamplesRatio?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -696,24 +699,19 @@ export function compare({
             .filter((arr): arr is number[] => Boolean(arr)),
         }),
       ]
-      // const [comparisonA, comparisonB] = [
-      //   compare({
-      //     data1: matchingA.data1,
-      //     rejectedData1: matchingA.remaining1,
-      //     data2: matchingA.data2,
-      //     rejectedData2: matchingA.remaining2,
-      //     confidenceLevel,
-      //     precisionDelta,
-      //   }),
-      //   compare({
-      //     data1: matchingB.data1,
-      //     rejectedData1: matchingB.remaining1,
-      //     data2: matchingB.data2,
-      //     rejectedData2: matchingB.remaining2,
-      //     confidenceLevel,
-      //     precisionDelta,
-      //   }),
-      // ]
+
+      if (
+        comparisonA.data1.validCount / data1.length <
+        minimumUsedToTotalSamplesRatio
+      ) {
+        return INVALID_LEFT
+      }
+      if (
+        comparisonB.data1.validCount / data2.length <
+        minimumUsedToTotalSamplesRatio
+      ) {
+        return INVALID_RIGHT
+      }
 
       const stdevDiffA = Math.abs(
         comparisonA.data1.stdev - comparisonA.data2.stdev,

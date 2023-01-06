@@ -15,12 +15,54 @@ describe('optimize', () => {
       getNextIterationArgument: String,
       iterations: 4,
     })
-    expect(results).toEqual([
-      ['2', -2, [-2, 3, 'regular'], -10],
-      ['0', -0, [-0, 3, 'regular'], -2],
-      ['1', 1, [1, 3, 'regular'], 2],
-      ['3', 3, [3, -2, 'reversed'], 10],
-    ])
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          "0",
+          -0,
+          Array [
+            -0,
+            3,
+            "regular",
+          ],
+          -2,
+          true,
+        ],
+        Array [
+          "2",
+          -2,
+          Array [
+            -0,
+            -2,
+            "reversed",
+          ],
+          -2,
+          true,
+        ],
+        Array [
+          "1",
+          1,
+          Array [
+            1,
+            -0,
+            "reversed",
+          ],
+          1,
+          true,
+        ],
+        Array [
+          "3",
+          3,
+          Array [
+            3,
+            -0,
+            "reversed",
+          ],
+          3,
+          true,
+        ],
+      ]
+    `)
   })
 
   it('should returns an array with the correct length', () => {
@@ -40,37 +82,29 @@ describe('optimize', () => {
       compare: (a, b): [number, readonly any[]] => [b - a, []],
       getNextIterationArgument: (iteration: number) => iteration,
     })
-    expect(results.map(([_1, _2, _3, rank]) => rank)).toEqual([
-      -10, -5, 0, 5, 10,
-    ])
+    expect(results.map(([_1, _2, _3, rank]) => rank)).toMatchInlineSnapshot(`
+      Array [
+        -4,
+        -3,
+        -2,
+        -1,
+        10,
+      ]
+    `)
   })
 
-  it('correctly handles the INVALID_LEFT symbol', () => {
+  it('correctly handles the INVALID_LEFT and INVALID_RIGHT symbols', () => {
     const results = optimize({
       iterate: (iteration: number) => iteration,
       iterations: 5,
       compare: (a, b) =>
         // eslint-disable-next-line jest/no-conditional-in-test
-        a <= 2 ? INVALID_LEFT : [a - b, undefined],
+        a <= 2 ? INVALID_LEFT : b <= 2 ? INVALID_RIGHT : [a - b, 'hello'],
       getNextIterationArgument: (iteration: number) => iteration + 1,
     })
-    expect(results.map(([, iterationResult]) => iterationResult)).toEqual([
-      3, 4, 5,
-    ])
-  })
-
-  it('correctly handles the INVALID_RIGHT symbol', () => {
-    const results = optimize({
-      iterate: (iteration: number) => iteration,
-      iterations: 5,
-      compare: (a, b) =>
-        // eslint-disable-next-line jest/no-conditional-in-test
-        b >= 3 ? INVALID_RIGHT : [a - b, undefined],
-      getNextIterationArgument: (iteration: number) => iteration + 1,
-    })
-    expect(results.map(([, iterationResult]) => iterationResult)).toEqual([
-      1, 2,
-    ])
+    expect(
+      results.map(([i, iterationResult, meta]) => iterationResult),
+    ).toEqual([3, 4, 5])
   })
 
   it('correctly handles the reverseCompareMeta function', () => {
@@ -83,9 +117,9 @@ describe('optimize', () => {
     })
     expect(results.map(([_, , comparisonMeta]) => comparisonMeta)).toEqual([
       [],
-      [],
-      [],
-      [],
+      ['reversed'],
+      ['reversed'],
+      ['reversed'],
       ['reversed'],
     ])
   })
