@@ -70,7 +70,12 @@ export interface DenoiseSettings {
   threshold: number
 }
 
-export type ComparisonOutcome = 'less' | 'greater' | 'similar' | 'invalid'
+export type ComparisonOutcome =
+  | 'less'
+  | 'greater'
+  | 'equal'
+  | 'similar'
+  | 'invalid'
 
 export function getOutcome(
   {
@@ -91,14 +96,21 @@ export function getOutcome(
     data2: number[]
     meanDifference: number
   },
-): ComparisonOutcome {
-  const isSimpleComparison = data1.length === 1 && data2.length === 1
+): { outcome: ComparisonOutcome; definitive: boolean } {
+  const data1IsEqual = data1.every((d) => d === data1[0])
+  const data2IsEqual = data2.every((d) => d === data2[0])
+  const isSimpleComparison =
+    (data1.length === 1 && data2.length === 1) || (data1IsEqual && data2IsEqual)
   if (isSimpleComparison) {
-    return meanDifference === 0
-      ? 'similar'
-      : meanDifference > 0
-      ? 'greater'
-      : 'less'
+    return {
+      outcome:
+        meanDifference === 0
+          ? 'equal'
+          : meanDifference > 0
+          ? 'greater'
+          : 'less',
+      definitive: true,
+    }
   }
 
   const isTTestInvalid =
@@ -108,12 +120,13 @@ export function getOutcome(
 
   const bothAreExactlyEqual =
     meanDifference === 0 &&
-    data1.reduce((a, b) => Math.abs(a) + Math.abs(b), 0) ===
-      data2.reduce((a, b) => Math.abs(a) + Math.abs(b), 0)
+    data1IsEqual &&
+    data2IsEqual &&
+    data1[0] === data2[0]
 
   // hypothesis: Actual difference in means is not equal to 0
   const outcome = bothAreExactlyEqual
-    ? 'similar'
+    ? 'equal'
     : isTTestInvalid
     ? 'invalid'
     : // first is greater than second
@@ -123,7 +136,8 @@ export function getOutcome(
     less.rejected
     ? 'greater'
     : 'similar'
-  return outcome
+
+  return { outcome, definitive: isTTestInvalid || bothAreExactlyEqual }
 }
 
 export interface ComparisonResult {
@@ -260,7 +274,7 @@ export const mergeComparisons = ({
 
   const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
   const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
-  const outcome = getOutcome(ttest, {
+  const { outcome } = getOutcome(ttest, {
     data1: allUsedData1,
     data2: allUsedData2,
     meanDifference: weightedMeanDifference,
@@ -405,7 +419,7 @@ export function compare({
     }),
   ]
 
-  const outcome = getOutcome(
+  const { outcome, definitive: definitiveOutcomeEstablished } = getOutcome(
     { twoSided, greater, less },
     { meanDifference, data1, data2 },
   )
@@ -420,18 +434,36 @@ export function compare({
       tValue: twoSided.statistic,
       degreesOfFreedom: twoSided.df,
       twoSided: {
-        rejected: twoSided.rejected,
-        pValue: twoSided.pValue,
+        rejected: definitiveOutcomeEstablished
+          ? outcome === 'greater' || outcome === 'less'
+          : twoSided.rejected,
+        pValue: definitiveOutcomeEstablished
+          ? outcome === 'greater' || outcome === 'less'
+            ? 0
+            : 1
+          : twoSided.pValue,
         confidenceInterval: [twoSided.ci[0] ?? null, twoSided.ci[1] ?? null],
       },
       greater: {
-        rejected: greater.rejected,
-        pValue: greater.pValue,
+        rejected: definitiveOutcomeEstablished
+          ? outcome === 'greater'
+          : greater.rejected,
+        pValue: definitiveOutcomeEstablished
+          ? outcome === 'greater'
+            ? 0
+            : 1
+          : greater.pValue,
         confidenceInterval: [greater.ci[0] ?? null, greater.ci[1] ?? null],
       },
       less: {
-        rejected: less.rejected,
-        pValue: less.pValue,
+        rejected: definitiveOutcomeEstablished
+          ? outcome === 'less'
+          : less.rejected,
+        pValue: definitiveOutcomeEstablished
+          ? outcome === 'less'
+            ? 0
+            : 1
+          : less.pValue,
         confidenceInterval: [less.ci[0] ?? null, less.ci[1] ?? null],
       },
     },
@@ -464,7 +496,12 @@ export function compare({
   } as const
 
   if (
-    !(noiseValuesPerSample === 0 || data1.length === 1 || data2.length === 1)
+    !(
+      noiseValuesPerSample === 0 ||
+      definitiveOutcomeEstablished ||
+      data1.length <= 2 ||
+      data2.length <= 2
+    )
   ) {
     // apply denoising logic:
     const [threshold1, threshold2] = [
@@ -661,11 +698,12 @@ export function compare({
         [comparisonB, comparisonA] as const,
     })
 
-    // we want to count the number of times the comparison was equal/greater/less,
+    // we want to count the number of times the comparison was similar/greater/less,
     // and choose the best one from those
     const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
       bestComparisons,
-      ([_settings, _split, [comparison]]) => comparison.outcome,
+      ([_settings, _split, [comparison]]) =>
+        comparison.outcome === 'equal' ? 'similar' : comparison.outcome,
     )
 
     const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
