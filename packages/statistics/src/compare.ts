@@ -7,13 +7,13 @@ import {
   optimalThreshold,
   OptimalThresholdConfigBase,
 } from './kernelDensityEstimate'
-import { getModalityData, matchModalities } from './matchModalities'
+import { getMatchedUsableModalities } from './matchModalities'
 import { calcShapiroWilk } from './normality'
 import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
 import type { SplitMultiModalDistributionConfig } from './splitMultimodalDistribution'
 import * as utils from './utilities'
 
-const DEFAULT_CONFIDENCE_LEVEL = 0.95
+export const DEFAULT_CONFIDENCE_LEVEL = 0.95
 export const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
 
 function getCohensDStats({
@@ -46,10 +46,10 @@ export interface SampleStatistics {
   variance: number
   stdev: number
   normalityProbability: number
-  validCount: number
+  dataCount: number
   data: number[]
-  rejectedCount: number
-  rejectedData: number[]
+  discardedCount: number
+  discardedData: number[]
   modalityCount?: number
 }
 
@@ -150,6 +150,7 @@ export interface ComparisonResult {
     tValue: number
   }
   meanDifference: number
+  stdevDifference: number
   pooledVariance: number
   pooledStDev: number
   data1: SampleStatistics
@@ -168,6 +169,7 @@ export interface ComparisonResult {
   comparedModalities2?: SampleStatistics[]
   discardedModalities1?: number[][]
   discardedModalities2?: number[][]
+  mergedFromMultipleModalities?: boolean
 }
 
 export type ConfidenceInterval = readonly [number | null, number | null]
@@ -178,6 +180,7 @@ const MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO = 0.5
 const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
 const DEFAULT_MINIMAL_MODALITY_SIZE = 3
 const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
+const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.3
 
 const getIsUsableModality =
   (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
@@ -191,7 +194,7 @@ const getIsUsableModality =
         split[1].length >= minimalSplitLength,
     )
 
-export const mergeComparisons = ({
+export const mergeComparisonsFromMultipleModalities = ({
   comparisons,
   confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
   discardedModalities1,
@@ -205,8 +208,23 @@ export const mergeComparisons = ({
   if (comparisons.length === 0) {
     throw new Error('No comparisons to merge')
   }
+  const discardedData1 = discardedModalities1.flat()
+  const discardedData2 = discardedModalities2.flat()
+
   if (comparisons.length === 1) {
-    return comparisons[0]!
+    return {
+      ...comparisons[0]!,
+      data1: {
+        ...comparisons[0]!.data1,
+        discardedCount: discardedData1.length,
+        discardedData: discardedData1,
+      },
+      data2: {
+        ...comparisons[0]!.data2,
+        discardedCount: discardedData2.length,
+        discardedData: discardedData2,
+      },
+    }
   }
   const totalData1Length = comparisons.reduce(
     (sum, c) => sum + c.data1.data.length,
@@ -284,10 +302,19 @@ export const mergeComparisons = ({
     .reverse()
     .sort((a, b) => b.weight - a.weight)[0]!
 
+  const stdev1 = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.data1.stdev * c.weight1,
+    0,
+  )
+  const stdev2 = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.data2.stdev * c.weight2,
+    0,
+  )
   return {
     outcome,
     ttest,
     meanDifference: weightedMeanDifference,
+    stdevDifference: stdev1 - stdev2,
     pooledVariance: weightedPooledVariance,
     pooledStDev: weightedPooledStDev,
     data1: {
@@ -295,17 +322,14 @@ export const mergeComparisons = ({
       // we don't weight the mean, because it would be even more misleading
       // we use the largest sample split instead
       mean: largestSampleSplitComparison.data1.mean,
-      stdev: comparisonsWithWeights.reduce(
-        (sum, c) => sum + c.data1.stdev * c.weight1,
-        0,
-      ),
-      rejectedCount: discardedModalities1.length,
-      rejectedData: discardedModalities1.flat(),
+      stdev: stdev1,
+      discardedCount: discardedData1.length,
+      discardedData: discardedData1,
       normalityProbability: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.normalityProbability * c.weight1,
         0,
       ),
-      validCount: allUsedData1.length,
+      dataCount: allUsedData1.length,
       variance: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.variance * c.weight1,
         0,
@@ -313,18 +337,15 @@ export const mergeComparisons = ({
     },
     data2: {
       data: allUsedData2,
+      dataCount: allUsedData2.length,
+      discardedCount: discardedData2.length,
+      discardedData: discardedData2,
       mean: largestSampleSplitComparison.data2.mean,
-      stdev: comparisonsWithWeights.reduce(
-        (sum, c) => sum + c.data2.stdev * c.weight2,
-        0,
-      ),
-      rejectedCount: discardedModalities2.length,
-      rejectedData: discardedModalities2.flat(),
+      stdev: stdev2,
       normalityProbability: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.normalityProbability * c.weight2,
         0,
       ),
-      validCount: allUsedData2.length,
       variance: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.variance * c.weight2,
         0,
@@ -334,14 +355,15 @@ export const mergeComparisons = ({
     comparedModalities2: comparisons.map((c) => c.data2),
     discardedModalities1,
     discardedModalities2,
+    mergedFromMultipleModalities: true,
   }
 }
 
 export function compare({
   data1,
   data2,
-  rejectedData1,
-  rejectedData2,
+  discardedData1,
+  discardedData2,
   minimumVelocityToFirstQuartileRatio,
   precisionDelta,
   noiseValuesPerSample = 0,
@@ -355,16 +377,18 @@ export function compare({
   kernelStretchFactorSearchStepSize = DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
   minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
   minimumUsedToTotalSamplesRatio = DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
+  discardedDataPenaltyFactor = DEFAULT_DISCARDED_DATA_PENALTY_FACTOR,
 }: {
   data1: number[]
   data2: number[]
-  rejectedData1?: number[]
-  rejectedData2?: number[]
+  discardedData1?: number[]
+  discardedData2?: number[]
   confidenceLevel?: number
   kernelStretchFactorRange?: readonly [lower: number, upper: number]
   kernelStretchFactorSearchStepSize?: number
   minimalModalitySize?: number
   minimumUsedToTotalSamplesRatio?: number
+  discardedDataPenaltyFactor?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -427,6 +451,7 @@ export function compare({
   let result: ComparisonResult = {
     outcome,
     meanDifference,
+    stdevDifference: stdev1 - stdev2,
     pooledVariance,
     pooledStDev,
     ttest: {
@@ -475,9 +500,9 @@ export function compare({
         Number.isNaN(shapiroWilk1.pValue) || shapiroWilk1.pValue < 0
           ? 1
           : Math.max(1 - shapiroWilk1.pValue, 0),
-      validCount: data1.length,
-      rejectedCount: rejectedData1?.length ?? 0,
-      rejectedData: rejectedData1 ?? [],
+      dataCount: data1.length,
+      discardedCount: discardedData1?.length ?? 0,
+      discardedData: discardedData1 ?? [],
       data: sorted1,
     },
     data2: {
@@ -488,9 +513,9 @@ export function compare({
         Number.isNaN(shapiroWilk2.pValue) || shapiroWilk2.pValue < 0
           ? 0
           : Math.max(1 - shapiroWilk2.pValue, 0),
-      validCount: data2.length,
-      rejectedCount: rejectedData2?.length ?? 0,
-      rejectedData: rejectedData2 ?? [],
+      dataCount: data2.length,
+      discardedCount: discardedData2?.length ?? 0,
+      discardedData: discardedData2 ?? [],
       data: sorted2,
     },
   } as const
@@ -589,103 +614,134 @@ export function compare({
             : Math.min(threshold1.value, threshold2.value),
         }
       },
-      // we multiply by two if we test both bandwidth/threshold pairs
+      // we have twice as many iteration if we test both bandwidth/threshold pairs
       iterations: itIsWorthTestingBothThresholds
         ? optimizationIterations * 2
         : optimizationIterations,
-      compare: ([splitA1, splitA2], [splitB1, splitB2]) => {
-        const matchingA = matchModalities({
-          rawSplits1: splitA1.rawSplits,
-          rawSplits2: splitA2.rawSplits,
-        }).map(getModalityData)
-        const matchingB = matchModalities({
-          rawSplits1: splitB1.rawSplits,
-          rawSplits2: splitB2.rawSplits,
-        }).map(getModalityData)
+      getComparisonCache: (allResults) => {
+        const isUsableModality = getIsUsableModality(minimalModalitySize)
+        const comparisons = allResults.map(([, [split1, split2]]) => {
+          const { usableModalities, discardedModalities } =
+            getMatchedUsableModalities({
+              rawSplits1: split1.rawSplits,
+              rawSplits2: split2.rawSplits,
+              isUsableModality,
+            })
 
-        const [usableModalitiesA, discardedModalitiesA] = utils.partition(
-          matchingA,
-          getIsUsableModality(minimalModalitySize),
+          if (usableModalities.length === 0) {
+            return undefined
+          }
+          const [discardedModalities1, discardedModalities2] = [
+            discardedModalities
+              .map(([rd1]) => rd1)
+              .filter((arr): arr is number[] => Boolean(arr)),
+            discardedModalities
+              .map(([, rd2]) => rd2)
+              .filter((arr): arr is number[] => Boolean(arr)),
+          ]
+          const modalityComparisons = usableModalities.map(([d1, d2]) =>
+            compare({
+              data1: d1,
+              data2: d2,
+              confidenceLevel,
+              precisionDelta,
+            }),
+          )
+          const comparison = mergeComparisonsFromMultipleModalities({
+            comparisons: modalityComparisons,
+            confidenceLevel,
+            discardedModalities1,
+            discardedModalities2,
+          })
+
+          if (
+            comparison.data1.dataCount / data1.length <
+              minimumUsedToTotalSamplesRatio ||
+            comparison.data2.dataCount / data2.length <
+              minimumUsedToTotalSamplesRatio
+          ) {
+            return undefined
+          }
+
+          return comparison
+        })
+        const validComparisons = comparisons.filter(
+          (c): c is ComparisonResult => Boolean(c),
         )
-        const [usableModalitiesB, discardedModalitiesB] = utils.partition(
-          matchingB,
-          getIsUsableModality(minimalModalitySize),
-        )
-        if (usableModalitiesA.length === 0) {
+        return {
+          comparisons,
+          maxStdevDiff: Math.max(
+            ...validComparisons.map((comparison) =>
+              Math.abs(comparison.stdevDifference),
+            ),
+          ),
+          maxDiscardedCount1: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data1.discardedCount,
+            ),
+          ),
+          maxDiscardedCount2: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data2.discardedCount,
+            ),
+          ),
+        }
+      },
+      compare: (_splitsA, _splitsB, indexA, indexB, cache) => {
+        const comparisonA = cache?.comparisons[indexA]
+        const comparisonB = cache?.comparisons[indexB]
+
+        if (!comparisonA) {
           return INVALID_LEFT
         }
-        if (usableModalitiesB.length === 0) {
-          return INVALID_RIGHT
-        }
-        const comparisonsA = usableModalitiesA.map(([d1, d2]) =>
-          compare({
-            data1: d1,
-            data2: d2,
-            confidenceLevel,
-            precisionDelta,
-          }),
-        )
-        const comparisonsB = usableModalitiesB.map(([d1, d2]) =>
-          compare({
-            data1: d1,
-            data2: d2,
-            confidenceLevel,
-            precisionDelta,
-          }),
-        )
-
-        const [comparisonA, comparisonB] = [
-          mergeComparisons({
-            comparisons: comparisonsA,
-            confidenceLevel,
-            discardedModalities1: discardedModalitiesA
-              .map(([a, b]) => a)
-              .filter((arr): arr is number[] => Boolean(arr)),
-            discardedModalities2: discardedModalitiesA
-              .map(([a, b]) => b)
-              .filter((arr): arr is number[] => Boolean(arr)),
-          }),
-          mergeComparisons({
-            comparisons: comparisonsB,
-            confidenceLevel,
-            discardedModalities1: discardedModalitiesB
-              .map(([a, b]) => a)
-              .filter((arr): arr is number[] => Boolean(arr)),
-            discardedModalities2: discardedModalitiesB
-              .map(([a, b]) => b)
-              .filter((arr): arr is number[] => Boolean(arr)),
-          }),
-        ]
-
-        if (
-          comparisonA.data1.validCount / data1.length <
-          minimumUsedToTotalSamplesRatio
-        ) {
-          return INVALID_LEFT
-        }
-        if (
-          comparisonB.data1.validCount / data2.length <
-          minimumUsedToTotalSamplesRatio
-        ) {
+        if (!comparisonB) {
           return INVALID_RIGHT
         }
 
-        const stdevDiffA = Math.abs(
-          comparisonA.data1.stdev - comparisonA.data2.stdev,
-        )
-        const stdevDiffB = Math.abs(
-          comparisonB.data1.stdev - comparisonB.data2.stdev,
-        )
-        const valueA = stdevDiffA
-        const valueB = stdevDiffB
+        const discardedDataPenaltyA1 =
+          cache.maxDiscardedCount1 === 0
+            ? 0
+            : comparisonA.data1.discardedCount / cache.maxDiscardedCount1
+        const discardedDataPenaltyA2 =
+          cache.maxDiscardedCount1 === 0
+            ? 0
+            : comparisonA.data2.discardedCount / cache.maxDiscardedCount2
+        const discardedDataPenaltyB1 =
+          cache.maxDiscardedCount1 === 0
+            ? 0
+            : comparisonB.data1.discardedCount / cache.maxDiscardedCount1
+        const discardedDataPenaltyB2 =
+          cache.maxDiscardedCount2 === 0
+            ? 0
+            : comparisonB.data2.discardedCount / cache.maxDiscardedCount2
+        const stdevDiffPenaltyA =
+          cache.maxStdevDiff === 0
+            ? 0
+            : Math.abs(comparisonA.stdevDifference) / cache.maxStdevDiff
+        const stdevDiffPenaltyB =
+          cache.maxStdevDiff === 0
+            ? 0
+            : Math.abs(comparisonB.stdevDifference) / cache.maxStdevDiff
+        const overallDiscardedDataPenaltyA =
+          (discardedDataPenaltyA1 + discardedDataPenaltyA2) / 2
+        const overallDiscardedDataPenaltyB =
+          (discardedDataPenaltyB1 + discardedDataPenaltyB2) / 2
+
+        // to get as high quality data as we can by matching samples together
+        // we want to keep as much data as possible (penalty for discarding more data),
+        // but also minimize the differences between stdevs (penalty for higher stdev difference)
+        const valueA =
+          stdevDiffPenaltyA +
+          overallDiscardedDataPenaltyA * discardedDataPenaltyFactor
+        const valueB =
+          stdevDiffPenaltyB +
+          overallDiscardedDataPenaltyB * discardedDataPenaltyFactor
 
         // an alternative would be to compare pooledStDev:
         // const valueA = comparisonA.pooledStDev
         // const valueB = comparisonB.pooledStDev
-
         // the more similar the pooledStDev between the two, the better
-        // another option would be to sort by the lowest mean difference,
-        // though this might introduce bias towards "equality"
+
         return [
           valueA - valueB,
           // return lower first -- it will be one representing the ranking
@@ -700,6 +756,7 @@ export function compare({
 
     // we want to count the number of times the comparison was similar/greater/less,
     // and choose the best one from those
+    // 'similar' and 'equal' are counted as the same thing for this purpose
     const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
       bestComparisons,
       ([_settings, _split, [comparison]]) =>
@@ -709,12 +766,9 @@ export function compare({
     const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
       bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], []]
 
-    if (
-      !(
-        !betterBand ||
-        Math.abs(meanDifference) < Math.abs(betterBand.meanDifference)
-      )
-    ) {
+    // note: in some cases it might be better to use the original result,
+    // e.g. if Math.abs(result.stdevDifference) < Math.abs(betterBand.stdevDifference)
+    if (betterBand) {
       result = {
         ...betterBand,
         originalResult: result,

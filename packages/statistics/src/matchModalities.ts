@@ -18,15 +18,7 @@ export interface MatchedSplit {
   }[]
 }
 
-export function matchModalities({
-  rawSplits1,
-  rawSplits2,
-  meanDistanceWeight = 1,
-  // eslint-disable-next-line no-magic-numbers
-  sizeRatioWeight = 0.5,
-  // eslint-disable-next-line no-magic-numbers
-  prioritizeSizeRatioAbove = 0.7,
-}: {
+export interface MatchModalitiesConfig {
   rawSplits1: number[][]
   rawSplits2: number[][]
   meanDistanceWeight?: number
@@ -36,7 +28,17 @@ export function matchModalities({
    * Otherwise, all splits that do not have the correct ratio will be matched in the 2nd pass
    */
   prioritizeSizeRatioAbove?: number
-}) {
+}
+
+export function matchModalities({
+  rawSplits1,
+  rawSplits2,
+  meanDistanceWeight = 1,
+  // eslint-disable-next-line no-magic-numbers
+  sizeRatioWeight = 0.5,
+  // eslint-disable-next-line no-magic-numbers
+  prioritizeSizeRatioAbove = 0.7,
+}: MatchModalitiesConfig) {
   const means1 = rawSplits1
     .map<MappedSplit>((data, index) => ({
       data,
@@ -53,15 +55,16 @@ export function matchModalities({
       source: 2,
     }))
     .sort((a, b) => a.mean - b.mean)
-  const moreSplits = means1.length > means2.length ? means1 : means2
-  const fewerSplits = means1.length > means2.length ? means2 : means1
-  const splitsDifference = moreSplits.length - fewerSplits.length
-  const matchedSplits = moreSplits.map((split) => ({
+  const sideWithMoreSplits = means1.length > means2.length ? means1 : means2
+  const sideWithFewerSplits = means1.length > means2.length ? means2 : means1
+  const splitsDifference =
+    sideWithMoreSplits.length - sideWithFewerSplits.length
+  const matchedSplits = sideWithMoreSplits.map((split) => ({
     split,
-    otherSplitMatches: fewerSplits
+    otherSplitMatches: sideWithFewerSplits
       .map((otherSplit) => ({
         split: otherSplit,
-        // prioritize both mean closeness (1x) and group size ratio (0.5x)
+        // prioritize both mean closeness by mean (1x) and group size ratio (0.5x)
         distanceFactor:
           (Math.abs(split.mean - otherSplit.mean) / split.mean) *
             meanDistanceWeight -
@@ -140,6 +143,22 @@ export const getModalityData = (
   input[0]?.data,
   input[1]?.data,
 ]
+
+export function getMatchedUsableModalities({
+  isUsableModality,
+  ...config
+}: MatchModalitiesConfig & {
+  isUsableModality: (
+    split: [number[] | undefined, number[] | undefined],
+  ) => split is [number[], number[]]
+}) {
+  const matching = matchModalities(config).map(getModalityData)
+  const [usableModalities, discardedModalities] = utils.partition(
+    matching,
+    isUsableModality,
+  )
+  return { usableModalities, discardedModalities }
+}
 
 // simpler version that only matches the largest modality:
 export function getBestMatchingModality(

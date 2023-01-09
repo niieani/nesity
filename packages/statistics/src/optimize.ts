@@ -10,18 +10,25 @@ type OptimizationResult<ArgT, T, CompareT> = [
   done: boolean,
 ]
 
-export function optimize<T, ArgT, CompareT>({
+export function optimize<T, ArgT, CompareT, RefT>({
   iterate,
   iterations,
+  getComparisonCache,
   compare,
   getNextIterationArgument,
   reverseCompareMeta,
 }: {
   iterate: (iterationArg: ArgT) => T
   iterations: number
+  getComparisonCache?: (
+    allResults: readonly (readonly [iterationArg: ArgT, iterationResult: T])[],
+  ) => RefT
   compare: (
     a: T,
     b: T,
+    indexA: number,
+    indexB: number,
+    comparisonReference?: RefT,
   ) =>
     | [compareRank: number, compareMeta: CompareT]
     | typeof INVALID_LEFT
@@ -40,18 +47,21 @@ export function optimize<T, ArgT, CompareT>({
     const arg = getNextIterationArgument(i)
     return [arg, iterate(arg), undefined, 0, false]
   })
+  const allResults = results.map(([arg, result]) => [arg, result] as const)
+  const comparisonReference = getComparisonCache?.(allResults)
 
-  for (let i = 0; i < results.length; i++) {
-    for (let j = 0; j < results.length; j++) {
-      const resultsI = results[i]!
-      const resultsJ = results[j]!
+  for (let indexA = 0; indexA < results.length; indexA++) {
+    for (let indexB = 0; indexB < results.length; indexB++) {
+      const resultsI = results[indexA]!
+      const resultsJ = results[indexB]!
       if (resultsI[4] && resultsJ[4]) {
         // eslint-disable-next-line no-continue
         continue
       }
 
       const compareResult =
-        compareResults[i]?.[j] ?? compare(resultsI[1], resultsJ[1])
+        compareResults[indexA]?.[indexB] ??
+        compare(resultsI[1], resultsJ[1], indexA, indexB, comparisonReference)
       if (compareResult === INVALID_LEFT) {
         resultsI[2] = INVALID
         resultsI[3] = Number.NEGATIVE_INFINITY
@@ -70,7 +80,7 @@ export function optimize<T, ArgT, CompareT>({
       resultsI[2] = compareMeta
       resultsI[3] += compareValue
       resultsI[4] = true
-      compareResults[i]![j] = compareResult
+      compareResults[indexA]![indexB] = compareResult
 
       const reversedCompareMeta =
         compareMeta !== INVALID
@@ -79,7 +89,7 @@ export function optimize<T, ArgT, CompareT>({
       resultsJ[2] = reversedCompareMeta
       resultsJ[3] -= compareValue
       resultsJ[4] = true
-      compareResults[j]![i] = [-compareValue, reversedCompareMeta]
+      compareResults[indexB]![indexA] = [-compareValue, reversedCompareMeta]
     }
   }
 
