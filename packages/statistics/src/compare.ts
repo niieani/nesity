@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/prefer-native-coercion-functions */
 import ttest2 from '@stdlib/stats-ttest2'
 import { calcCL, calcCohensD, calcGaussOverlap, calcU3 } from './cohensd'
+import type { GetSplitsReturnType } from './getSplits'
 import { getSplits } from './getSplits'
 import {
   calculateSilvermansRuleOfThumbBandwidth,
@@ -176,11 +177,11 @@ export type ConfidenceInterval = readonly [number | null, number | null]
 
 // eslint-disable-next-line no-magic-numbers
 const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
-const MAXIMUM_MULTI_BANDWIDTH_TESTING_BANDWIDTH_TO_BANDWIDTH_RATIO = 1.3
 const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
 const DEFAULT_MINIMAL_MODALITY_SIZE = 3
 const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
-const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.3
+const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.2
+const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
 
 const getIsUsableModality =
   (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
@@ -378,6 +379,7 @@ export function compare({
   minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
   minimumUsedToTotalSamplesRatio = DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
   discardedDataPenaltyFactor = DEFAULT_DISCARDED_DATA_PENALTY_FACTOR,
+  highPooledStdevPenaltyFactor = DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR,
 }: {
   data1: number[]
   data2: number[]
@@ -389,6 +391,7 @@ export function compare({
   minimalModalitySize?: number
   minimumUsedToTotalSamplesRatio?: number
   discardedDataPenaltyFactor?: number
+  highPooledStdevPenaltyFactor?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -557,41 +560,128 @@ export function compare({
     const bandwidthsNumerator = 1 / kernelStretchFactorSearchStepSize
     const optimizationIterations =
       (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) *
-      bandwidthsNumerator
+        bandwidthsNumerator +
+      1
 
     const [lowerBandwidth, higherBandwidth] = [
       Math.min(bandwidth1, bandwidth2),
       Math.max(bandwidth1, bandwidth2),
     ]
+    const bandwidthsToTestLower =
+      lowerBandwidth === 0
+        ? [{ bandwidth: 0, adjustedBandwidth: 0, factor: 1 } as const]
+        : Array.from({ length: optimizationIterations }, (_, i) => {
+            const factor =
+              kernelStretchFactorLowerRange +
+              kernelStretchFactorSearchStepSize * i
+            return {
+              bandwidth: lowerBandwidth,
+              adjustedBandwidth: lowerBandwidth * factor,
+              factor,
+            } as const
+          })
+    const bandwidthsToTestHigher =
+      higherBandwidth === 0
+        ? [{ bandwidth: 0, adjustedBandwidth: 0, factor: 1 } as const]
+        : Array.from({ length: optimizationIterations }, (_, i) => {
+            const factor =
+              kernelStretchFactorLowerRange +
+              kernelStretchFactorSearchStepSize * i
+            return {
+              bandwidth: higherBandwidth,
+              adjustedBandwidth: higherBandwidth * factor,
+              factor,
+            } as const
+          })
+    const firstHighBandwidthValue =
+      bandwidthsToTestHigher[0]?.adjustedBandwidth ?? (0 as const)
+    let firstOverlappingLowerBandwidthIndex = bandwidthsToTestLower.findIndex(
+      ({ adjustedBandwidth }) => adjustedBandwidth > firstHighBandwidthValue,
+    )
+    if (firstOverlappingLowerBandwidthIndex === -1) {
+      const lastLowBandwidthValue =
+        bandwidthsToTestLower.at(-1)?.adjustedBandwidth ?? 0
+      const inBetweenDistance = firstHighBandwidthValue - lastLowBandwidthValue
+      const averageStepDistance =
+        (lowerBandwidth * kernelStretchFactorSearchStepSize +
+          higherBandwidth * kernelStretchFactorSearchStepSize) /
+        2
+      const inBetweenCount = Math.ceil(inBetweenDistance / averageStepDistance)
+      const inBetweenBandwidths = Array.from(
+        { length: inBetweenCount - 1 },
+        (_, i) => {
+          const sourceBandwidth =
+            // eslint-disable-next-line no-magic-numbers
+            i / inBetweenCount < 0.5 ? lowerBandwidth : higherBandwidth
+          const adjustedBandwidth =
+            lastLowBandwidthValue + averageStepDistance * (i + 1)
+          const factor = adjustedBandwidth / sourceBandwidth
+          return {
+            bandwidth: sourceBandwidth,
+            adjustedBandwidth,
+            factor,
+          } as const
+        },
+      )
+      bandwidthsToTestLower.push(...inBetweenBandwidths)
+      firstOverlappingLowerBandwidthIndex = bandwidthsToTestLower.length
+    }
 
-    const bandwidthsRatio = higherBandwidth / lowerBandwidth
-    // a little performance optimization - if the bandwidths are too similar,
-    // then it's not worth testing both of them
-    const itIsWorthTestingBothBandwidths =
-      bandwidthsRatio >
-      MAXIMUM_MULTI_BANDWIDTH_TESTING_BANDWIDTH_TO_BANDWIDTH_RATIO
+    const bandwidthsToTest = [
+      ...bandwidthsToTestLower.slice(0, firstOverlappingLowerBandwidthIndex),
+      ...bandwidthsToTestHigher,
+    ]
 
-    const kernelStretchOptimization = (iterationSettings: {
+    const kernelStretchOptimization = ({
+      shouldSplit1,
+      shouldSplit2,
+      ...iterationSettings
+    }: {
       kernelStretchFactor: number
       bandwidth: number
       threshold: number
-    }) => {
+      shouldSplit1?: boolean
+      shouldSplit2?: boolean
+    }): readonly [GetSplitsReturnType, GetSplitsReturnType] => {
       const common = {
         ...iterationSettings,
         noiseValuesPerSample,
         iterations,
         random,
       }
-      return [
-        getSplits({
-          ...common,
-          sortedData: sorted1,
-        }),
-        getSplits({
-          ...common,
-          sortedData: sorted2,
-        }),
-      ] as const
+      const split1 =
+        !shouldSplit1 || common.bandwidth === 0
+          ? ({
+              largestModalityIndex: 0,
+              largestSplitIndex: 0,
+              modalities: [sorted1],
+              modalityCount: 1,
+              rawSplits: [sorted1],
+              rawSplitsSortedBySize: [sorted1],
+              separateModalitySizeThreshold: 0,
+              splitsAndTheirDistribution: [[sorted1, 1]],
+            } as const)
+          : getSplits({
+              ...common,
+              sortedData: sorted1,
+            })
+      const split2 =
+        !shouldSplit2 || common.bandwidth === 0
+          ? ({
+              largestModalityIndex: 0,
+              largestSplitIndex: 0,
+              modalities: [sorted2],
+              modalityCount: 1,
+              rawSplits: [sorted2],
+              rawSplitsSortedBySize: [sorted2],
+              separateModalitySizeThreshold: 0,
+              splitsAndTheirDistribution: [[sorted2, 1]],
+            } as const)
+          : getSplits({
+              ...common,
+              sortedData: sorted2,
+            })
+      return [split1, split2] as const
     }
 
     // try out different kernelStretchFactors automatically to find the best one
@@ -599,31 +689,44 @@ export function compare({
     const bestComparisons = optimize({
       iterate: kernelStretchOptimization,
       getNextIterationArgument(iteration) {
-        const actualIteration = itIsWorthTestingBothBandwidths
-          ? Math.floor(iteration / 2)
-          : iteration
-        // go up in increments of e.g. 0.1 every other iteration
-        const kernelStretchFactorAdjustment =
-          actualIteration / bandwidthsNumerator
-        return {
-          kernelStretchFactor:
-            kernelStretchFactorLowerRange + kernelStretchFactorAdjustment,
-          bandwidth: itIsWorthTestingBothBandwidths
-            ? iteration % 2 === 0
-              ? bandwidth1
-              : bandwidth2
-            : Math.min(bandwidth1, bandwidth2),
-          threshold: itIsWorthTestingBothBandwidths
-            ? iteration % 2 === 0
-              ? threshold1.value
-              : threshold2.value
-            : Math.min(threshold1.value, threshold2.value),
+        // we want 3 iterations per bandwidth: split vs split, split vs unsplit, unsplit vs split
+        const bandwidthIndex = Math.floor(iteration / 3)
+        const shouldSplit1 = iteration % 3 === 0 || iteration % 3 === 1
+        const shouldSplit2 = iteration % 3 === 0 || iteration % 3 === 2
+        const config = bandwidthsToTest[bandwidthIndex]
+        if (!config) {
+          // we also include an unsplit version to compare against
+          return {
+            bandwidth: 0,
+            threshold: 0,
+            kernelStretchFactor: 1,
+            shouldSplit1: false,
+            shouldSplit2: false,
+          }
         }
+        const { bandwidth, factor } = config
+        const sourceBandwidth =
+          bandwidth === lowerBandwidth ? 'lower' : 'higher'
+        // go up in increments of e.g. 0.1 every other iteration
+        return {
+          kernelStretchFactor: factor,
+          bandwidth:
+            sourceBandwidth === 'higher' ? higherBandwidth : lowerBandwidth,
+          threshold:
+            sourceBandwidth === 'higher'
+              ? higherBandwidth === bandwidth1
+                ? threshold1.value
+                : threshold2.value
+              : higherBandwidth === bandwidth1
+              ? threshold2.value
+              : threshold1.value,
+          shouldSplit1,
+          shouldSplit2,
+        } as const
       },
-      // we have twice as many iteration if we test both bandwidth/threshold pairs
-      iterations: itIsWorthTestingBothBandwidths
-        ? optimizationIterations * 2
-        : optimizationIterations,
+      // we want 3 iterations per bandwidth: split vs split, split vs unsplit, unsplit vs split
+      // we add +1 because we also include an unsplit version to compare against
+      iterations: bandwidthsToTest.length * 3 + 1,
       getComparisonCache: (allResults) => {
         const isUsableModality = getIsUsableModality(minimalModalitySize)
         const comparisons = allResults.map(([, [split1, split2]]) => {
@@ -659,7 +762,6 @@ export function compare({
             discardedModalities1,
             discardedModalities2,
           })
-
           if (
             comparison.data1.dataCount / data1.length <
               minimumUsedToTotalSamplesRatio ||
@@ -676,7 +778,10 @@ export function compare({
         )
         return {
           comparisons,
-          maxStdevDiff: Math.max(
+          maxPooledStdev: Math.max(
+            ...validComparisons.map((comparison) => comparison.pooledStDev),
+          ),
+          maxStdevDifference: Math.max(
             ...validComparisons.map((comparison) =>
               Math.abs(comparison.stdevDifference),
             ),
@@ -721,13 +826,22 @@ export function compare({
             ? 0
             : comparisonB.data2.discardedCount / cache.maxDiscardedCount2
         const stdevDiffPenaltyA =
-          cache.maxStdevDiff === 0
+          cache.maxStdevDifference === 0
             ? 0
-            : Math.abs(comparisonA.stdevDifference) / cache.maxStdevDiff
+            : Math.abs(comparisonA.stdevDifference) / cache.maxStdevDifference
         const stdevDiffPenaltyB =
-          cache.maxStdevDiff === 0
+          cache.maxStdevDifference === 0
             ? 0
-            : Math.abs(comparisonB.stdevDifference) / cache.maxStdevDiff
+            : Math.abs(comparisonB.stdevDifference) / cache.maxStdevDifference
+
+        const pooledStdevPenaltyA =
+          cache.maxPooledStdev === 0
+            ? 0
+            : Math.abs(comparisonA.pooledStDev) / cache.maxPooledStdev
+        const pooledStdevPenaltyB =
+          cache.maxPooledStdev === 0
+            ? 0
+            : Math.abs(comparisonB.pooledStDev) / cache.maxPooledStdev
         const overallDiscardedDataPenaltyA =
           (discardedDataPenaltyA1 + discardedDataPenaltyA2) / 2
         const overallDiscardedDataPenaltyB =
@@ -738,26 +852,21 @@ export function compare({
         // but also minimize the differences between stdevs (penalty for higher stdev difference)
         const valueA =
           stdevDiffPenaltyA +
-          overallDiscardedDataPenaltyA * discardedDataPenaltyFactor
+          overallDiscardedDataPenaltyA * discardedDataPenaltyFactor +
+          pooledStdevPenaltyA * highPooledStdevPenaltyFactor
         const valueB =
           stdevDiffPenaltyB +
-          overallDiscardedDataPenaltyB * discardedDataPenaltyFactor
-
-        // an alternative would be to compare pooledStDev:
-        // const valueA = comparisonA.pooledStDev
-        // const valueB = comparisonB.pooledStDev
+          overallDiscardedDataPenaltyB * discardedDataPenaltyFactor +
+          pooledStdevPenaltyB * highPooledStdevPenaltyFactor
         // the more similar the pooledStDev between the two, the better
 
         return [
-          valueA - valueB,
+          valueA < valueB ? -1 : valueA === 0 ? 0 : 1,
           // return lower first -- it will be one representing the ranking
-          valueA < valueB
-            ? ([comparisonA, comparisonB] as const)
-            : ([comparisonB, comparisonA] as const),
+          valueA < valueB ? comparisonA : comparisonB,
         ]
       },
-      reverseCompareMeta: ([comparisonA, comparisonB]) =>
-        [comparisonB, comparisonA] as const,
+      reverseCompareMeta: (comparisons) => comparisons,
     })
 
     // we want to count the number of times the comparison was similar/greater/less,
@@ -765,18 +874,38 @@ export function compare({
     // 'similar' and 'equal' are counted as the same thing for this purpose
     const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
       bestComparisons,
-      ([_settings, _split, [comparison]]) =>
+      ([_settings, _split, comparison]) =>
         comparison.outcome === 'equal' ? 'similar' : comparison.outcome,
     )
 
-    const [denoiseSettings, [splitMetadata1, splitMetadata2], [betterBand]] =
-      bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], []]
+    // console.log(
+    //   bestComparisons.slice(0, 10).map(([settings, split, [comparison]]) => ({
+    //     stretch: settings.kernelStretchFactor,
+    //     // modality1: split[0].rawSplits,
+    //     // modality2: split[1].rawSplits,
+    //     data1: comparison.data1.data,
+    //     data1stdev: comparison.data1.stdev,
+    //     discarded1: comparison.data1.discardedData,
+    //     data2: comparison.data2.data,
+    //     data2stdev: comparison.data2.stdev,
+    //     discarded2: comparison.data2.discardedData,
+    //     meanDiff: comparison.meanDifference,
+    //     stdevDifference: comparison.stdevDifference,
+    //     outcome: comparison.outcome,
+    //   })),
+    // )
+
+    const [
+      denoiseSettings,
+      [splitMetadata1, splitMetadata2],
+      betterComparison,
+    ] = bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], undefined]
 
     // note: in some cases it might be better to use the original result,
     // e.g. if Math.abs(result.stdevDifference) < Math.abs(betterBand.stdevDifference)
-    if (betterBand) {
+    if (betterComparison) {
       result = {
-        ...betterBand,
+        ...betterComparison,
         originalResult: result,
         denoiseSettings,
       }

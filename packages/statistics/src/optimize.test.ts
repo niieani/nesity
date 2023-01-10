@@ -21,9 +21,9 @@ describe('optimize', () => {
           "0",
           -0,
           Array [
-            -0,
             3,
-            "regular",
+            -0,
+            "reversed",
           ],
           -2,
           true,
@@ -32,9 +32,9 @@ describe('optimize', () => {
           "2",
           -2,
           Array [
-            -0,
             -2,
-            "reversed",
+            -0,
+            "regular",
           ],
           -2,
           true,
@@ -54,9 +54,9 @@ describe('optimize', () => {
           "3",
           3,
           Array [
-            3,
             -0,
-            "reversed",
+            3,
+            "regular",
           ],
           3,
           true,
@@ -116,11 +116,11 @@ describe('optimize', () => {
       reverseCompareMeta: (meta: readonly string[]) => [...meta, 'reversed'],
     })
     expect(results.map(([_, , comparisonMeta]) => comparisonMeta)).toEqual([
+      ['reversed'],
+      ['reversed'],
       [],
-      ['reversed'],
-      ['reversed'],
-      ['reversed'],
-      ['reversed'],
+      [],
+      [],
     ])
   })
 })

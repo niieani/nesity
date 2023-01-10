@@ -19,8 +19,8 @@ export interface MatchedSplit {
 }
 
 export interface MatchModalitiesConfig {
-  rawSplits1: number[][]
-  rawSplits2: number[][]
+  rawSplits1: readonly number[][]
+  rawSplits2: readonly number[][]
   meanDistanceWeight?: number
   sizeRatioWeight?: number
   /**

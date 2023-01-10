@@ -52,43 +52,47 @@ export function optimize<T, ArgT, CompareT, RefT>({
 
   for (let indexA = 0; indexA < results.length; indexA++) {
     for (let indexB = 0; indexB < results.length; indexB++) {
-      const resultsI = results[indexA]!
-      const resultsJ = results[indexB]!
-      if (resultsI[4] && resultsJ[4]) {
+      // eslint-disable-next-line no-continue
+      if (indexA === indexB) continue
+
+      const resultA = results[indexA]!
+      const resultB = results[indexB]!
+      if (resultA[4] && resultA[4]) {
         // eslint-disable-next-line no-continue
         continue
       }
 
       const compareResult =
-        compareResults[indexA]?.[indexB] ??
-        compare(resultsI[1], resultsJ[1], indexA, indexB, comparisonReference)
+        // compareResults[indexA]?.[indexB] ??
+        compare(resultA[1], resultB[1], indexA, indexB, comparisonReference)
+
       if (compareResult === INVALID_LEFT) {
-        resultsI[2] = INVALID
-        resultsI[3] = Number.NEGATIVE_INFINITY
-        resultsI[4] = true
+        resultA[2] = INVALID
+        resultA[3] = Number.NEGATIVE_INFINITY
+        resultA[4] = true
         // eslint-disable-next-line no-continue
         continue
       }
       if (compareResult === INVALID_RIGHT) {
-        resultsJ[2] = INVALID
-        resultsJ[3] = Number.NEGATIVE_INFINITY
-        resultsJ[4] = true
+        resultB[2] = INVALID
+        resultB[3] = Number.NEGATIVE_INFINITY
+        resultB[4] = true
         // eslint-disable-next-line no-continue
         continue
       }
       const [compareValue, compareMeta] = compareResult
-      resultsI[2] = compareMeta
-      resultsI[3] += compareValue
-      resultsI[4] = true
+      resultA[2] = compareMeta
+      resultA[3] += compareValue
+      resultA[4] = true
       compareResults[indexA]![indexB] = compareResult
 
       const reversedCompareMeta =
         compareMeta !== INVALID
           ? reverseCompareMeta?.(compareMeta) ?? compareMeta
           : compareMeta
-      resultsJ[2] = reversedCompareMeta
-      resultsJ[3] -= compareValue
-      resultsJ[4] = true
+      resultB[2] = reversedCompareMeta
+      resultB[3] -= compareValue
+      resultB[4] = true
       compareResults[indexB]![indexA] = [-compareValue, reversedCompareMeta]
     }
   }
@@ -99,5 +103,6 @@ export function optimize<T, ArgT, CompareT, RefT>({
         typeof result[1] !== 'undefined' && result[2] !== INVALID,
     )
     .sort(([_iArgA, _iResA, , a], [_iArgB, _iResB, , b]) => a - b)
+
   return sortedResults
 }

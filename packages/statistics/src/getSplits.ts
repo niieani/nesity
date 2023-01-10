@@ -5,13 +5,13 @@ import {
 } from './splitMultimodalDistribution'
 
 export interface GetSplitsReturnType {
-  rawSplitsSortedBySize: number[][]
-  rawSplits: number[][]
+  rawSplitsSortedBySize: readonly number[][]
+  rawSplits: readonly number[][]
   largestSplitIndex: number
-  splitsAndTheirDistribution: (readonly [number[], number])[]
+  splitsAndTheirDistribution: readonly (readonly [number[], number])[]
   separateModalitySizeThreshold: number
   modalityCount: number
-  modalities: number[][]
+  modalities: readonly number[][]
   largestModalityIndex: number
 }
 
