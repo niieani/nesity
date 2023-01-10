@@ -8,6 +8,7 @@ import {
   MULTIMODAL_SAMPLE_3,
   MULTIMODAL_SAMPLE_BEGINNING,
   MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
+  REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY,
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
   UNIMODAL_SAMPLE_REAL,
@@ -89,3 +90,46 @@ describe.each([0, 1, 2, 3])(
     })
   },
 )
+
+describe('difficult splits', () => {
+  it('splits a multimodal dataset with a heavy beginning into unimodal datasets (2)', () => {
+    const result = splitMultimodalDistribution({
+      data: REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2,
+      noiseValuesPerSample: 3,
+      random,
+      kernelStretchFactor: 0.5,
+    })
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          544.7000000001863,
+          557.5,
+          567.0999999999767,
+          575.3000000000466,
+          592.8999999999069,
+          609.7000000000116,
+          621.5,
+          648.2000000000698,
+          686.0999999999767,
+          779.1000000000931,
+          784.9000000000233,
+        ],
+        Array [
+          1314,
+        ],
+        Array [
+          1854.8000000000466,
+          1911.9000000000233,
+          1930.6999999999534,
+          1995.4000000000233,
+        ],
+      ]
+    `)
+    // expect(result).toHaveLength(3)
+    // expect(result).toEqual([
+    //   [...MULTIMODAL_SAMPLE_BEGINNING, ...MULTIMODAL_SAMPLE_1],
+    //   MULTIMODAL_SAMPLE_2,
+    //   MULTIMODAL_SAMPLE_3,
+    // ])
+  })
+})

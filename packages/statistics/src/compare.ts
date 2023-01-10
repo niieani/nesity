@@ -176,7 +176,7 @@ export type ConfidenceInterval = readonly [number | null, number | null]
 
 // eslint-disable-next-line no-magic-numbers
 const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
-const MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO = 0.5
+const MAXIMUM_MULTI_BANDWIDTH_TESTING_BANDWIDTH_TO_BANDWIDTH_RATIO = 1.3
 const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
 const DEFAULT_MINIMAL_MODALITY_SIZE = 3
 const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
@@ -554,12 +554,22 @@ export function compare({
       }),
     ]
 
-    const thresholdDifference = Math.abs(threshold1.value - threshold2.value)
-    const thresholdToStdevRatio = thresholdDifference / pooledStDev
-    // little performance optimization
-    const itIsWorthTestingBothThresholds =
-      thresholdToStdevRatio >
-      MINIMAL_MULTI_THRESHOLD_TESTING_THRESHOLD_DIFFERENCE_TO_STDEV_RATIO
+    const bandwidthsNumerator = 1 / kernelStretchFactorSearchStepSize
+    const optimizationIterations =
+      (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) *
+      bandwidthsNumerator
+
+    const [lowerBandwidth, higherBandwidth] = [
+      Math.min(bandwidth1, bandwidth2),
+      Math.max(bandwidth1, bandwidth2),
+    ]
+
+    const bandwidthsRatio = higherBandwidth / lowerBandwidth
+    // a little performance optimization - if the bandwidths are too similar,
+    // then it's not worth testing both of them
+    const itIsWorthTestingBothBandwidths =
+      bandwidthsRatio >
+      MAXIMUM_MULTI_BANDWIDTH_TESTING_BANDWIDTH_TO_BANDWIDTH_RATIO
 
     const kernelStretchOptimization = (iterationSettings: {
       kernelStretchFactor: number
@@ -584,30 +594,26 @@ export function compare({
       ] as const
     }
 
-    const numerator = 1 / kernelStretchFactorSearchStepSize
-    const optimizationIterations =
-      (kernelStretchFactorUpperRange - kernelStretchFactorLowerRange) *
-      numerator
-
     // try out different kernelStretchFactors automatically to find the best one
     // optimizing for lowest pooled stdev difference
     const bestComparisons = optimize({
       iterate: kernelStretchOptimization,
       getNextIterationArgument(iteration) {
-        const actualIteration = itIsWorthTestingBothThresholds
+        const actualIteration = itIsWorthTestingBothBandwidths
           ? Math.floor(iteration / 2)
           : iteration
         // go up in increments of e.g. 0.1 every other iteration
-        const kernelStretchFactorAdjustment = actualIteration / numerator
+        const kernelStretchFactorAdjustment =
+          actualIteration / bandwidthsNumerator
         return {
           kernelStretchFactor:
             kernelStretchFactorLowerRange + kernelStretchFactorAdjustment,
-          bandwidth: itIsWorthTestingBothThresholds
+          bandwidth: itIsWorthTestingBothBandwidths
             ? iteration % 2 === 0
               ? bandwidth1
               : bandwidth2
             : Math.min(bandwidth1, bandwidth2),
-          threshold: itIsWorthTestingBothThresholds
+          threshold: itIsWorthTestingBothBandwidths
             ? iteration % 2 === 0
               ? threshold1.value
               : threshold2.value
@@ -615,7 +621,7 @@ export function compare({
         }
       },
       // we have twice as many iteration if we test both bandwidth/threshold pairs
-      iterations: itIsWorthTestingBothThresholds
+      iterations: itIsWorthTestingBothBandwidths
         ? optimizationIterations * 2
         : optimizationIterations,
       getComparisonCache: (allResults) => {
