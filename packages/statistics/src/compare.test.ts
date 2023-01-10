@@ -1052,6 +1052,10 @@ describe('compare', () => {
         "meanDifference": 212.2854941558442,
         "mergedFromMultipleModalities": true,
         "outcome": "similar",
+        "outcomeFrequencies": Object {
+          "greater": 0.09375,
+          "similar": 0.90625,
+        },
         "pooledStDev": 19.004977567411487,
         "pooledVariance": 361.1891723378139,
         "stdevDifference": 7.313345144108309,
@@ -1080,6 +1084,20 @@ describe('compare', () => {
               -190.58515537107286,
             ],
             "pValue": 3.5138085947715135e-7,
+            "rejected": true,
+          },
+        },
+        "ttestAdjusted": Object {
+          "greater": Object {
+            "pValue": 0.3693182778988856,
+            "rejected": false,
+          },
+          "less": Object {
+            "pValue": 0.3246751489848949,
+            "rejected": false,
+          },
+          "twoSided": Object {
+            "pValue": 0.046875334909881716,
             "rejected": true,
           },
         },

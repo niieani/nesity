@@ -141,14 +141,24 @@ export function getOutcome(
   return { outcome, definitive: isTTestInvalid || bothAreExactlyEqual }
 }
 
+export interface AllTTests {
+  twoSided: TTestResult
+  greater: TTestResult
+  less: TTestResult
+  degreesOfFreedom: number
+  tValue: number
+}
+
 export interface ComparisonResult {
   outcome: ComparisonOutcome
-  ttest: {
-    twoSided: TTestResult
-    greater: TTestResult
-    less: TTestResult
-    degreesOfFreedom: number
-    tValue: number
+  outcomeFrequencies?: {
+    [outcome in ComparisonOutcome]?: number
+  }
+  ttest: AllTTests
+  ttestAdjusted?: {
+    twoSided: TTestResultBase
+    greater: TTestResultBase
+    less: TTestResultBase
   }
   meanDifference: number
   stdevDifference: number
@@ -182,6 +192,7 @@ const DEFAULT_MINIMAL_MODALITY_SIZE = 3
 const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
 const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.2
 const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
+const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
 
 const getIsUsableModality =
   (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
@@ -380,6 +391,7 @@ export function compare({
   minimumUsedToTotalSamplesRatio = DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
   discardedDataPenaltyFactor = DEFAULT_DISCARDED_DATA_PENALTY_FACTOR,
   highPooledStdevPenaltyFactor = DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR,
+  outcomeFrequencyPValueAdjustmentFactor = DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR,
 }: {
   data1: number[]
   data2: number[]
@@ -392,6 +404,7 @@ export function compare({
   minimumUsedToTotalSamplesRatio?: number
   discardedDataPenaltyFactor?: number
   highPooledStdevPenaltyFactor?: number
+  outcomeFrequencyPValueAdjustmentFactor?: number
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -858,7 +871,7 @@ export function compare({
           stdevDiffPenaltyB +
           overallDiscardedDataPenaltyB * discardedDataPenaltyFactor +
           pooledStdevPenaltyB * highPooledStdevPenaltyFactor
-        // the more similar the pooledStDev between the two, the better
+        // the more similar the stdevDifference and pooledStDev between the two, the better
 
         return [
           valueA < valueB ? -1 : valueA === 0 ? 0 : 1,
@@ -872,40 +885,89 @@ export function compare({
     // we want to count the number of times the comparison was similar/greater/less,
     // and choose the best one from those
     // 'similar' and 'equal' are counted as the same thing for this purpose
-    const bestComparisonsFromMostCommonOutcome = utils.mostCommonBy(
-      bestComparisons,
-      ([_settings, _split, comparison]) =>
+    const outcomeByFrequency = utils
+      .histogramBy(bestComparisons, ([_settings, _split, comparison]) =>
         comparison.outcome === 'equal' ? 'similar' : comparison.outcome,
+      )
+      .sort(([, a], [, b]) => b - a)
+
+    const outcomeFrequenciesArray = outcomeByFrequency.map(
+      ([[[_settings, _split, comparison] = []], count]) =>
+        [comparison!.outcome, count / bestComparisons.length] as const,
     )
 
-    // console.log(
-    //   bestComparisons.slice(0, 10).map(([settings, split, [comparison]]) => ({
-    //     stretch: settings.kernelStretchFactor,
-    //     // modality1: split[0].rawSplits,
-    //     // modality2: split[1].rawSplits,
-    //     data1: comparison.data1.data,
-    //     data1stdev: comparison.data1.stdev,
-    //     discarded1: comparison.data1.discardedData,
-    //     data2: comparison.data2.data,
-    //     data2stdev: comparison.data2.stdev,
-    //     discarded2: comparison.data2.discardedData,
-    //     meanDiff: comparison.meanDifference,
-    //     stdevDifference: comparison.stdevDifference,
-    //     outcome: comparison.outcome,
-    //   })),
-    // )
+    const outcomeFrequencies = Object.fromEntries(outcomeFrequenciesArray) as {
+      [outcome in ComparisonOutcome]?: number
+    }
+
+    const bestComparisonsFromMostCommonOutcome = outcomeByFrequency[0]?.[0]
 
     const [
       denoiseSettings,
       [splitMetadata1, splitMetadata2],
       betterComparison,
-    ] = bestComparisonsFromMostCommonOutcome[0] ?? [undefined, [], undefined]
+    ] = bestComparisonsFromMostCommonOutcome?.[0] ?? [undefined, [], undefined]
 
     // note: in some cases it might be better to use the original result,
     // e.g. if Math.abs(result.stdevDifference) < Math.abs(betterBand.stdevDifference)
     if (betterComparison) {
+      const mostCommon = outcomeFrequenciesArray[0]?.[0]
+      const twoSidedAdjustment = outcomeFrequencies.similar
+        ? 1 -
+          (1 - outcomeFrequencies.similar) *
+            outcomeFrequencyPValueAdjustmentFactor
+        : 1
+      const greaterAdjustment = outcomeFrequencies.greater
+        ? 1 -
+          (1 - outcomeFrequencies.greater) *
+            outcomeFrequencyPValueAdjustmentFactor
+        : 1
+      const lessAdjustment = outcomeFrequencies.less
+        ? 1 -
+          (1 - outcomeFrequencies.less) * outcomeFrequencyPValueAdjustmentFactor
+        : 1
+      // most common adjust up
+      // less common adjust down
+      const twoSidedPValue =
+        mostCommon === 'similar'
+          ? 1 -
+            (1 - betterComparison.ttest.twoSided.pValue) * twoSidedAdjustment
+          : betterComparison.ttest.twoSided.pValue * twoSidedAdjustment
+      const greaterPValue =
+        mostCommon === 'greater'
+          ? 1 - (1 - betterComparison.ttest.greater.pValue) * greaterAdjustment
+          : betterComparison.ttest.greater.pValue * greaterAdjustment
+      const lessPValue =
+        mostCommon === 'less'
+          ? 1 - (1 - betterComparison.ttest.less.pValue) * lessAdjustment
+          : betterComparison.ttest.less.pValue * lessAdjustment
+      const ttestAdjusted = {
+        twoSided: {
+          pValue: twoSidedPValue,
+          rejected: twoSidedPValue < alpha,
+        },
+        greater: {
+          pValue: greaterPValue,
+          rejected: greaterPValue < alpha,
+        },
+        less: {
+          pValue: lessPValue,
+          rejected: lessPValue < alpha,
+        },
+      }
       result = {
         ...betterComparison,
+        ...(outcomeFrequenciesArray.length > 1
+          ? {
+              ttestAdjusted,
+              outcome: getOutcome(ttestAdjusted, {
+                data1: betterComparison.data1.data,
+                data2: betterComparison.data2.data,
+                meanDifference: betterComparison.meanDifference,
+              }).outcome,
+              outcomeFrequencies,
+            }
+          : {}),
         originalResult: result,
         denoiseSettings,
       }
