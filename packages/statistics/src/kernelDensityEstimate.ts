@@ -70,7 +70,7 @@ export function optimalThreshold({
   value: number
   stdev: number
 } {
-  const distances = utilities.distances({ sortedData })
+  const distances = utilities.distances(sortedData).map(Math.abs)
   const q1 = utilities.quantile({
     sortedData,
     q: utilities.FIRST_QUARTILE,

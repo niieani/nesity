@@ -8,6 +8,7 @@ import {
   REAL_WORLD_DATA_7_BIMODAL,
   REAL_WORLD_DATA_8_SIMILAR,
   REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY,
+  REAL_WORLD_DATA_10_SIMILAR_NOISY,
 } from './__fixtures__/testSamples'
 import { compare } from './compare'
 import { getStableRandom } from './utilities'
@@ -50,7 +51,9 @@ describe('compare', () => {
             1604.7237,
           ],
           "mean": 1262.0372269230768,
+          "meanDistanceRatio": 1.0106527356151334,
           "modalityCount": 1,
+          "noiseCount": 3,
           "normalityProbability": 0.7877846020925403,
           "stdev": 54.763117695107304,
           "variance": 2998.999059688175,
@@ -79,7 +82,9 @@ describe('compare', () => {
             4040.1620000000003,
           ],
           "mean": 1256.7755300000001,
+          "meanDistanceRatio": 1.0160390885527708,
           "modalityCount": 1,
+          "noiseCount": 6,
           "normalityProbability": 0.7638960322720459,
           "stdev": 63.500249238291225,
           "variance": 4032.2816533251057,
@@ -165,6 +170,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 274.73454545454547,
+            "meanDistanceRatio": 1.0103820195396211,
             "normalityProbability": 0.3097986213870877,
             "stdev": 8.070541597236659,
             "variance": 65.13364167272724,
@@ -179,6 +185,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 311.856,
+            "meanDistanceRatio": 1.0204054202216892,
             "normalityProbability": 1,
             "stdev": 6.80022301104897,
             "variance": 46.24303299999991,
@@ -203,6 +210,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 278.09672727272726,
+            "meanDistanceRatio": 1.0050715659923473,
             "normalityProbability": 0.6819670385723727,
             "stdev": 5.16563374797147,
             "variance": 26.68377201818178,
@@ -217,6 +225,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 299.06166666666667,
+            "meanDistanceRatio": 1.0092838461224174,
             "normalityProbability": 0,
             "stdev": 2.825700857014664,
             "variance": 7.984585333333405,
@@ -246,6 +255,7 @@ describe('compare', () => {
             223.675,
           ],
           "mean": 274.73454545454547,
+          "meanDistanceRatio": 1.01252989111435,
           "modalityCount": 1,
           "normalityProbability": 0.4576989168041403,
           "stdev": 7.798330471625011,
@@ -275,6 +285,7 @@ describe('compare', () => {
             198.564,
           ],
           "mean": 278.09672727272726,
+          "meanDistanceRatio": 1.0059741974487908,
           "modalityCount": 1,
           "normalityProbability": 0.5358312445925786,
           "stdev": 4.664219557052155,
@@ -310,6 +321,10 @@ describe('compare', () => {
         "meanDifference": -0.09992857142858735,
         "mergedFromMultipleModalities": true,
         "outcome": "similar",
+        "outcomeFrequencies": Object {
+          "greater": 0.09375,
+          "similar": 0.90625,
+        },
         "pooledStDev": 6.4715708117449,
         "pooledVariance": 41.88122877142854,
         "stdevDifference": 3.1341109145728563,
@@ -338,6 +353,20 @@ describe('compare', () => {
               8.001437827069946,
             ],
             "pValue": 0.21896833021352227,
+            "rejected": false,
+          },
+        },
+        "ttestAdjusted": Object {
+          "greater": Object {
+            "pValue": 0.3775896430613586,
+            "rejected": false,
+          },
+          "less": Object {
+            "pValue": 0.3095503669735157,
+            "rejected": false,
+          },
+          "twoSided": Object {
+            "pValue": 0.25557918973476335,
             "rejected": false,
           },
         },
@@ -376,6 +405,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 274.7600909090909,
+            "meanDistanceRatio": 1.01038887356709,
             "normalityProbability": 0.31931801360806844,
             "stdev": 8.079851934961999,
             "variance": 65.28400729090916,
@@ -390,6 +420,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 311.91499999999996,
+            "meanDistanceRatio": 1.0203248866763825,
             "normalityProbability": 1,
             "stdev": 6.763303113124523,
             "variance": 45.742268999999865,
@@ -414,6 +445,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 278.0945454545455,
+            "meanDistanceRatio": 1.0050824619112118,
             "normalityProbability": 0.6789762980636239,
             "stdev": 5.1751151941505,
             "variance": 26.78181727272737,
@@ -428,6 +460,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 299.09,
+            "meanDistanceRatio": 1.0091548699009703,
             "normalityProbability": 0,
             "stdev": 2.787686675363644,
             "variance": 7.771197000000008,
@@ -457,6 +490,7 @@ describe('compare', () => {
             223.656,
           ],
           "mean": 274.7600909090909,
+          "meanDistanceRatio": 1.012518019233367,
           "modalityCount": 1,
           "normalityProbability": 0.46517843926348235,
           "stdev": 7.79773433028254,
@@ -486,6 +520,7 @@ describe('compare', () => {
             3434.452,
           ],
           "mean": 278.0945454545455,
+          "meanDistanceRatio": 1.00595512076616,
           "modalityCount": 1,
           "normalityProbability": 0.5334813770499902,
           "stdev": 4.663523368696174,
@@ -521,6 +556,10 @@ describe('compare', () => {
         "meanDifference": -0.12828571428566526,
         "mergedFromMultipleModalities": true,
         "outcome": "similar",
+        "outcomeFrequencies": Object {
+          "greater": 0.09836065573770492,
+          "similar": 0.9016393442622951,
+        },
         "pooledStDev": 6.473198779252367,
         "pooledVariance": 41.90230243571433,
         "stdevDifference": 3.1342109615863665,
@@ -549,6 +588,20 @@ describe('compare', () => {
               8.02333534106879,
             ],
             "pValue": 0.22223278237764602,
+            "rejected": false,
+          },
+        },
+        "ttestAdjusted": Object {
+          "greater": Object {
+            "pValue": 0.37816976396170277,
+            "rejected": false,
+          },
+          "less": Object {
+            "pValue": 0.31139237009958604,
+            "rejected": false,
+          },
+          "twoSided": Object {
+            "pValue": 0.2604836291459586,
             "rejected": false,
           },
         },
@@ -592,16 +645,15 @@ describe('compare', () => {
             12178.027000000016,
           ],
           "mean": 8884.876714285718,
+          "meanDistanceRatio": 1.0093259016810512,
           "modalityCount": 1,
+          "noiseCount": 2,
           "normalityProbability": 0.4830977036553685,
           "stdev": 315.04092536524325,
           "variance": 99250.78465498876,
         },
         "data2": Object {
           "data": Array [
-            8447.615000000002,
-            8504.422999999988,
-            8551.507999999989,
             8672.03300000001,
             8672.610999999995,
             8751.861000000015,
@@ -616,58 +668,64 @@ describe('compare', () => {
             9378.695000000009,
             9492.404999999995,
           ],
-          "dataCount": 16,
-          "discardedCount": 0,
-          "discardedData": Array [],
-          "mean": 8909.8101875,
+          "dataCount": 13,
+          "discardedCount": 3,
+          "discardedData": Array [
+            8447.615000000002,
+            8504.422999999988,
+            8551.507999999989,
+          ],
+          "mean": 9004.109,
+          "meanDistanceRatio": 1.0075729245816964,
           "modalityCount": 1,
-          "normalityProbability": 0.19957423060483725,
-          "stdev": 312.1875018910312,
-          "variance": 97461.03633696263,
+          "noiseCount": 3,
+          "normalityProbability": 0.48236056387847337,
+          "stdev": 264.57079484893745,
+          "variance": 69997.70548699856,
         },
         "denoiseSettings": Object {
           "bandwidth": 161.37417144278757,
           "kernelStretchFactor": 0.8,
           "shouldSplit1": true,
-          "shouldSplit2": false,
+          "shouldSplit2": true,
           "threshold": 312.1875018910312,
         },
         "effectSize": Object {
-          "cohensD": -0.06963521727873759,
-          "nonOverlapMeasure": 0.4722420028150469,
-          "overlappingCoefficient": 0.9722251794804171,
-          "probabilityOfSuperiority": 0.4803642028043161,
+          "cohensD": -0.35177594218517105,
+          "nonOverlapMeasure": 0.3625031510819295,
+          "overlappingCoefficient": 0.8603819557030646,
+          "probabilityOfSuperiority": 0.4017797327550121,
         },
-        "meanDifference": 24.93347321428155,
+        "meanDifference": 119.23228571428263,
         "outcome": "similar",
-        "pooledStDev": 313.5155353617888,
-        "pooledVariance": 98291.99091318905,
-        "stdevDifference": 2.853423474212036,
+        "pooledStDev": 291.9063319874262,
+        "pooledVariance": 85209.30665435348,
+        "stdevDifference": 50.4701305163058,
         "ttest": Object {
-          "degreesOfFreedom": 27.403602652184716,
+          "degreesOfFreedom": 24.768125941714196,
           "greater": Object {
             "confidenceInterval": Array [
-              -220.38075704079165,
+              -310.0765398756139,
               Infinity,
             ],
-            "pValue": 0.5851604482916946,
+            "pValue": 0.8519941372426528,
             "rejected": false,
           },
           "less": Object {
             "confidenceInterval": Array [
               -Infinity,
-              170.5138106122249,
+              71.61196844704497,
             ],
-            "pValue": 0.4148395517083054,
+            "pValue": 0.1480058627573472,
             "rejected": false,
           },
-          "tValue": -0.21717721422878858,
+          "tValue": -1.0675662075271293,
           "twoSided": Object {
             "confidenceInterval": Array [
-              -260.3358314395426,
-              210.46888501097587,
+              -349.36331456819096,
+              110.8987431396221,
             ],
-            "pValue": 0.8296791034166108,
+            "pValue": 0.2960117255146944,
             "rejected": false,
           },
         },
@@ -705,6 +763,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 567.2165555555556,
+            "meanDistanceRatio": 1.0212701020134594,
             "normalityProbability": 0.021263344498033687,
             "stdev": 30.750844805920003,
             "variance": 945.6144562777772,
@@ -723,6 +782,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 1095.9214285714286,
+            "meanDistanceRatio": 1.0149741103064052,
             "normalityProbability": 0.709709919769268,
             "stdev": 34.35113648220454,
             "variance": 1180.0005776190437,
@@ -743,6 +803,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 586.6701428571429,
+            "meanDistanceRatio": 1.0198328140594426,
             "normalityProbability": 0.8620144797621213,
             "stdev": 24.003430861917582,
             "variance": 576.1646931428575,
@@ -763,6 +824,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 1108.3907777777779,
+            "meanDistanceRatio": 1.0111993604686127,
             "normalityProbability": 0.7795235585319694,
             "stdev": 32.71913508093459,
             "variance": 1070.5418004444446,
@@ -791,6 +853,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 1095.9214285714286,
+          "meanDistanceRatio": 1.0185156056416231,
           "modalityCount": 2,
           "normalityProbability": 0.3224587211791987,
           "stdev": 32.32597241429448,
@@ -819,6 +882,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 1108.3907777777779,
+          "meanDistanceRatio": 1.0149764964146009,
           "modalityCount": 2,
           "normalityProbability": 0.8156133365701609,
           "stdev": 28.906014485114653,
@@ -906,6 +970,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 22.5391,
+            "meanDistanceRatio": 1.4799130718600582,
             "normalityProbability": 0.9999867832152746,
             "stdev": 23.871928621290742,
             "variance": 569.8689761,
@@ -921,6 +986,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 591.90525,
+            "meanDistanceRatio": 1.017407402892384,
             "normalityProbability": 0.11204146205647347,
             "stdev": 13.036806776073131,
             "variance": 169.9583309166663,
@@ -941,6 +1007,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 607.63,
+            "meanDistanceRatio": 1.0170140719706773,
             "normalityProbability": 0.9832576799307058,
             "stdev": 19.341509713566836,
             "variance": 374.09399800000034,
@@ -956,6 +1023,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 28.755499999999998,
+            "meanDistanceRatio": 1.093627581103284,
             "normalityProbability": 0.01545389028355526,
             "stdev": 3.1751525422673255,
             "variance": 10.081593666666661,
@@ -985,6 +1053,7 @@ describe('compare', () => {
             706.821,
           ],
           "mean": 22.5391,
+          "meanDistanceRatio": 1.3477685950121514,
           "modalityCount": 2,
           "normalityProbability": 0.7462881200270457,
           "stdev": 20.77617952265714,
@@ -1014,6 +1083,7 @@ describe('compare', () => {
             102.28,
           ],
           "mean": 607.63,
+          "meanDistanceRatio": 1.0448735298370797,
           "modalityCount": 2,
           "normalityProbability": 0.6313290291499237,
           "stdev": 13.462834378548832,
@@ -1140,7 +1210,9 @@ describe('compare', () => {
             803.6723255157472,
           ],
           "mean": 486.1610312417168,
+          "meanDistanceRatio": 1.0268959601086594,
           "modalityCount": 1,
+          "noiseCount": 2,
           "normalityProbability": 0.29639226652268136,
           "stdev": 50.59236113207368,
           "variance": 2559.5870049181594,
@@ -1169,7 +1241,9 @@ describe('compare', () => {
             1330.7345961914061,
           ],
           "mean": 485.67700063868926,
+          "meanDistanceRatio": 1.0312400065842302,
           "modalityCount": 1,
+          "noiseCount": 2,
           "normalityProbability": 0.7442370363176855,
           "stdev": 58.075970369898414,
           "variance": 3372.8183344053186,
@@ -1230,11 +1304,9 @@ describe('compare', () => {
       noiseValuesPerSample: 3,
       random: getStableRandom(5_000),
       iterations: 15,
-      // kernelStretchFactorRange: [0.5, 2.5],
-      // discardedDataPenaltyFactor: -1,
     })
 
-    // expect(result.outcome).toBe('similar')
+    expect(result.outcome).toBe('similar')
     expect(result).toMatchInlineSnapshot(`
       Object {
         "comparedModalities1": Array [
@@ -1257,6 +1329,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 628.4500000000504,
+            "meanDistanceRatio": 1.0551934381027104,
             "normalityProbability": 0.985303543406668,
             "stdev": 97.05314851337945,
             "variance": 9419.313636360088,
@@ -1272,6 +1345,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 2032.324999999968,
+            "meanDistanceRatio": 1.069772076504024,
             "normalityProbability": 0.9564785698274588,
             "stdev": 189.69687003215546,
             "variance": 35984.90249999648,
@@ -1296,6 +1370,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 633.3636363636629,
+            "meanDistanceRatio": 1.0377883680025721,
             "normalityProbability": 0.9380714214119303,
             "stdev": 84.21425381403726,
             "variance": 7092.04054545509,
@@ -1312,6 +1387,7 @@ describe('compare', () => {
             "discardedCount": 0,
             "discardedData": Array [],
             "mean": 1801.3600000000092,
+            "meanDistanceRatio": 1.1214242586088297,
             "normalityProbability": 0.9834759275748338,
             "stdev": 277.0266467327679,
             "variance": 76743.76300000178,
@@ -1340,6 +1416,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 628.4500000000504,
+          "meanDistanceRatio": 1.0588380977030387,
           "modalityCount": 1,
           "normalityProbability": 0.9780973000118657,
           "stdev": 120.21407889307345,
@@ -1368,6 +1445,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 633.3636363636629,
+          "meanDistanceRatio": 1.0639245838170277,
           "modalityCount": 1,
           "normalityProbability": 0.9522603295878376,
           "stdev": 144.4681266011406,
@@ -1426,6 +1504,129 @@ describe('compare', () => {
     `)
   })
 
+  it('should compare two datasets with noise iterations (similar 4)', () => {
+    const { originalResult, ...result } = compare({
+      ...REAL_WORLD_DATA_10_SIMILAR_NOISY,
+      noiseValuesPerSample: 3,
+      random: getStableRandom(5_000),
+      iterations: 15,
+    })
+
+    expect(result.outcome).toBe('similar')
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data1": Object {
+          "data": Array [
+            558.3779999999969,
+            561.0819999999945,
+            568.3039999999922,
+            569.9889999999938,
+            571.4279999999931,
+            578.8069999999934,
+            587.9529999999946,
+            605.6259999999933,
+            609.3809999999942,
+            613.0419999999917,
+            613.2369999999943,
+            615.233999999996,
+            621.3489999999929,
+          ],
+          "dataCount": 13,
+          "discardedCount": 3,
+          "discardedData": Array [
+            698.2099999999915,
+            1482.7349999999942,
+            1759.8599999999988,
+          ],
+          "mean": 590.2930769230709,
+          "meanDistanceRatio": 1.008974899977282,
+          "modalityCount": 1,
+          "noiseCount": 3,
+          "normalityProbability": 0.9292350142115805,
+          "stdev": 23.257320874158665,
+          "variance": 540.9029742435764,
+        },
+        "data2": Object {
+          "data": Array [
+            557.2959999999936,
+            559.6269999999946,
+            568.4069999999929,
+            571.6659999999926,
+            573.8239999999945,
+            576.2269999999933,
+            577.3689999999933,
+            583.5359999999945,
+            585.4599999999919,
+            586.1419999999941,
+            605.9639999999927,
+            629.8679999999944,
+            632.3439999999922,
+          ],
+          "dataCount": 13,
+          "discardedCount": 3,
+          "discardedData": Array [
+            1458.1829999999989,
+            1524.4450000000002,
+            1692.5979999999925,
+          ],
+          "mean": 585.2099999999934,
+          "meanDistanceRatio": 1.0106574692714307,
+          "modalityCount": 1,
+          "noiseCount": 3,
+          "normalityProbability": 0.9562910706807728,
+          "stdev": 23.84269879858383,
+          "variance": 568.4742859999907,
+        },
+        "denoiseSettings": Object {
+          "bandwidth": 17.6269691358854,
+          "kernelStretchFactor": 0.9,
+          "shouldSplit1": true,
+          "shouldSplit2": true,
+          "threshold": 354.7947910506342,
+        },
+        "effectSize": Object {
+          "cohensD": 0.18467931381003283,
+          "nonOverlapMeasure": 0.5732597138716617,
+          "overlappingCoefficient": 0.9264281812921558,
+          "probabilityOfSuperiority": 0.5519493800562874,
+        },
+        "meanDifference": -5.083076923077442,
+        "outcome": "similar",
+        "pooledStDev": 23.551828594013323,
+        "pooledVariance": 554.6886301217836,
+        "stdevDifference": -0.5853779244251633,
+        "ttest": Object {
+          "degreesOfFreedom": 23.985185076517052,
+          "greater": Object {
+            "confidenceInterval": Array [
+              -10.722079317438691,
+              Infinity,
+            ],
+            "pValue": 0.29361872817948476,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              20.88823316359358,
+            ],
+            "pValue": 0.7063812718205152,
+            "rejected": false,
+          },
+          "tValue": 0.5502483239550531,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              -13.983402002509251,
+              24.149555848664132,
+            ],
+            "pValue": 0.5872374563589695,
+            "rejected": false,
+          },
+        },
+      }
+    `)
+  })
+
   it('should compare two small datasets with noise iterations (greater)', () => {
     const { originalResult, ...result } = compare({
       ...REAL_WORLD_DATA_6_GREATER,
@@ -1460,7 +1661,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 1734.6108124999996,
+          "meanDistanceRatio": 1.0400306247983537,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 0.997441432776035,
           "stdev": 389.9511438157723,
           "variance": 152061.89456322914,
@@ -1488,7 +1691,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 1989.0906874999998,
+          "meanDistanceRatio": 1.0463584791919407,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 0.748517729160048,
           "stdev": 377.4615563315411,
           "variance": 142477.22650822916,
@@ -1568,6 +1773,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 29.395833333333332,
+          "meanDistanceRatio": 1.4339073963755762,
           "normalityProbability": 0.9442472989953399,
           "stdev": 20.791395810927817,
           "variance": 432.28213976666683,
@@ -1581,6 +1787,7 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 41.5415,
+          "meanDistanceRatio": 1.7563864375290295,
           "normalityProbability": 0.39632812046348587,
           "stdev": 16.1213275042721,
           "variance": 259.89720050000005,
@@ -1639,72 +1846,74 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('equal')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                  ],
-                  "dataCount": 1,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    58,
-                  ],
-                  "dataCount": 1,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": NaN,
-                  "nonOverlapMeasure": NaN,
-                  "overlappingCoefficient": NaN,
-                  "probabilityOfSuperiority": NaN,
-                },
-                "meanDifference": 0,
-                "outcome": "equal",
-                "pooledStDev": NaN,
-                "pooledVariance": NaN,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": NaN,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+          ],
+          "dataCount": 1,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 0,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            58,
+          ],
+          "dataCount": 1,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 0,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": NaN,
+          "nonOverlapMeasure": NaN,
+          "overlappingCoefficient": NaN,
+          "probabilityOfSuperiority": NaN,
+        },
+        "meanDifference": 0,
+        "outcome": "equal",
+        "pooledStDev": NaN,
+        "pooledVariance": NaN,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": NaN,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets of exactly one data point', () => {
@@ -1718,72 +1927,74 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('greater')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                  ],
-                  "dataCount": 1,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    59,
-                  ],
-                  "dataCount": 1,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 59,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": NaN,
-                  "nonOverlapMeasure": NaN,
-                  "overlappingCoefficient": NaN,
-                  "probabilityOfSuperiority": NaN,
-                },
-                "meanDifference": 1,
-                "outcome": "greater",
-                "pooledStDev": NaN,
-                "pooledVariance": NaN,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": NaN,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+          ],
+          "dataCount": 1,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 0,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            59,
+          ],
+          "dataCount": 1,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 59,
+          "meanDistanceRatio": 0,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": NaN,
+          "nonOverlapMeasure": NaN,
+          "overlappingCoefficient": NaN,
+          "probabilityOfSuperiority": NaN,
+        },
+        "meanDifference": 1,
+        "outcome": "greater",
+        "pooledStDev": NaN,
+        "pooledVariance": NaN,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": NaN,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two identical datasets of exactly two data points', () => {
@@ -1797,74 +2008,76 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('equal')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                    58,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    58,
-                    58,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": NaN,
-                  "nonOverlapMeasure": NaN,
-                  "overlappingCoefficient": NaN,
-                  "probabilityOfSuperiority": NaN,
-                },
-                "meanDifference": 0,
-                "outcome": "equal",
-                "pooledStDev": 0,
-                "pooledVariance": 0,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": NaN,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+            58,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            58,
+            58,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": NaN,
+          "nonOverlapMeasure": NaN,
+          "overlappingCoefficient": NaN,
+          "probabilityOfSuperiority": NaN,
+        },
+        "meanDifference": 0,
+        "outcome": "equal",
+        "pooledStDev": 0,
+        "pooledVariance": 0,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": NaN,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets of exactly the same two data points', () => {
@@ -1878,74 +2091,76 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('greater')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                    58,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    158,
-                    158,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 158,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": NaN,
-                  "nonOverlapMeasure": NaN,
-                  "overlappingCoefficient": NaN,
-                  "probabilityOfSuperiority": NaN,
-                },
-                "meanDifference": 100,
-                "outcome": "greater",
-                "pooledStDev": 0,
-                "pooledVariance": 0,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": -Infinity,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+            58,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            158,
+            158,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 158,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": NaN,
+          "nonOverlapMeasure": NaN,
+          "overlappingCoefficient": NaN,
+          "probabilityOfSuperiority": NaN,
+        },
+        "meanDifference": 100,
+        "outcome": "greater",
+        "pooledStDev": 0,
+        "pooledVariance": 0,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": -Infinity,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets of exactly the same 3 data points', () => {
@@ -1959,76 +2174,78 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('greater')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                    58,
-                    58,
-                  ],
-                  "dataCount": 3,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    158,
-                    158,
-                    158,
-                  ],
-                  "dataCount": 3,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 158,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": NaN,
-                  "nonOverlapMeasure": NaN,
-                  "overlappingCoefficient": NaN,
-                  "probabilityOfSuperiority": NaN,
-                },
-                "meanDifference": 100,
-                "outcome": "greater",
-                "pooledStDev": 0,
-                "pooledVariance": 0,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": -Infinity,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+            58,
+            58,
+          ],
+          "dataCount": 3,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            158,
+            158,
+            158,
+          ],
+          "dataCount": 3,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 158,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": NaN,
+          "nonOverlapMeasure": NaN,
+          "overlappingCoefficient": NaN,
+          "probabilityOfSuperiority": NaN,
+        },
+        "meanDifference": 100,
+        "outcome": "greater",
+        "pooledStDev": 0,
+        "pooledVariance": 0,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": -Infinity,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets of 4 exactly the same data points', () => {
@@ -2042,78 +2259,80 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('greater')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                    58,
-                    58,
-                    58,
-                  ],
-                  "dataCount": 4,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58,
-                  "normalityProbability": 1,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "data2": Object {
-                  "data": Array [
-                    158,
-                    158,
-                    158,
-                    158,
-                  ],
-                  "dataCount": 4,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 158,
-                  "normalityProbability": 0,
-                  "stdev": 0,
-                  "variance": 0,
-                },
-                "effectSize": Object {
-                  "cohensD": -Infinity,
-                  "nonOverlapMeasure": 0,
-                  "overlappingCoefficient": 0,
-                  "probabilityOfSuperiority": 0,
-                },
-                "meanDifference": 100,
-                "outcome": "greater",
-                "pooledStDev": 0,
-                "pooledVariance": 0,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": NaN,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      Infinity,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      NaN,
-                    ],
-                    "pValue": 1,
-                    "rejected": false,
-                  },
-                  "tValue": -Infinity,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      NaN,
-                      NaN,
-                    ],
-                    "pValue": 0,
-                    "rejected": true,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+            58,
+            58,
+            58,
+          ],
+          "dataCount": 4,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 1,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "data2": Object {
+          "data": Array [
+            158,
+            158,
+            158,
+            158,
+          ],
+          "dataCount": 4,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 158,
+          "meanDistanceRatio": 1,
+          "normalityProbability": 0,
+          "stdev": 0,
+          "variance": 0,
+        },
+        "effectSize": Object {
+          "cohensD": -Infinity,
+          "nonOverlapMeasure": 0,
+          "overlappingCoefficient": 0,
+          "probabilityOfSuperiority": 0,
+        },
+        "meanDifference": 100,
+        "outcome": "greater",
+        "pooledStDev": 0,
+        "pooledVariance": 0,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": NaN,
+          "greater": Object {
+            "confidenceInterval": Array [
+              NaN,
+              Infinity,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              NaN,
+            ],
+            "pValue": 1,
+            "rejected": false,
+          },
+          "tValue": -Infinity,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              NaN,
+              NaN,
+            ],
+            "pValue": 0,
+            "rejected": true,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets with two different data points', () => {
@@ -2127,74 +2346,76 @@ describe('compare', () => {
 
     expect(result.outcome).toBe('greater')
     expect(result).toMatchInlineSnapshot(`
-              Object {
-                "data1": Object {
-                  "data": Array [
-                    58,
-                    59,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 58.5,
-                  "normalityProbability": 0.39632812046346777,
-                  "stdev": 0.7071067811865476,
-                  "variance": 0.5,
-                },
-                "data2": Object {
-                  "data": Array [
-                    158,
-                    159,
-                  ],
-                  "dataCount": 2,
-                  "discardedCount": 0,
-                  "discardedData": Array [],
-                  "mean": 158.5,
-                  "normalityProbability": 0.39632812046338406,
-                  "stdev": 0.7071067811865476,
-                  "variance": 0.5,
-                },
-                "effectSize": Object {
-                  "cohensD": -0,
-                  "nonOverlapMeasure": 0.5,
-                  "overlappingCoefficient": 1,
-                  "probabilityOfSuperiority": 0.5,
-                },
-                "meanDifference": 100,
-                "outcome": "greater",
-                "pooledStDev": 0.7071067811865476,
-                "pooledVariance": 0.5,
-                "stdevDifference": 0,
-                "ttest": Object {
-                  "degreesOfFreedom": 2.000000000000001,
-                  "greater": Object {
-                    "confidenceInterval": Array [
-                      -102.06474160483504,
-                      Infinity,
-                    ],
-                    "pValue": 0.9999750018748438,
-                    "rejected": false,
-                  },
-                  "less": Object {
-                    "confidenceInterval": Array [
-                      -Infinity,
-                      -97.93525839516495,
-                    ],
-                    "pValue": 0.000024998125156236253,
-                    "rejected": true,
-                  },
-                  "tValue": -141.42135623730948,
-                  "twoSided": Object {
-                    "confidenceInterval": Array [
-                      -103.04243492229665,
-                      -96.95756507770334,
-                    ],
-                    "pValue": 0.000049996250312472505,
-                    "rejected": true,
-                  },
-                },
-              }
-          `)
+      Object {
+        "data1": Object {
+          "data": Array [
+            58,
+            59,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 58.5,
+          "meanDistanceRatio": 1.0172413793103448,
+          "normalityProbability": 0.39632812046346777,
+          "stdev": 0.7071067811865476,
+          "variance": 0.5,
+        },
+        "data2": Object {
+          "data": Array [
+            158,
+            159,
+          ],
+          "dataCount": 2,
+          "discardedCount": 0,
+          "discardedData": Array [],
+          "mean": 158.5,
+          "meanDistanceRatio": 1.0063291139240507,
+          "normalityProbability": 0.39632812046338406,
+          "stdev": 0.7071067811865476,
+          "variance": 0.5,
+        },
+        "effectSize": Object {
+          "cohensD": -0,
+          "nonOverlapMeasure": 0.5,
+          "overlappingCoefficient": 1,
+          "probabilityOfSuperiority": 0.5,
+        },
+        "meanDifference": 100,
+        "outcome": "greater",
+        "pooledStDev": 0.7071067811865476,
+        "pooledVariance": 0.5,
+        "stdevDifference": 0,
+        "ttest": Object {
+          "degreesOfFreedom": 2.000000000000001,
+          "greater": Object {
+            "confidenceInterval": Array [
+              -102.06474160483504,
+              Infinity,
+            ],
+            "pValue": 0.9999750018748438,
+            "rejected": false,
+          },
+          "less": Object {
+            "confidenceInterval": Array [
+              -Infinity,
+              -97.93525839516495,
+            ],
+            "pValue": 0.000024998125156236253,
+            "rejected": true,
+          },
+          "tValue": -141.42135623730948,
+          "twoSided": Object {
+            "confidenceInterval": Array [
+              -103.04243492229665,
+              -96.95756507770334,
+            ],
+            "pValue": 0.000049996250312472505,
+            "rejected": true,
+          },
+        },
+      }
+    `)
   })
 
   it('should compare two different datasets of 3 different data points', () => {
@@ -2219,7 +2440,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 58,
+          "meanDistanceRatio": 1.0173926194797338,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 1,
           "stdev": 1,
           "variance": 1,
@@ -2234,7 +2457,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 158,
+          "meanDistanceRatio": 1.0063492703378216,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 0,
           "stdev": 1,
           "variance": 1,
@@ -2312,7 +2537,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 56.5,
+          "meanDistanceRatio": 1.0178609402293612,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 0.02812294292355122,
           "stdev": 1.2909944487358056,
           "variance": 1.6666666666666667,
@@ -2328,7 +2555,9 @@ describe('compare', () => {
           "discardedCount": 0,
           "discardedData": Array [],
           "mean": 158,
+          "meanDistanceRatio": 1,
           "modalityCount": 1,
+          "noiseCount": 0,
           "normalityProbability": 0,
           "stdev": 0,
           "variance": 0,

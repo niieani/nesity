@@ -12,7 +12,7 @@ export const sort = (data: number[]): number[] =>
   [...data].sort((a, b) => a - b)
 
 export const mean = (data: number[]): number =>
-  data.reduce((a, b) => a + b, 0) / data.length
+  data.length === 0 ? 0 : data.reduce((a, b) => a + b, 0) / data.length
 
 export const variance = ({
   data,
@@ -67,13 +67,17 @@ export const pooledVariance = ({
 export const harmonicMean = (...numbers: number[]): number =>
   numbers.length / numbers.reduce((total, number) => total + 1 / number, 0)
 
-export const distances = ({
-  data,
-  sortedData = sort(data!),
-}: DataOrSortedData): number[] =>
-  Array.from({ length: sortedData.length - 1 }, (_, i) =>
-    Math.abs(sortedData[i + 1]! - sortedData[i]!),
-  )
+export const distances = (data: number[]): number[] =>
+  data.length === 0
+    ? []
+    : Array.from({ length: data.length - 1 }, (_, i) => data[i + 1]! - data[i]!)
+
+export const consecutiveRatios = (data: number[]): number[] =>
+  data.length === 0
+    ? []
+    : Array.from({ length: data.length - 1 }, (_, i) =>
+        data[i] === 0 ? 0 : data[i + 1]! / data[i]!,
+      )
 
 export const quantile = ({
   data,

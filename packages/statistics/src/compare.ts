@@ -14,6 +14,62 @@ import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
 import type { SplitMultiModalDistributionConfig } from './splitMultimodalDistribution'
 import * as utils from './utilities'
 
+export interface AllTTests {
+  twoSided: TTestResult
+  greater: TTestResult
+  less: TTestResult
+  degreesOfFreedom: number
+  tValue: number
+}
+
+export interface ComparisonResult {
+  outcome: ComparisonOutcome
+  outcomeFrequencies?: {
+    [outcome in ComparisonOutcome]?: number
+  }
+  ttest: AllTTests
+  ttestAdjusted?: {
+    twoSided: TTestResultBase
+    greater: TTestResultBase
+    less: TTestResultBase
+  }
+  meanDifference: number
+  stdevDifference: number
+  pooledVariance: number
+  pooledStDev: number
+  data1: SampleStatistics
+  data2: SampleStatistics
+  // present when denoising:
+  originalResult?: ComparisonResult
+  denoiseSettings?: DenoiseSettings
+  effectSize?: {
+    cohensD: number
+    overlappingCoefficient: number
+    probabilityOfSuperiority: number
+    nonOverlapMeasure: number
+  }
+  // present when multimodal
+  comparedModalities1?: SampleStatistics[]
+  comparedModalities2?: SampleStatistics[]
+  discardedModalities1?: number[][]
+  discardedModalities2?: number[][]
+  mergedFromMultipleModalities?: boolean
+}
+
+export type ConfidenceInterval = readonly [number | null, number | null]
+
+// eslint-disable-next-line no-magic-numbers
+export const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
+export const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
+export const DEFAULT_MINIMAL_MODALITY_SIZE = 3
+export const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
+export const DEFAULT_STDEV_DIFF_PENALTY_FACTOR = 1
+export const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.5
+export const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
+export const DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR = 1
+export const DEFAULT_NOISE_SIZE_BONUS_FACTOR = 0.2
+export const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
+
 export const DEFAULT_CONFIDENCE_LEVEL = 0.95
 export const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
 
@@ -46,11 +102,14 @@ export interface SampleStatistics {
   mean: number
   variance: number
   stdev: number
+  /** mean distance from consecutive ordered */
+  meanDistanceRatio: number
   normalityProbability: number
   dataCount: number
   data: number[]
   discardedCount: number
   discardedData: number[]
+  noiseCount?: number
   modalityCount?: number
 }
 
@@ -141,59 +200,6 @@ export function getOutcome(
   return { outcome, definitive: isTTestInvalid || bothAreExactlyEqual }
 }
 
-export interface AllTTests {
-  twoSided: TTestResult
-  greater: TTestResult
-  less: TTestResult
-  degreesOfFreedom: number
-  tValue: number
-}
-
-export interface ComparisonResult {
-  outcome: ComparisonOutcome
-  outcomeFrequencies?: {
-    [outcome in ComparisonOutcome]?: number
-  }
-  ttest: AllTTests
-  ttestAdjusted?: {
-    twoSided: TTestResultBase
-    greater: TTestResultBase
-    less: TTestResultBase
-  }
-  meanDifference: number
-  stdevDifference: number
-  pooledVariance: number
-  pooledStDev: number
-  data1: SampleStatistics
-  data2: SampleStatistics
-  // present when denoising:
-  originalResult?: ComparisonResult
-  denoiseSettings?: DenoiseSettings
-  effectSize?: {
-    cohensD: number
-    overlappingCoefficient: number
-    probabilityOfSuperiority: number
-    nonOverlapMeasure: number
-  }
-  // present when multimodal
-  comparedModalities1?: SampleStatistics[]
-  comparedModalities2?: SampleStatistics[]
-  discardedModalities1?: number[][]
-  discardedModalities2?: number[][]
-  mergedFromMultipleModalities?: boolean
-}
-
-export type ConfidenceInterval = readonly [number | null, number | null]
-
-// eslint-disable-next-line no-magic-numbers
-const DEFAULT_KERNEL_STRETCH_FACTOR_RANGE = [0.8, 2.5] as const
-const DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE = 0.1
-const DEFAULT_MINIMAL_MODALITY_SIZE = 3
-const DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO = 0.6
-const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.2
-const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
-const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
-
 const getIsUsableModality =
   (minimalSplitLength = DEFAULT_MINIMAL_MODALITY_SIZE) =>
   (
@@ -209,11 +215,13 @@ const getIsUsableModality =
 export const mergeComparisonsFromMultipleModalities = ({
   comparisons,
   confidenceLevel = DEFAULT_CONFIDENCE_LEVEL,
+  minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
   discardedModalities1,
   discardedModalities2,
 }: {
   comparisons: ComparisonResult[]
   confidenceLevel?: number
+  minimalModalitySize?: number
   discardedModalities1: number[][]
   discardedModalities2: number[][]
 }): ComparisonResult => {
@@ -223,6 +231,13 @@ export const mergeComparisonsFromMultipleModalities = ({
   const discardedData1 = discardedModalities1.flat()
   const discardedData2 = discardedModalities2.flat()
 
+  const noise1 = discardedModalities1
+    .filter((d) => d.length <= minimalModalitySize)
+    .flat()
+  const noise2 = discardedModalities2
+    .filter((d) => d.length <= minimalModalitySize)
+    .flat()
+
   if (comparisons.length === 1) {
     return {
       ...comparisons[0]!,
@@ -230,11 +245,13 @@ export const mergeComparisonsFromMultipleModalities = ({
         ...comparisons[0]!.data1,
         discardedCount: discardedData1.length,
         discardedData: discardedData1,
+        noiseCount: noise1.length,
       },
       data2: {
         ...comparisons[0]!.data2,
         discardedCount: discardedData2.length,
         discardedData: discardedData2,
+        noiseCount: noise2.length,
       },
     }
   }
@@ -337,6 +354,10 @@ export const mergeComparisonsFromMultipleModalities = ({
       stdev: stdev1,
       discardedCount: discardedData1.length,
       discardedData: discardedData1,
+      meanDistanceRatio: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data1.meanDistanceRatio * c.weight1,
+        0,
+      ),
       normalityProbability: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.normalityProbability * c.weight1,
         0,
@@ -354,6 +375,10 @@ export const mergeComparisonsFromMultipleModalities = ({
       discardedData: discardedData2,
       mean: largestSampleSplitComparison.data2.mean,
       stdev: stdev2,
+      meanDistanceRatio: comparisonsWithWeights.reduce(
+        (sum, c) => sum + c.data2.meanDistanceRatio * c.weight2,
+        0,
+      ),
       normalityProbability: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.normalityProbability * c.weight2,
         0,
@@ -389,8 +414,11 @@ export function compare({
   kernelStretchFactorSearchStepSize = DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
   minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
   minimumUsedToTotalSamplesRatio = DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
+  stdevDiffPenaltyFactor = DEFAULT_STDEV_DIFF_PENALTY_FACTOR,
   discardedDataPenaltyFactor = DEFAULT_DISCARDED_DATA_PENALTY_FACTOR,
   highPooledStdevPenaltyFactor = DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR,
+  highMeanDistanceRatioPenaltyFactor = DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR,
+  noiseSizeBonusFactor = DEFAULT_NOISE_SIZE_BONUS_FACTOR,
   outcomeFrequencyPValueAdjustmentFactor = DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR,
 }: {
   data1: number[]
@@ -402,8 +430,11 @@ export function compare({
   kernelStretchFactorSearchStepSize?: number
   minimalModalitySize?: number
   minimumUsedToTotalSamplesRatio?: number
+  stdevDiffPenaltyFactor?: number
   discardedDataPenaltyFactor?: number
   highPooledStdevPenaltyFactor?: number
+  highMeanDistanceRatioPenaltyFactor?: number
+  noiseSizeBonusFactor?: number
   outcomeFrequencyPValueAdjustmentFactor?: number
 } & OptimalThresholdConfigBase &
   Pick<
@@ -412,6 +443,10 @@ export function compare({
   >): ComparisonResult {
   const [sorted1, sorted2] = [utils.sort(data1), utils.sort(data2)]
   const [mean1, mean2] = [utils.mean(data1), utils.mean(data2)]
+  const [meanDistanceRatio1, meanDistanceRatio2] = [
+    utils.mean(utils.consecutiveRatios(sorted1)),
+    utils.mean(utils.consecutiveRatios(sorted2)),
+  ]
   const [variance1, variance2] = [
     utils.variance({
       sortedData: sorted1,
@@ -512,6 +547,7 @@ export function compare({
       mean: mean1,
       stdev: stdev1,
       variance: variance1,
+      meanDistanceRatio: meanDistanceRatio1,
       normalityProbability:
         Number.isNaN(shapiroWilk1.pValue) || shapiroWilk1.pValue < 0
           ? 1
@@ -525,6 +561,7 @@ export function compare({
       mean: mean2,
       stdev: stdev2,
       variance: variance2,
+      meanDistanceRatio: meanDistanceRatio2,
       normalityProbability:
         Number.isNaN(shapiroWilk2.pValue) || shapiroWilk2.pValue < 0
           ? 0
@@ -799,6 +836,26 @@ export function compare({
               Math.abs(comparison.stdevDifference),
             ),
           ),
+          maxNoiseCount1: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data1.noiseCount ?? 0,
+            ),
+          ),
+          maxNoiseCount2: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data2.noiseCount ?? 0,
+            ),
+          ),
+          maxMeanDistance1: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data1.meanDistanceRatio,
+            ),
+          ),
+          maxMeanDistance2: Math.max(
+            ...validComparisons.map(
+              (comparison) => comparison.data2.meanDistanceRatio,
+            ),
+          ),
           maxDiscardedCount1: Math.max(
             ...validComparisons.map(
               (comparison) => comparison.data1.discardedCount,
@@ -822,6 +879,7 @@ export function compare({
           return INVALID_RIGHT
         }
 
+        // discarded data
         const discardedDataPenaltyA1 =
           cache.maxDiscardedCount1 === 0
             ? 0
@@ -838,6 +896,44 @@ export function compare({
           cache.maxDiscardedCount2 === 0
             ? 0
             : comparisonB.data2.discardedCount / cache.maxDiscardedCount2
+
+        // we add points for noise size, non-modalities that were filtered out
+        const noiseSizeBonusA1 =
+          cache.maxNoiseCount1 === 0
+            ? 0
+            : (comparisonA.data1.noiseCount ?? 0) / cache.maxNoiseCount1
+        const noiseSizeBonusA2 =
+          cache.maxNoiseCount2 === 0
+            ? 0
+            : (comparisonA.data2.noiseCount ?? 0) / cache.maxNoiseCount2
+        const noiseSizeBonusB1 =
+          cache.maxNoiseCount1 === 0
+            ? 0
+            : (comparisonB.data1.noiseCount ?? 0) / cache.maxNoiseCount1
+        const noiseSizeBonusB2 =
+          cache.maxNoiseCount2 === 0
+            ? 0
+            : (comparisonB.data2.noiseCount ?? 0) / cache.maxNoiseCount2
+
+        // penalty for larger distances
+        const meanDistanceRatioPenaltyA1 =
+          cache.maxMeanDistance1 === 0
+            ? 0
+            : comparisonA.data1.meanDistanceRatio / cache.maxMeanDistance1
+        const meanDistanceRatioPenaltyA2 =
+          cache.maxMeanDistance2 === 0
+            ? 0
+            : comparisonA.data2.meanDistanceRatio / cache.maxMeanDistance2
+        const meanDistanceRatioPenaltyB1 =
+          cache.maxMeanDistance1 === 0
+            ? 0
+            : comparisonB.data1.meanDistanceRatio / cache.maxMeanDistance1
+        const meanDistanceRatioPenaltyB2 =
+          cache.maxMeanDistance2 === 0
+            ? 0
+            : comparisonB.data2.meanDistanceRatio / cache.maxMeanDistance2
+
+        // stdev difference
         const stdevDiffPenaltyA =
           cache.maxStdevDifference === 0
             ? 0
@@ -847,6 +943,7 @@ export function compare({
             ? 0
             : Math.abs(comparisonB.stdevDifference) / cache.maxStdevDifference
 
+        // pooled stdev
         const pooledStdevPenaltyA =
           cache.maxPooledStdev === 0
             ? 0
@@ -855,26 +952,64 @@ export function compare({
           cache.maxPooledStdev === 0
             ? 0
             : Math.abs(comparisonB.pooledStDev) / cache.maxPooledStdev
+
         const overallDiscardedDataPenaltyA =
           (discardedDataPenaltyA1 + discardedDataPenaltyA2) / 2
         const overallDiscardedDataPenaltyB =
           (discardedDataPenaltyB1 + discardedDataPenaltyB2) / 2
 
+        const overallMeanDistancePenaltyA =
+          (meanDistanceRatioPenaltyA1 + meanDistanceRatioPenaltyA2) / 2
+        const overallMeanDistancePenaltyB =
+          (meanDistanceRatioPenaltyB1 + meanDistanceRatioPenaltyB2) / 2
+
+        const overallNoiseSizeBonusA = (noiseSizeBonusA1 + noiseSizeBonusA2) / 2
+        const overallNoiseSizeBonusB = (noiseSizeBonusB1 + noiseSizeBonusB2) / 2
+
         // to get as high quality data as we can by matching samples together
         // we want to keep as much data as possible (penalty for discarding more data),
-        // but also minimize the differences between stdevs (penalty for higher stdev difference)
+        // but also minimize the differences between stdevs (penalty for higher stdev difference),
+        // and increase the amount of noise removed (bonus for removing more noise)
         const valueA =
-          stdevDiffPenaltyA +
+          stdevDiffPenaltyA * stdevDiffPenaltyFactor +
           overallDiscardedDataPenaltyA * discardedDataPenaltyFactor +
-          pooledStdevPenaltyA * highPooledStdevPenaltyFactor
+          pooledStdevPenaltyA * highPooledStdevPenaltyFactor +
+          overallMeanDistancePenaltyA * highMeanDistanceRatioPenaltyFactor +
+          overallNoiseSizeBonusA * -noiseSizeBonusFactor
         const valueB =
-          stdevDiffPenaltyB +
+          stdevDiffPenaltyB * stdevDiffPenaltyFactor +
           overallDiscardedDataPenaltyB * discardedDataPenaltyFactor +
-          pooledStdevPenaltyB * highPooledStdevPenaltyFactor
+          pooledStdevPenaltyB * highPooledStdevPenaltyFactor +
+          overallMeanDistancePenaltyB * highMeanDistanceRatioPenaltyFactor +
+          overallNoiseSizeBonusB * -noiseSizeBonusFactor
         // the more similar the stdevDifference and pooledStDev between the two, the better
 
+        // if (
+        //   comparisonA.data1.noiseCount === 2 &&
+        //   comparisonA.data2.noiseCount === 3
+        // ) {
+        //   console.log('this', comparisonA)
+        // }
+        // console.log({
+        //   // stdevDiffPenaltyA,
+        //   // overallDiscardedDataPenaltyA,
+        //   // pooledStdevPenaltyA,
+        //   overallNoiseSizeBonusA,
+        //   noiseSizeBonusA1,
+        //   noiseSizeBonusA2,
+        //   // maxNoise1: cache.maxNoiseCount1,
+        //   // maxNoise2: cache.maxNoiseCount2,
+        //   // noisea1: comparisonA.data1.noiseCount,
+        //   // noisea2: comparisonA.data2.noiseCount,
+
+        //   // stdevDiffPenaltyB,
+        //   // overallDiscardedDataPenaltyB,
+        //   // pooledStdevPenaltyB,
+        //   // overallNoiseSizeBonusB,
+        // })
         return [
-          valueA < valueB ? -1 : valueA === 0 ? 0 : 1,
+          // valueA < valueB ? -1 : valueA === 0 ? 0 : 1,
+          valueA - valueB,
           // return lower first -- it will be one representing the ranking
           valueA < valueB ? comparisonA : comparisonB,
         ]
