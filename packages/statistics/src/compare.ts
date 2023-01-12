@@ -111,6 +111,8 @@ export interface SampleStatistics {
   discardedData: number[]
   noiseCount?: number
   modalityCount?: number
+  representativeMean?: number
+  representativeStdev?: number
 }
 
 interface TTestResultBase {
@@ -195,6 +197,10 @@ export function getOutcome(
     : // first is less than second
     less.rejected
     ? 'greater'
+    : twoSided.rejected
+    ? Math.min(greater.pValue, less.pValue) === greater.pValue
+      ? 'less'
+      : 'greater'
     : 'similar'
 
   return { outcome, definitive: isTTestInvalid || bothAreExactlyEqual }
@@ -334,10 +340,18 @@ export const mergeComparisonsFromMultipleModalities = ({
     meanDifference: weightedMeanDifference,
   })
 
-  const largestSampleSplitComparison = comparisonsWithWeights
+  const largestSampleSplitComparison = [...comparisonsWithWeights]
     .reverse()
     .sort((a, b) => b.weight - a.weight)[0]!
 
+  const mean1 = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.data1.mean * c.weight1,
+    0,
+  )
+  const mean2 = comparisonsWithWeights.reduce(
+    (sum, c) => sum + c.data2.mean * c.weight2,
+    0,
+  )
   const stdev1 = comparisonsWithWeights.reduce(
     (sum, c) => sum + c.data1.stdev * c.weight1,
     0,
@@ -355,12 +369,14 @@ export const mergeComparisonsFromMultipleModalities = ({
     pooledStDev: weightedPooledStDev,
     data1: {
       data: allUsedData1,
-      // we don't weight the mean, because it would be even more misleading
-      // we use the largest sample split instead
-      mean: largestSampleSplitComparison.data1.mean,
-      stdev: stdev1,
       discardedCount: discardedData1.length,
       discardedData: discardedData1,
+      stdev: stdev1,
+      mean: mean1,
+      // we don't weight the mean, because it would be even more misleading
+      // we use the largest sample split instead
+      representativeMean: largestSampleSplitComparison.data1.mean,
+      representativeStdev: largestSampleSplitComparison.data1.stdev,
       meanDistanceRatio: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data1.meanDistanceRatio * c.weight1,
         0,
@@ -381,8 +397,12 @@ export const mergeComparisonsFromMultipleModalities = ({
       dataCount: allUsedData2.length,
       discardedCount: discardedData2.length,
       discardedData: discardedData2,
-      mean: largestSampleSplitComparison.data2.mean,
       stdev: stdev2,
+      mean: mean2,
+      // we don't weight the mean, because it would be even more misleading
+      // we use the largest sample split instead
+      representativeMean: largestSampleSplitComparison.data2.mean,
+      representativeStdev: largestSampleSplitComparison.data2.stdev,
       meanDistanceRatio: comparisonsWithWeights.reduce(
         (sum, c) => sum + c.data2.meanDistanceRatio * c.weight2,
         0,
