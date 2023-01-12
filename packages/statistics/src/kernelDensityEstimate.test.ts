@@ -49,7 +49,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
 671 ┤│       │
 633 ┤│       │
 594 ┼╯       ╰
-Scaled by: 1000000
+    Scaled by: 1000000
 "
 `)
   })
@@ -72,7 +72,7 @@ Scaled by: 1000000
 126 ┤│                ╰─
  87 ┤│
  48 ┼╯
-Scaled by: 100000
+    Scaled by: 100000
 "
 `)
   })
@@ -95,7 +95,7 @@ Scaled by: 100000
  443 ┤│                            │
  356 ┼╯                            ╰╮
  270 ┤                              ╰
-Scaled by: 100000
+     Scaled by: 100000
 "
 `)
   })
@@ -118,7 +118,7 @@ Scaled by: 100000
 731 ┤ │           │
 718 ┤ │           ╰
 704 ┼─╯
-Scaled by: 1000000
+    Scaled by: 1000000
 "
 `)
   })
@@ -141,7 +141,7 @@ Scaled by: 1000000
 407 ┤              ││
 394 ┤              ││
 381 ┤              ╰╯
-Scaled by: 1000000
+    Scaled by: 1000000
 "
 `)
   })
@@ -164,7 +164,7 @@ Scaled by: 1000000
 408 ┤             │╭────╮ ╭───╮
 361 ┤             ╰╯    ╰╮│   ╰─
 314 ┤                    ╰╯
-Scaled by: 1000000
+    Scaled by: 1000000
 "
 `)
   })

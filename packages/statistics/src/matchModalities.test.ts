@@ -107,9 +107,10 @@ describe('matchModalities', () => {
     ]
 
     expect(
-      matchModalities({ rawSplits1, rawSplits2 }).map((result) =>
-        result.map((d) => d?.data),
-      ),
+      matchModalities({
+        rawSplits1,
+        rawSplits2,
+      }).map((result) => result.map((d) => d?.data)),
     ).toEqual(expectedResult)
   })
 
@@ -132,7 +133,12 @@ describe('matchModalities', () => {
     ).toMatchInlineSnapshot(`
       Array [
         Array [
-          undefined,
+          Array [
+            24.992,
+            28.01,
+            29.373,
+            32.647,
+          ],
           Array [
             10.239,
             10.293,
@@ -146,10 +152,11 @@ describe('matchModalities', () => {
         ],
         Array [
           Array [
-            24.992,
-            28.01,
-            29.373,
-            32.647,
+            93.469,
+            95.761,
+            98.026,
+            99.019,
+            102.28,
           ],
           Array [
             66.587,
@@ -157,13 +164,7 @@ describe('matchModalities', () => {
           ],
         ],
         Array [
-          Array [
-            93.469,
-            95.761,
-            98.026,
-            99.019,
-            102.28,
-          ],
+          undefined,
           Array [
             127.194,
           ],
@@ -185,6 +186,85 @@ describe('matchModalities', () => {
             608.943,
             706.821,
           ],
+        ],
+      ]
+    `)
+  })
+
+  it('should return an array of closest split pairs matches with real world data (2)', () => {
+    const rawSplits1 = [
+      [
+        10.239, 10.293, 10.4, 10.856, 11.11, 11.706, 11.935, 13.279, 66.587,
+        68.986,
+      ],
+      [127.194],
+      [578.245, 586.523, 593.91, 608.943],
+      [706.821],
+    ]
+    const rawSplits2 = [
+      [24.992, 28.01, 29.373, 32.647],
+      [93.469, 95.761, 98.026, 99.019, 102.28],
+      [566.367, 607.782, 609.666, 610.453, 612.29, 621.299, 625.553],
+    ]
+    const matched = matchModalities({ rawSplits1, rawSplits2 }).map((result) =>
+      result.map((d) => d?.data),
+    )
+    expect(matched).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          Array [
+            10.239,
+            10.293,
+            10.4,
+            10.856,
+            11.11,
+            11.706,
+            11.935,
+            13.279,
+            66.587,
+            68.986,
+          ],
+          Array [
+            24.992,
+            28.01,
+            29.373,
+            32.647,
+          ],
+        ],
+        Array [
+          Array [
+            127.194,
+          ],
+          Array [
+            93.469,
+            95.761,
+            98.026,
+            99.019,
+            102.28,
+          ],
+        ],
+        Array [
+          Array [
+            578.245,
+            586.523,
+            593.91,
+            608.943,
+          ],
+          Array [
+            566.367,
+            607.782,
+            609.666,
+            610.453,
+            612.29,
+            621.299,
+            625.553,
+          ],
+        ],
+        Array [
+          Array [
+            706.821,
+          ],
+          undefined,
         ],
       ]
     `)
@@ -217,18 +297,16 @@ describe('matchModalities', () => {
     const rawSplits1 = [[500, 550, 550, 560, 560, 560, 560, 560, 560, 560, 560]]
     const rawSplits2 = [
       [550, 560],
-      [700, 730, 740, 750, 750, 750],
+      [700, 730, 740, 740, 740, 740, 750, 750, 750],
     ]
     expect(
-      matchModalities({ rawSplits1, rawSplits2 }).map((result) =>
-        result.map((d) => d?.data),
-      ),
+      matchModalities({
+        rawSplits1,
+        rawSplits2,
+      }).map((result) => result.map((d) => d?.data)),
     ).toEqual([
       [undefined, [550, 560]],
-      [
-        [500, 550, 550, 560, 560, 560, 560, 560, 560, 560, 560],
-        [700, 730, 740, 750, 750, 750],
-      ],
+      [rawSplits1[0], rawSplits2[1]],
     ])
   })
 })

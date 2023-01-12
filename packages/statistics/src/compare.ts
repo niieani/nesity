@@ -232,11 +232,18 @@ export const mergeComparisonsFromMultipleModalities = ({
   const discardedData2 = discardedModalities2.flat()
 
   const noise1 = discardedModalities1
-    .filter((d) => d.length <= minimalModalitySize)
+    .filter((d) => d.length < minimalModalitySize)
     .flat()
   const noise2 = discardedModalities2
-    .filter((d) => d.length <= minimalModalitySize)
+    .filter((d) => d.length < minimalModalitySize)
     .flat()
+
+  const modalityCount1 =
+    comparisons.length +
+    discardedModalities1.filter((d) => d.length >= minimalModalitySize).length
+  const modalityCount2 =
+    comparisons.length +
+    discardedModalities2.filter((d) => d.length >= minimalModalitySize).length
 
   if (comparisons.length === 1) {
     return {
@@ -367,6 +374,7 @@ export const mergeComparisonsFromMultipleModalities = ({
         (sum, c) => sum + c.data1.variance * c.weight1,
         0,
       ),
+      modalityCount: modalityCount1,
     },
     data2: {
       data: allUsedData2,
@@ -387,9 +395,10 @@ export const mergeComparisonsFromMultipleModalities = ({
         (sum, c) => sum + c.data2.variance * c.weight2,
         0,
       ),
+      modalityCount: modalityCount2,
     },
-    comparedModalities1: comparisons.map((c) => c.data1),
-    comparedModalities2: comparisons.map((c) => c.data2),
+    comparedModalities1: comparisonsWithWeights.map((c) => c.data1),
+    comparedModalities2: comparisonsWithWeights.map((c) => c.data2),
     discardedModalities1,
     discardedModalities2,
     mergedFromMultipleModalities: true,
@@ -820,7 +829,6 @@ export function compare({
           ) {
             return undefined
           }
-
           return comparison
         })
         const validComparisons = comparisons.filter(
@@ -984,31 +992,7 @@ export function compare({
           overallNoiseSizeBonusB * -noiseSizeBonusFactor
         // the more similar the stdevDifference and pooledStDev between the two, the better
 
-        // if (
-        //   comparisonA.data1.noiseCount === 2 &&
-        //   comparisonA.data2.noiseCount === 3
-        // ) {
-        //   console.log('this', comparisonA)
-        // }
-        // console.log({
-        //   // stdevDiffPenaltyA,
-        //   // overallDiscardedDataPenaltyA,
-        //   // pooledStdevPenaltyA,
-        //   overallNoiseSizeBonusA,
-        //   noiseSizeBonusA1,
-        //   noiseSizeBonusA2,
-        //   // maxNoise1: cache.maxNoiseCount1,
-        //   // maxNoise2: cache.maxNoiseCount2,
-        //   // noisea1: comparisonA.data1.noiseCount,
-        //   // noisea2: comparisonA.data2.noiseCount,
-
-        //   // stdevDiffPenaltyB,
-        //   // overallDiscardedDataPenaltyB,
-        //   // pooledStdevPenaltyB,
-        //   // overallNoiseSizeBonusB,
-        // })
         return [
-          // valueA < valueB ? -1 : valueA === 0 ? 0 : 1,
           valueA - valueB,
           // return lower first -- it will be one representing the ranking
           valueA < valueB ? comparisonA : comparisonB,
@@ -1107,8 +1091,10 @@ export function compare({
         denoiseSettings,
       }
     }
-    result.data1.modalityCount = splitMetadata1?.modalityCount
-    result.data2.modalityCount = splitMetadata2?.modalityCount
+    result.data1.modalityCount =
+      result.data1.modalityCount ?? splitMetadata1?.modalityCount ?? 1
+    result.data2.modalityCount =
+      result.data2.modalityCount ?? splitMetadata2?.modalityCount ?? 1
   }
 
   return {
