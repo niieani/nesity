@@ -1,6 +1,12 @@
 /* eslint-disable unicorn/prefer-native-coercion-functions */
 import ttest2 from '@stdlib/stats-ttest2'
-import { calcCL, calcCohensD, calcGaussOverlap, calcU3 } from './cohensd'
+import {
+  calcChangeProbability,
+  calcCL,
+  calcCohensD,
+  calcGaussOverlap,
+  calcU3,
+} from './cohensd'
 import type { GetSplitsReturnType } from './getSplits'
 import { getSplits } from './getSplits'
 import {
@@ -64,6 +70,8 @@ export const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
 export const DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR = 1
 export const DEFAULT_NOISE_SIZE_BONUS_FACTOR = 0.2
 export const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
+// matches Cohen's D of 0.5 (medium size change)
+export const DEFAULT_MINIMAL_ABSOLUTE_CHANGE_PROBABILITY = 0.276
 
 export const DEFAULT_CONFIDENCE_LEVEL = 0.95
 export const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
@@ -93,7 +101,7 @@ export function getEffectSizeStats({
   const overlappingCoefficient = calcGaussOverlap(cohensD)
   const nonOverlapMeasure = calcU3(cohensD)
   const probabilityOfSuperiority = calcCL(cohensD)
-  const changeProbability = probabilityOfSuperiority * 2 - 1
+  const changeProbability = calcChangeProbability(probabilityOfSuperiority)
   return {
     cohensD,
     overlappingCoefficient,
@@ -158,11 +166,17 @@ export function getOutcome(
     data1,
     data2,
     meanDifference,
+    effectSizeStats: { changeProbability, cohensD },
   }: {
     data1: number[]
     data2: number[]
     meanDifference: number
+    effectSizeStats: EffectSizeStats
   },
+  {
+    requireTwoSidedNullHypothesisRejection,
+    minimalAbsoluteChangeProbability,
+  }: InternalGetOutcomeOptions,
 ): { outcome: ComparisonOutcome; definitive: boolean } {
   const data1IsEqual = data1.every((d) => d === data1[0])
   const data2IsEqual = data2.every((d) => d === data2[0])
@@ -192,21 +206,28 @@ export function getOutcome(
     data1[0] === data2[0]
 
   // hypothesis: Actual difference in means is not equal to 0
-  const outcome = bothAreExactlyEqual
+  const tTestOutcome = bothAreExactlyEqual
     ? 'equal'
     : isTTestInvalid
     ? 'invalid'
     : // first is greater than second
-    greater.rejected
+    greater.rejected &&
+      (!requireTwoSidedNullHypothesisRejection || twoSided.rejected)
     ? 'less'
     : // first is less than second
-    less.rejected
+    less.rejected &&
+      (!requireTwoSidedNullHypothesisRejection || twoSided.rejected)
     ? 'greater'
     : twoSided.rejected
     ? Math.min(greater.pValue, less.pValue) === greater.pValue
       ? 'less'
       : 'greater'
     : 'similar'
+
+  const outcome =
+    Math.abs(changeProbability) < minimalAbsoluteChangeProbability
+      ? 'similar'
+      : tTestOutcome
 
   return { outcome, definitive: isTTestInvalid || bothAreExactlyEqual }
 }
@@ -229,12 +250,14 @@ export const mergeComparisonsFromMultipleModalities = ({
   minimalModalitySize = DEFAULT_MINIMAL_MODALITY_SIZE,
   discardedModalities1,
   discardedModalities2,
+  getOutcomeOptions,
 }: {
   comparisons: ComparisonResult[]
   confidenceLevel?: number
   minimalModalitySize?: number
   discardedModalities1: number[][]
   discardedModalities2: number[][]
+  getOutcomeOptions: InternalGetOutcomeOptions
 }): ComparisonResult => {
   if (comparisons.length === 0) {
     throw new Error('No comparisons to merge')
@@ -339,11 +362,7 @@ export const mergeComparisonsFromMultipleModalities = ({
 
   const allUsedData1 = comparisonsWithWeights.flatMap((c) => c.data1.data)
   const allUsedData2 = comparisonsWithWeights.flatMap((c) => c.data2.data)
-  const { outcome } = getOutcome(ttest, {
-    data1: allUsedData1,
-    data2: allUsedData2,
-    meanDifference: weightedMeanDifference,
-  })
+
   const effectSizeStats: EffectSizeStats = {
     cohensD: comparisonsWithWeights.reduce(
       (sum, c) => sum + c.effectSizeStats.cohensD * c.weight,
@@ -367,6 +386,16 @@ export const mergeComparisonsFromMultipleModalities = ({
     ),
   }
 
+  const { outcome } = getOutcome(
+    ttest,
+    {
+      data1: allUsedData1,
+      data2: allUsedData2,
+      meanDifference: weightedMeanDifference,
+      effectSizeStats,
+    },
+    getOutcomeOptions,
+  )
 
   const largestSampleSplitComparison = [...comparisonsWithWeights]
     .reverse()
@@ -454,6 +483,22 @@ export const mergeComparisonsFromMultipleModalities = ({
   }
 }
 
+export type GetOutcomeOptions = {
+  requireTwoSidedNullHypothesisRejection: boolean
+} & (
+  | {
+      minimalAbsoluteChangeProbability: number
+    }
+  | {
+      minimalCohensD: number
+    }
+)
+
+export interface InternalGetOutcomeOptions {
+  requireTwoSidedNullHypothesisRejection: boolean
+  minimalAbsoluteChangeProbability: number
+}
+
 export function compare({
   data1,
   data2,
@@ -478,6 +523,7 @@ export function compare({
   highMeanDistanceRatioPenaltyFactor = DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR,
   noiseSizeBonusFactor = DEFAULT_NOISE_SIZE_BONUS_FACTOR,
   outcomeFrequencyPValueAdjustmentFactor = DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR,
+  getOutcomeOptions: getOutcomeOptionsPartial = {},
 }: {
   data1: number[]
   data2: number[]
@@ -494,6 +540,7 @@ export function compare({
   highMeanDistanceRatioPenaltyFactor?: number
   noiseSizeBonusFactor?: number
   outcomeFrequencyPValueAdjustmentFactor?: number
+  getOutcomeOptions?: Partial<GetOutcomeOptions>
 } & OptimalThresholdConfigBase &
   Pick<
     SplitMultiModalDistributionConfig,
@@ -552,9 +599,28 @@ export function compare({
     }),
   ]
 
+  const effectSizeStats = getEffectSizeStats({
+    mean1,
+    mean2,
+    pooledStDev,
+    data1: sorted1,
+    data2: sorted2,
+  })
+
+  const getOutcomeOptions: InternalGetOutcomeOptions = {
+    minimalAbsoluteChangeProbability:
+      'minimalCohensD' in getOutcomeOptionsPartial &&
+      typeof getOutcomeOptionsPartial.minimalCohensD === 'number'
+        ? calcChangeProbability(getOutcomeOptionsPartial.minimalCohensD)
+        : DEFAULT_MINIMAL_ABSOLUTE_CHANGE_PROBABILITY,
+    requireTwoSidedNullHypothesisRejection: false,
+    ...getOutcomeOptionsPartial,
+  }
+
   const { outcome, definitive: definitiveOutcomeEstablished } = getOutcome(
     { twoSided, greater, less },
-    { meanDifference, data1, data2 },
+    { meanDifference, data1, data2, effectSizeStats },
+    getOutcomeOptions,
   )
 
   let result: ComparisonResult = {
@@ -563,6 +629,7 @@ export function compare({
     stdevDifference: stdev1 - stdev2,
     pooledVariance,
     pooledStDev,
+    effectSizeStats,
     ttest: {
       // how many standard deviations away from the mean of the distribution:
       tValue: twoSided.statistic,
@@ -862,6 +929,7 @@ export function compare({
               data2: d2,
               confidenceLevel,
               precisionDelta,
+              getOutcomeOptions,
             }),
           )
           const comparison = mergeComparisonsFromMultipleModalities({
@@ -869,6 +937,7 @@ export function compare({
             confidenceLevel,
             discardedModalities1,
             discardedModalities2,
+            getOutcomeOptions,
           })
           if (
             comparison.data1.dataCount / data1.length <
@@ -1128,11 +1197,16 @@ export function compare({
         ...(outcomeFrequenciesArray.length > 1
           ? {
               ttestAdjusted,
-              outcome: getOutcome(ttestAdjusted, {
-                data1: betterComparison.data1.data,
-                data2: betterComparison.data2.data,
-                meanDifference: betterComparison.meanDifference,
-              }).outcome,
+              outcome: getOutcome(
+                ttestAdjusted,
+                {
+                  data1: betterComparison.data1.data,
+                  data2: betterComparison.data2.data,
+                  meanDifference: betterComparison.meanDifference,
+                  effectSizeStats: betterComparison.effectSizeStats,
+                },
+                getOutcomeOptions,
+              ).outcome,
               outcomeFrequencies,
             }
           : {}),
@@ -1145,17 +1219,5 @@ export function compare({
     result.data2.modalityCount =
       result.data2.modalityCount ?? splitMetadata2?.modalityCount ?? 1
   }
-
-  return {
-    ...result,
-    // Calculate the effect size using Cohen's d;
-    // this is delayed to the last moment for performance
-    effectSize: getCohensDStats({
-      mean1: result.data1.mean,
-      mean2: result.data2.mean,
-      pooledStDev: result.pooledStDev,
-      data1: result.data1.data,
-      data2: result.data2.data,
-    }),
-  }
+  return result
 }

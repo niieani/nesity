@@ -14,16 +14,26 @@ export const calcGaussOverlap = (cohensD: number): number =>
 /**
  * Calculates the probability of superiority
  *
- * This is effect size with many names: common language effect size (CL), Area under the receiver operating characteristics (AUC) or just A for its non-parametric version (Ruscio & Mullen, 2012). It is meant to be more intuitive for persons without any training in statistics. The effect size gives the probability that a person picked at random from the treatment group will have a higher score than a person picked at random from the control group. Cohen’s d can be converted CL using the following formula (Ruscio, 2008)
+ * This is effect size with many names: common language effect size (CL),
+ * Area under the receiver operating characteristics (AUC) or just A for its non-parametric version (Ruscio & Mullen, 2012).
+ * It is meant to be more intuitive for persons without any training in statistics.
+ * The effect size gives the probability that a person picked at random from the treatment group
+ * will have a higher score than a person picked at random from the control group.
+ * Cohen’s d can be converted CL using the following formula (Ruscio, 2008)
  * CL=Φ(δ/√2)
  * where Φ is the cumulative distribution function of the standard normal distribution, and δ the population Cohen’s d.
  */
 export const calcCL = (cohensD: number): number =>
   normal.cdf(cohensD / Math.sqrt(2), 0, 1)
 
+export const calcChangeProbability = (
+  probabilityOfSuperiority: number,
+): number => probabilityOfSuperiority * 2 - 1
+
 /**
  * Cohen’s U₃
- * Cohen (1977) defined U3 as a measure of non-overlap, where “we take the percentage of the A population which the upper half of the cases of the Β population exceeds”.
+ * Cohen (1977) defined U3 as a measure of non-overlap, where “we take the percentage of the A population
+ * which the upper half of the cases of the Β population exceeds”.
  * Cohen’s d can be converted to Cohen’s U3 using the following formula
  * U₃=Φ(δ)
  * where Φ is the cumulative distribution function of the standard normal distribution, and δ the population Cohen’s d.
@@ -64,12 +74,17 @@ export const calcCohensD = ({
   mean2?: number
   pooledStDev?: number
   /**
-   * The constants 3 and 2.25 in the correction formula provided are related to the degrees of freedom of the t-distribution.
-   * It is worth noting that these constants are not universally accepted, and there is some debate about their appropriate use. It is always a good idea to carefully consider the assumptions underlying any correction that you apply, and to consider whether it is appropriate for your specific research context.
+   * The constants 3 and 2.25 in the correction formula are related to the degrees of freedom of the t-distribution.
+   * It is worth noting that these constants are not universally accepted, and there is some debate about their appropriate use.
+   * It is always a good idea to carefully consider the assumptions underlying any correction that you apply,
+   * and to consider whether it is appropriate for your specific research context.
+   * @default 50
    */
   correctForSmallSampleSizeWhenBelow?: number
 }): number => {
-  const n = utils.harmonicMean(n1, n2)
+  // n is only used for purposes of correction for small sample size, it cannot be lower than 4
+  // eslint-disable-next-line no-magic-numbers
+  const n = Math.max(utils.harmonicMean(n1, n2), 4)
   const cohensD = (mean1 - mean2) / pooledStDev
   if (n < correctForSmallSampleSizeWhenBelow) {
     const correctionFactorForSmallSampleSize =
