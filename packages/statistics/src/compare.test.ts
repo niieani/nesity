@@ -96,7 +96,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 128.47764545139034,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": 0.07462758875961048,
           "nonOverlapMeasure": 0.5297444886655136,
           "overlappingCoefficient": 0.9702348068281813,
@@ -316,7 +316,7 @@ describe('compare', () => {
             198.564,
           ],
         ],
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": 0.013383243968940767,
           "nonOverlapMeasure": 0.505338982489052,
           "overlappingCoefficient": 0.9946608979774366,
@@ -537,7 +537,7 @@ describe('compare', () => {
             3434.452,
           ],
         ],
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": 0.01717674138178567,
           "nonOverlapMeasure": 0.5068521914294575,
           "overlappingCoefficient": 0.9931475558628949,
@@ -680,7 +680,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 312.1875018910312,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0.35177594218517105,
           "nonOverlapMeasure": 0.3625031510819295,
           "overlappingCoefficient": 0.8603819557030646,
@@ -891,7 +891,7 @@ describe('compare', () => {
         },
         "discardedModalities1": Array [],
         "discardedModalities2": Array [],
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -2.3388505179729644,
           "nonOverlapMeasure": 0.00967158557477793,
           "overlappingCoefficient": 0.24223233796328647,
@@ -1111,7 +1111,7 @@ describe('compare', () => {
             102.28,
           ],
         ],
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -9.296895627936468,
           "nonOverlapMeasure": 0,
           "overlappingCoefficient": 0.000003344422098261468,
@@ -1253,7 +1253,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 117.00142369724773,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": 0.007702892446609495,
           "nonOverlapMeasure": 0.5030729790893343,
           "overlappingCoefficient": 0.9969269981189638,
@@ -1462,7 +1462,7 @@ describe('compare', () => {
         },
         "discardedModalities1": Array [],
         "discardedModalities2": Array [],
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0.11133343920996386,
           "nonOverlapMeasure": 0.45567596978574065,
           "overlappingCoefficient": 0.9556073122824297,
@@ -1586,7 +1586,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 354.7947910506342,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": 0.18467931381003283,
           "nonOverlapMeasure": 0.5732597138716617,
           "overlappingCoefficient": 0.9264281812921558,
@@ -1707,7 +1707,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 377.4615563315411,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0.5864643643728225,
           "nonOverlapMeasure": 0.2787817510409292,
           "overlappingCoefficient": 0.7693446868577472,
@@ -1794,7 +1794,7 @@ describe('compare', () => {
           "stdev": 16.1213275042721,
           "variance": 259.89720050000005,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0,
           "nonOverlapMeasure": 0.5,
           "overlappingCoefficient": 1,
@@ -1875,7 +1875,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": NaN,
           "nonOverlapMeasure": NaN,
           "overlappingCoefficient": NaN,
@@ -1956,7 +1956,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": NaN,
           "nonOverlapMeasure": NaN,
           "overlappingCoefficient": NaN,
@@ -2039,7 +2039,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": NaN,
           "nonOverlapMeasure": NaN,
           "overlappingCoefficient": NaN,
@@ -2122,7 +2122,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": NaN,
           "nonOverlapMeasure": NaN,
           "overlappingCoefficient": NaN,
@@ -2207,7 +2207,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": NaN,
           "nonOverlapMeasure": NaN,
           "overlappingCoefficient": NaN,
@@ -2294,7 +2294,7 @@ describe('compare', () => {
           "stdev": 0,
           "variance": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -Infinity,
           "nonOverlapMeasure": 0,
           "overlappingCoefficient": 0,
@@ -2377,7 +2377,7 @@ describe('compare', () => {
           "stdev": 0.7071067811865476,
           "variance": 0.5,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0,
           "nonOverlapMeasure": 0.5,
           "overlappingCoefficient": 1,
@@ -2473,7 +2473,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 1,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -0,
           "nonOverlapMeasure": 0.5,
           "overlappingCoefficient": 1,
@@ -2571,7 +2571,7 @@ describe('compare', () => {
           "shouldSplit2": true,
           "threshold": 0,
         },
-        "effectSize": Object {
+        "effectSizeStats": Object {
           "cohensD": -44.926606816006036,
           "nonOverlapMeasure": 0,
           "overlappingCoefficient": 0,

@@ -39,15 +39,10 @@ export interface ComparisonResult {
   pooledStDev: number
   data1: SampleStatistics
   data2: SampleStatistics
+  effectSizeStats: EffectSizeStats
   // present when denoising:
   originalResult?: ComparisonResult
   denoiseSettings?: DenoiseSettings
-  effectSize?: {
-    cohensD: number
-    overlappingCoefficient: number
-    probabilityOfSuperiority: number
-    nonOverlapMeasure: number
-  }
   // present when multimodal
   comparedModalities1?: SampleStatistics[]
   comparedModalities2?: SampleStatistics[]
@@ -73,7 +68,15 @@ export const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
 export const DEFAULT_CONFIDENCE_LEVEL = 0.95
 export const DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO = 0.8
 
-function getCohensDStats({
+export interface EffectSizeStats {
+  cohensD: number
+  overlappingCoefficient: number
+  probabilityOfSuperiority: number
+  nonOverlapMeasure: number
+  changeProbability: number
+}
+
+export function getEffectSizeStats({
   mean1,
   mean2,
   pooledStDev,
@@ -85,16 +88,18 @@ function getCohensDStats({
   pooledStDev: number
   data1: number[]
   data2: number[]
-}) {
+}): EffectSizeStats {
   const cohensD = calcCohensD({ mean1, mean2, pooledStDev, data1, data2 })
   const overlappingCoefficient = calcGaussOverlap(cohensD)
-  const probabilityOfSuperiority = calcCL(cohensD)
   const nonOverlapMeasure = calcU3(cohensD)
+  const probabilityOfSuperiority = calcCL(cohensD)
+  const changeProbability = probabilityOfSuperiority * 2 - 1
   return {
     cohensD,
     overlappingCoefficient,
-    probabilityOfSuperiority,
     nonOverlapMeasure,
+    probabilityOfSuperiority,
+    changeProbability,
   }
 }
 
@@ -339,6 +344,29 @@ export const mergeComparisonsFromMultipleModalities = ({
     data2: allUsedData2,
     meanDifference: weightedMeanDifference,
   })
+  const effectSizeStats: EffectSizeStats = {
+    cohensD: comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.effectSizeStats.cohensD * c.weight,
+      0,
+    ),
+    nonOverlapMeasure: comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.effectSizeStats.nonOverlapMeasure * c.weight,
+      0,
+    ),
+    overlappingCoefficient: comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.effectSizeStats.overlappingCoefficient * c.weight,
+      0,
+    ),
+    probabilityOfSuperiority: comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.effectSizeStats.probabilityOfSuperiority * c.weight,
+      0,
+    ),
+    changeProbability: comparisonsWithWeights.reduce(
+      (sum, c) => sum + c.effectSizeStats.changeProbability * c.weight,
+      0,
+    ),
+  }
+
 
   const largestSampleSplitComparison = [...comparisonsWithWeights]
     .reverse()
@@ -367,6 +395,7 @@ export const mergeComparisonsFromMultipleModalities = ({
     stdevDifference: stdev1 - stdev2,
     pooledVariance: weightedPooledVariance,
     pooledStDev: weightedPooledStDev,
+    effectSizeStats,
     data1: {
       data: allUsedData1,
       discardedCount: discardedData1.length,
