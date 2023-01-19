@@ -938,6 +938,7 @@ export function compare({
             discardedModalities1,
             discardedModalities2,
             getOutcomeOptions,
+            minimalModalitySize,
           })
           if (
             comparison.data1.dataCount / data1.length <
