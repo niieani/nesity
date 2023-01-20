@@ -69,6 +69,7 @@ export const DEFAULT_DISCARDED_DATA_PENALTY_FACTOR = 0.5
 export const DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR = 1
 export const DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR = 1
 export const DEFAULT_NOISE_SIZE_BONUS_FACTOR = 0.2
+export const DEFAULT_MODALITY_COUNT_SIMILARITY_BONUS_FACTOR = 1
 export const DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR = 0.5
 // matches Cohen's D of 0.5 (medium size change)
 export const DEFAULT_MINIMAL_ABSOLUTE_CHANGE_PROBABILITY = 0.276
@@ -522,6 +523,7 @@ export function compare({
   highPooledStdevPenaltyFactor = DEFAULT_HIGH_POOLED_STDEV_PENALTY_FACTOR,
   highMeanDistanceRatioPenaltyFactor = DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR,
   noiseSizeBonusFactor = DEFAULT_NOISE_SIZE_BONUS_FACTOR,
+  modalityCountSimilarityBonusFactor = DEFAULT_MODALITY_COUNT_SIMILARITY_BONUS_FACTOR,
   outcomeFrequencyPValueAdjustmentFactor = DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR,
   getOutcomeOptions: getOutcomeOptionsPartial = {},
 }: {
@@ -539,6 +541,7 @@ export function compare({
   highPooledStdevPenaltyFactor?: number
   highMeanDistanceRatioPenaltyFactor?: number
   noiseSizeBonusFactor?: number
+  modalityCountSimilarityBonusFactor?: number
   outcomeFrequencyPValueAdjustmentFactor?: number
   getOutcomeOptions?: Partial<GetOutcomeOptions>
 } & OptimalThresholdConfigBase &
@@ -1042,6 +1045,25 @@ export function compare({
             ? 0
             : (comparisonB.data2.noiseCount ?? 0) / cache.maxNoiseCount2
 
+        const modalitySimilarityBonusA =
+          Math.min(
+            comparisonA.data1.modalityCount ?? 1,
+            comparisonA.data2.modalityCount ?? 1,
+          ) /
+          Math.max(
+            comparisonA.data1.modalityCount ?? 1,
+            comparisonA.data2.modalityCount ?? 1,
+          )
+        const modalitySimilarityBonusB =
+          Math.min(
+            comparisonB.data1.modalityCount ?? 1,
+            comparisonB.data2.modalityCount ?? 1,
+          ) /
+          Math.max(
+            comparisonB.data1.modalityCount ?? 1,
+            comparisonB.data2.modalityCount ?? 1,
+          )
+
         // penalty for larger distances
         const meanDistanceRatioPenaltyA1 =
           cache.maxMeanDistance1 === 0
@@ -1102,13 +1124,15 @@ export function compare({
           overallDiscardedDataPenaltyA * discardedDataPenaltyFactor +
           pooledStdevPenaltyA * highPooledStdevPenaltyFactor +
           overallMeanDistancePenaltyA * highMeanDistanceRatioPenaltyFactor +
-          overallNoiseSizeBonusA * -noiseSizeBonusFactor
+          overallNoiseSizeBonusA * -noiseSizeBonusFactor +
+          modalitySimilarityBonusA * -modalityCountSimilarityBonusFactor
         const valueB =
           stdevDiffPenaltyB * stdevDiffPenaltyFactor +
           overallDiscardedDataPenaltyB * discardedDataPenaltyFactor +
           pooledStdevPenaltyB * highPooledStdevPenaltyFactor +
           overallMeanDistancePenaltyB * highMeanDistanceRatioPenaltyFactor +
-          overallNoiseSizeBonusB * -noiseSizeBonusFactor
+          overallNoiseSizeBonusB * -noiseSizeBonusFactor +
+          modalitySimilarityBonusB * -modalityCountSimilarityBonusFactor
         // the more similar the stdevDifference and pooledStDev between the two, the better
 
         return [

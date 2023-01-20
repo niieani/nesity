@@ -2819,7 +2819,7 @@ describe('compare', () => {
           "discardedData": Array [],
           "mean": 2529.589428904114,
           "meanDistanceRatio": 1.0222824791747493,
-          "modalityCount": 3,
+          "modalityCount": 1,
           "noiseCount": 0,
           "normalityProbability": 0.9995866634550169,
           "stdev": 698.7827070362189,
@@ -2880,11 +2880,11 @@ describe('compare', () => {
           "variance": 332707.9915771552,
         },
         "denoiseSettings": Object {
-          "bandwidth": 248.2344927135532,
+          "bandwidth": 300.72716490786166,
           "kernelStretchFactor": 0.8,
-          "shouldSplit1": true,
+          "shouldSplit1": false,
           "shouldSplit2": true,
-          "threshold": 576.8084531082699,
+          "threshold": 698.7827070362189,
         },
         "effectSizeStats": Object {
           "changeProbability": -0.15176204072051402,
