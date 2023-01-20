@@ -1,4 +1,7 @@
+import { REAL_WORLD_DATA_12_SIMILAR_3_MODES } from './__fixtures__/testSamples'
 import {
+  consecutiveRatios,
+  findSharpChangeQuantile,
   histogramBy,
   mostCommonBy,
   pooledVariance,
@@ -76,5 +79,69 @@ describe('histogramBy', () => {
   it('returns an empty array if the iterable is empty', () => {
     const histogram = histogramBy([], (i) => i)
     expect(histogram).toEqual([])
+  })
+})
+
+describe('findSharpChangeQuantile', () => {
+  it('should find the quantile that has the sharpest change in value', () => {
+    const data = REAL_WORLD_DATA_12_SIMILAR_3_MODES.data2
+    const ratios = consecutiveRatios(data)
+    const sharpChangeQuantile = findSharpChangeQuantile({ data: ratios })
+    expect(sharpChangeQuantile).toMatchInlineSnapshot(`
+      Object {
+        "q": 0.94,
+        "qMinusDeltaValue": 1.065615423365112,
+        "qValue": 1.0943418345907685,
+      }
+    `)
+  })
+})
+
+describe('consecutiveRatios', () => {
+  it('should calculate the ratios between consecutive numbers', () => {
+    const data = REAL_WORLD_DATA_12_SIMILAR_3_MODES.data2
+    expect(consecutiveRatios(data)).toMatchInlineSnapshot(`
+      Array [
+        1.0257721925660277,
+        1.018988889421454,
+        1.0399128449000516,
+        1.0013032258840187,
+        1.0032886338832736,
+        1.01636094808713,
+        1.1770338270482994,
+        1.118276750888153,
+        1.017476687887295,
+        1.0239222269713282,
+        1.0136538439986997,
+        1.001826524686173,
+        1.0012602393601635,
+        1.0185055210302212,
+        1.0012765251064293,
+        1.0168708109294389,
+        1.0025702633976896,
+        1.0008058446121777,
+        1.0044255065166816,
+        1.0039207901720424,
+        1.0018080289165396,
+        1.00830842641711,
+        1.0061224645001088,
+        1.0042519891222828,
+        1.0166743596870176,
+        1.0217532962782143,
+        1.0158548650319004,
+        1.1155086639149363,
+        1.0199063704506492,
+        1.0018534632889835,
+        1.0031031742734073,
+        1.0134195744725834,
+        1.0232038974467164,
+        1.003669584194443,
+        1.0027957022478515,
+        1.0016149239008212,
+        1.0025050004055724,
+        1.013040698898338,
+        1.0381375413445995,
+      ]
+    `)
   })
 })
