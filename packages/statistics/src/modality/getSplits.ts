@@ -1,8 +1,8 @@
-import { DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO } from './compare'
+import { DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO } from '../compare'
 import {
-  splitMultimodalDistribution,
   SplitMultiModalDistributionConfig,
-} from './splitMultimodalDistribution'
+  splitMultimodalDistributionUsingKernelDensityEstimation,
+} from './splitMultimodalDistributionWithKDE'
 
 export interface GetSplitsReturnType {
   rawSplitsSortedBySize: readonly number[][]
@@ -51,7 +51,10 @@ export function getSplits({
     getThreshold: () => threshold,
     iterations,
   }
-  const rawSplits = splitMultimodalDistribution({ sortedData, ...common })
+  const rawSplits = splitMultimodalDistributionUsingKernelDensityEstimation({
+    sortedData,
+    ...common,
+  })
   const rawSplitsSortedBySize = [...rawSplits].sort(
     (a, b) => b.length - a.length,
   )

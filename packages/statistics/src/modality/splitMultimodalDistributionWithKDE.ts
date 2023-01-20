@@ -4,8 +4,8 @@ import {
   KernelDensityEstimateConfig,
   KernelDensityEstimateConfigBase,
   optimalThreshold,
-} from './kernelDensityEstimate'
-import * as utilities from './utilities'
+} from '../kernelDensityEstimate'
+import * as utilities from '../utilities'
 
 export interface SplitMultiModalDistributionConfigBase
   extends KernelDensityEstimateConfigBase {
@@ -28,7 +28,7 @@ export type NoiseOptions = Pick<
 >
 
 export function getLocalMaxima(config: KernelDensityEstimateConfig): number[] {
-  const { data, sortedData = utilities.sort(data!) } = config
+  const { data, sortedData = utilities.sort(data) } = config
   const dataLength = sortedData.length
   const kde = kernelDensityEstimate({
     sortedData,
@@ -114,7 +114,7 @@ function getSplitIndexes({
  * Uses kernel density estimation for multimodal distribution detection.
  * See http://adereth.github.io/blog/2014/10/12/silvermans-mode-detection-method-explained/
  */
-export function splitMultimodalDistribution(
+export function splitMultimodalDistributionUsingKernelDensityEstimation(
   config: SplitMultiModalDistributionConfig,
 ): number[][] {
   const {

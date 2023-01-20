@@ -1,6 +1,6 @@
+import * as ratioTransformation from '../ratioTransformation'
+import * as utils from '../utilities'
 import type { GetSplitsReturnType } from './getSplits'
-import * as ratioTransformation from './ratioTransformation'
-import * as utils from './utilities'
 
 export interface MappedSplit {
   data: number[]

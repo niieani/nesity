@@ -12,9 +12,9 @@ import {
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
   UNIMODAL_SAMPLE_REAL,
-} from './__fixtures__/testSamples'
-import { splitMultimodalDistribution } from './splitMultimodalDistribution'
-import * as utilities from './utilities'
+} from '../__fixtures__/testSamples'
+import * as utilities from '../utilities'
+import { splitMultimodalDistributionUsingKernelDensityEstimation } from './splitMultimodalDistributionWithKDE'
 
 const random = utilities.getStableRandom()
 
@@ -23,7 +23,7 @@ describe.each([0, 1, 2, 3])(
   (noiseValuesPerSample) => {
     it('keeps a unimodal dataset unchanged', () => {
       expect(
-        splitMultimodalDistribution({
+        splitMultimodalDistributionUsingKernelDensityEstimation({
           data: UNIMODAL_SAMPLE,
           noiseValuesPerSample,
           random,
@@ -33,7 +33,7 @@ describe.each([0, 1, 2, 3])(
 
     it('keeps a unimodal normally distributed dataset unchanged', () => {
       expect(
-        splitMultimodalDistribution({
+        splitMultimodalDistributionUsingKernelDensityEstimation({
           data: UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
           noiseValuesPerSample,
           random,
@@ -43,7 +43,7 @@ describe.each([0, 1, 2, 3])(
 
     it('keeps another unimodal normally distributed dataset unchanged', () => {
       expect(
-        splitMultimodalDistribution({
+        splitMultimodalDistributionUsingKernelDensityEstimation({
           data: UNIMODAL_SAMPLE_REAL,
           noiseValuesPerSample,
           random,
@@ -53,7 +53,7 @@ describe.each([0, 1, 2, 3])(
 
     it('splits a bimodal dataset into unimodal datasets', () => {
       expect(
-        splitMultimodalDistribution({
+        splitMultimodalDistributionUsingKernelDensityEstimation({
           data: BIMODAL_SAMPLE,
           noiseValuesPerSample,
           random,
@@ -62,7 +62,7 @@ describe.each([0, 1, 2, 3])(
     })
 
     it('splits a multimodal dataset into unimodal datasets', () => {
-      const result = splitMultimodalDistribution({
+      const result = splitMultimodalDistributionUsingKernelDensityEstimation({
         data: MULTIMODAL_SAMPLE,
         noiseValuesPerSample,
         random,
@@ -76,7 +76,7 @@ describe.each([0, 1, 2, 3])(
     })
 
     it('splits a multimodal dataset with a heavy beginning into unimodal datasets', () => {
-      const result = splitMultimodalDistribution({
+      const result = splitMultimodalDistributionUsingKernelDensityEstimation({
         data: MULTIMODAL_SAMPLE_HEAVY_BEGINNING,
         noiseValuesPerSample,
         random,
@@ -93,7 +93,7 @@ describe.each([0, 1, 2, 3])(
 
 describe('difficult splits', () => {
   it('splits a multimodal dataset with a heavy beginning into unimodal datasets (2)', () => {
-    const result = splitMultimodalDistribution({
+    const result = splitMultimodalDistributionUsingKernelDensityEstimation({
       data: REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2,
       noiseValuesPerSample: 3,
       random,

@@ -7,17 +7,17 @@ import {
   calcGaussOverlap,
   calcU3,
 } from './cohensd'
-import type { GetSplitsReturnType } from './getSplits'
-import { getSplits } from './getSplits'
 import {
   calculateSilvermansRuleOfThumbBandwidth,
   optimalThreshold,
   OptimalThresholdConfigBase,
 } from './kernelDensityEstimate'
-import { getMatchedUsableModalities } from './matchModalities'
+import type { GetSplitsReturnType } from './modality/getSplits'
+import { getSplits } from './modality/getSplits'
+import { getMatchedUsableModalities } from './modality/matchModalities'
+import type { SplitMultiModalDistributionConfig } from './modality/splitMultimodalDistributionWithKDE'
 import { calcShapiroWilk } from './normality'
 import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
-import type { SplitMultiModalDistributionConfig } from './splitMultimodalDistribution'
 import * as utils from './utilities'
 
 export interface AllTTests {
