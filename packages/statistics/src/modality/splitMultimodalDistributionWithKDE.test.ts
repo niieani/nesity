@@ -125,11 +125,6 @@ describe('difficult splits', () => {
         ],
       ]
     `)
-    // expect(result).toHaveLength(3)
-    // expect(result).toEqual([
-    //   [...MULTIMODAL_SAMPLE_BEGINNING, ...MULTIMODAL_SAMPLE_1],
-    //   MULTIMODAL_SAMPLE_2,
-    //   MULTIMODAL_SAMPLE_3,
-    // ])
+    expect(result).toHaveLength(3)
   })
 })

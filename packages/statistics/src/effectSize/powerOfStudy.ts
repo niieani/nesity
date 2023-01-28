@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { normal } from 'jstat'
-import { uniroot } from './vendor/uniroot'
+import { uniroot } from '../vendor/uniroot'
 
 type TailType = 'one-tailed' | 'two-tailed'
 

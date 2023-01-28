@@ -28,7 +28,7 @@ export type NoiseOptions = Pick<
 >
 
 export function getLocalMaxima(config: KernelDensityEstimateConfig): number[] {
-  const { data, sortedData = utilities.sort(data) } = config
+  const { data, sortedData = utilities.sort(data!) } = config
   const dataLength = sortedData.length
   const kde = kernelDensityEstimate({
     sortedData,

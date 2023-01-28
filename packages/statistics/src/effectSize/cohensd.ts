@@ -1,5 +1,5 @@
 import { normal } from 'jstat'
-import * as utils from './utilities'
+import * as utils from '../utilities'
 
 /**
  * Overlap

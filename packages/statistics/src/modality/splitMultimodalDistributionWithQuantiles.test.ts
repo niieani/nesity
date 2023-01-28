@@ -134,6 +134,80 @@ describe('splitMultimodalDistribution', () => {
 })
 
 describe('difficult splits', () => {
+  it('removes noisy end of a dataset', () => {
+    const result = splitMultimodalDistribution({
+      data: [...REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2, 5_500],
+    })
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          544.7000000001863,
+          557.5,
+          567.0999999999767,
+          575.3000000000466,
+          592.8999999999069,
+          609.7000000000116,
+          621.5,
+          648.2000000000698,
+          686.0999999999767,
+        ],
+        Array [
+          779.1000000000931,
+          784.9000000000233,
+        ],
+        Array [
+          1314,
+        ],
+        Array [
+          1854.8000000000466,
+          1911.9000000000233,
+          1930.6999999999534,
+          1995.4000000000233,
+        ],
+        Array [
+          5500,
+        ],
+      ]
+    `)
+  })
+
+  it('removes noisy end of a dataset 2', () => {
+    const result = splitMultimodalDistribution({
+      data: [...REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2, 3_500],
+    })
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        Array [
+          544.7000000001863,
+          557.5,
+          567.0999999999767,
+          575.3000000000466,
+          592.8999999999069,
+          609.7000000000116,
+          621.5,
+          648.2000000000698,
+          686.0999999999767,
+        ],
+        Array [
+          779.1000000000931,
+          784.9000000000233,
+        ],
+        Array [
+          1314,
+        ],
+        Array [
+          1854.8000000000466,
+          1911.9000000000233,
+          1930.6999999999534,
+          1995.4000000000233,
+        ],
+        Array [
+          3500,
+        ],
+      ]
+    `)
+  })
+
   it('splits a multimodal dataset with a heavy beginning into unimodal datasets (2)', () => {
     const result = splitMultimodalDistribution({
       data: REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2,
@@ -150,6 +224,8 @@ describe('difficult splits', () => {
           621.5,
           648.2000000000698,
           686.0999999999767,
+        ],
+        Array [
           779.1000000000931,
           784.9000000000233,
         ],
@@ -164,6 +240,6 @@ describe('difficult splits', () => {
         ],
       ]
     `)
-    expect(result).toHaveLength(3)
+    expect(result).toHaveLength(4)
   })
 })
