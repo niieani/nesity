@@ -1,6 +1,6 @@
+import * as ratioTransformation from '../ratioTransformation'
+import * as utils from '../utilities'
 import type { GetSplitsReturnType } from './getSplits'
-import * as ratioTransformation from './ratioTransformation'
-import * as utils from './utilities'
 
 export interface MappedSplit {
   data: number[]
@@ -43,6 +43,15 @@ export const getPrioritizationSizeRatio = (
     // eslint-disable-next-line no-magic-numbers
     1.5
 
+/**
+ * Used to match the modalities of two datasets by their means.
+ * The function will prioritize modalities with similar number of samples, and will try to match them by their means.
+ * You may adjust how the modalities are prioritized using the following parameters:
+ *
+ * `meanDistanceWeight` - the weight of the mean distance in the comparison
+ * `sizeRatioWeight` - the weight of the sample size ratio in the comparison
+ * `prioritizeSizeRatioAbove` - prioritize modalities with a sample size ratio above this value
+ */
 export function matchModalities({
   rawSplits1,
   rawSplits2,

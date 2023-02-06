@@ -106,6 +106,37 @@ export function interQuartileRange({
   return q3 - q1
 }
 
+export const DEFAULT_QUANTILE_PRECISION_DELTA = 0.01
+export const findSharpChangeQuantile = ({
+  data,
+  sortedData = sort(data!),
+  precisionDelta = DEFAULT_QUANTILE_PRECISION_DELTA,
+  lowestTestedQuantile = 0,
+}: DataOrSortedData & {
+  precisionDelta?: number
+  lowestTestedQuantile?: number
+}) => {
+  if (precisionDelta >= 1) {
+    throw new Error('precisionDelta must be less than 1')
+  }
+  const quantiles = Array.from(
+    { length: (1 - lowestTestedQuantile) / precisionDelta },
+    (_, i) => {
+      const q = 1 - i * precisionDelta
+      return quantile({ sortedData, q })
+    },
+  )
+  const quantileDistances = distances(quantiles).map(Math.abs)
+  const maximumDistance = Math.max(...quantileDistances)
+  const maximumDistanceIndex = quantileDistances.indexOf(maximumDistance)
+  const sharpestChangeQuantile = 1 - maximumDistanceIndex * precisionDelta
+  return {
+    q: sharpestChangeQuantile,
+    qValue: quantiles[maximumDistanceIndex]!,
+    qMinusDeltaValue: quantiles[maximumDistanceIndex + 1],
+  }
+}
+
 export const getStableRandom = (seed: number = 1) =>
   function stableRandom() {
     // eslint-disable-next-line no-param-reassign
