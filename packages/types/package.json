@@ -1,0 +1,81 @@
+{
+  "name": "nesity-types",
+  "bugs": {
+    "url": "https://github.com/niieani/nesity/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niieani/nesity.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": [
+    "typescript",
+    "strict"
+  ],
+  "author": "Bazyli Brzoska <npm@invent.life> (https://invent.life)",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./esm/main.js",
+      "require": "./cjs/main.js",
+      "types": "./src/main.ts"
+    },
+    "./*": {
+      "import": "./esm/*.js",
+      "require": "./cjs/*.js",
+      "types": "./src/*.ts"
+    },
+    "./cjs": {
+      "require": "./cjs/main.js",
+      "types": "./src/main.ts"
+    },
+    "./cjs/*": {
+      "require": "./cjs/*.js",
+      "types": "./src/*.ts"
+    },
+    "./esm/*": {
+      "import": "./esm/*.js",
+      "types": "./src/*.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "cjs/main.js",
+  "module": "esm/main.js",
+  "source": "src/main.ts",
+  "files": [
+    "cjs",
+    "esm",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "rrun": "rrun"
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "master",
+      {
+        "name": "main",
+        "channel": false
+      },
+      "next",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ]
+  },
+  "devDependencies": {
+    "expect-type": "^0.15.0"
+  }
+}

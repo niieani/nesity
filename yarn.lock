@@ -9631,6 +9631,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expect-type@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "expect-type@npm:0.15.0"
+  checksum: f5d3733bb593d9f7cf302b393e34b19389fb7022d72963815e9a847a9517b65201faef733dd9006bed9e200486d77204fd958c8d29ef58b466bed2da076fc0ba
+  languageName: node
+  linkType: hard
+
 "expect@npm:^28.0.0, expect@npm:^28.1.3":
   version: 28.1.3
   resolution: "expect@npm:28.1.3"
@@ -12942,6 +12949,14 @@ __metadata:
     asciichart: ^1.5.25
     jerzy: ^0.2.1
     jstat: ^1.9.6
+  languageName: unknown
+  linkType: soft
+
+"nesity-types@workspace:packages/types":
+  version: 0.0.0-use.local
+  resolution: "nesity-types@workspace:packages/types"
+  dependencies:
+    expect-type: ^0.15.0
   languageName: unknown
   linkType: soft
 
