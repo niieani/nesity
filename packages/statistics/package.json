@@ -11,6 +11,7 @@
   "engines": {
     "node": ">=16"
   },
+  "type": "module",
   "keywords": [
     "statistics",
     "kde",
@@ -57,7 +58,8 @@
     "access": "public"
   },
   "scripts": {
-    "rrun": "rrun"
+    "rrun": "rrun",
+    "create-cjs-stub-package": "echo '{\"type\": \"commonjs\"}' > cjs/package.json"
   },
   "release": {
     "branches": [
@@ -79,14 +81,14 @@
     ]
   },
   "dependencies": {
-    "@stdlib/stats-kstest": "^0.0.7",
-    "@stdlib/stats-ttest2": "^0.0.7",
+    "@stdlib/stats-kstest": "^0.1.0",
+    "@stdlib/stats-ttest2": "^0.1.0",
     "jerzy": "^0.2.1",
     "jstat": "^1.9.6"
   },
   "devDependencies": {
-    "@niieani/scaffold": "^1.5.22",
-    "@types/asciichart": "^1",
+    "@niieani/scaffold": "^1.7.11",
+    "@types/asciichart": "^1.5.8",
     "asciichart": "^1.5.25"
   }
 }

@@ -11,6 +11,7 @@
   "engines": {
     "node": ">=16"
   },
+  "type": "module",
   "keywords": [
     "typescript",
     "strict"
@@ -54,7 +55,8 @@
     "access": "public"
   },
   "scripts": {
-    "rrun": "rrun"
+    "rrun": "rrun",
+    "create-cjs-stub-package": "echo '{\"type\": \"commonjs\"}' > cjs/package.json"
   },
   "release": {
     "branches": [
@@ -76,6 +78,6 @@
     ]
   },
   "devDependencies": {
-    "expect-type": "^0.15.0"
+    "expect-type": "^0.17.3"
   }
 }

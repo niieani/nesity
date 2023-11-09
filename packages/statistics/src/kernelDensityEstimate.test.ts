@@ -5,12 +5,12 @@ import {
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
   UNIMODAL_SAMPLE_REAL,
-} from './__fixtures__/testSamples'
+} from './__fixtures__/testSamples.js'
 import {
   kernelDensityEstimate,
   optimalThreshold,
-} from './kernelDensityEstimate'
-import { asPlot } from './testPlottingHelpers'
+} from './kernelDensityEstimate.js'
+import { asPlot } from './testPlottingHelpers.js'
 
 describe('kernelDensityEstimateForNormalDistribution', () => {
   it('should correctly calculate the KDE', () => {
@@ -19,7 +19,7 @@ describe('kernelDensityEstimateForNormalDistribution', () => {
       sortedData: data,
     })
     expect(densityEstimate).toMatchInlineSnapshot(`
-      Array [
+      [
         0.05190959710900418,
         0.05190959710900418,
         0.05965428920481614,

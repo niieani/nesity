@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import,import/no-extraneous-dependencies
 import { expectTypeOf } from 'expect-type'
-import { fromEntries } from './fromEntries'
+import { fromEntries } from './fromEntries.js'
 
 // const tuples:
 const obj1 = fromEntries([

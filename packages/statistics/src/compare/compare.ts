@@ -1,34 +1,34 @@
 import ttest2 from '@stdlib/stats-ttest2'
-import { calcChangeProbability } from '../effectSize/cohensd'
-import { getEffectSizeStats } from '../effectSize/effectSizeStats'
-import type { GetSplitsReturnType } from '../modality/getSplits'
-import { calcShapiroWilk } from '../normality'
-import type { OptimizationResult } from '../optimize'
-import * as utils from '../utilities'
-import type { ComparisonQualityWeightingOptions } from './compareSplitPermutations'
+import { calcChangeProbability } from '../effectSize/cohensd.js'
+import { getEffectSizeStats } from '../effectSize/effectSizeStats.js'
+import type { GetSplitsReturnType } from '../modality/getSplits.js'
+import { calcShapiroWilk } from '../normality.js'
+import type { OptimizationResult } from '../optimize.js'
+import * as utils from '../utilities.js'
+import type { ComparisonQualityWeightingOptions } from './compareSplitPermutations.js'
 import {
   compareWithKDEDenoising,
   KDEOptimizationParameters,
-} from './compareWithKDEDenoising'
+} from './compareWithKDEDenoising.js'
 import {
   compareWithQuantileDenoising,
   QuantileOptimizationParameters,
-} from './compareWithQuantileDenoising'
+} from './compareWithQuantileDenoising.js'
 import {
   DEFAULT_CONFIDENCE_LEVEL,
   DEFAULT_MINIMAL_ABSOLUTE_CHANGE_PROBABILITY,
   DEFAULT_MINIMAL_MODALITY_SIZE,
   DEFAULT_MINIMUM_USED_TO_TOTAL_SAMPLES_RATIO,
   DEFAULT_OUTCOME_FREQUENCY_PVALUE_ADJUSTMENT_FACTOR,
-} from './defaults'
-import { getOutcome } from './getOutcome'
+} from './defaults.js'
+import { getOutcome } from './getOutcome.js'
 import type {
   ComparisonOutcome,
   ComparisonResult,
   DenoisingAndModalitySplittingOptions,
   GetOutcomeOptions,
   InternalGetOutcomeOptions,
-} from './types'
+} from './types.js'
 
 export function compare({
   data1,

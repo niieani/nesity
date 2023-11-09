@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import * as utilities from './utilities'
+import * as utilities from './utilities.js'
 
 export const DEFAULT_KERNEL_STRETCH_FACTOR = 1.3
 export const DEFAULT_QUANTILE_PRECISION = 0.01

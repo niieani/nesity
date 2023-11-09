@@ -1,3 +1,3 @@
-export * from './fromEntries'
-export * from './StrictMap'
-export * from './utility'
+export * from './fromEntries.js'
+export * from './StrictMap.js'
+export * from './utility.js'

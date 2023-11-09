@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { InferKeyOptionalityFromTupleType } from './utility'
+import type { InferKeyOptionalityFromTupleType } from './utility.js'
 
 type $Key = 0
 type $Value = 1

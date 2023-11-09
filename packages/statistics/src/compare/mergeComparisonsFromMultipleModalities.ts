@@ -1,14 +1,14 @@
-import type { EffectSizeStats } from '../effectSize/effectSizeStats'
+import type { EffectSizeStats } from '../effectSize/effectSizeStats.js'
 import {
   DEFAULT_CONFIDENCE_LEVEL,
   DEFAULT_MINIMAL_MODALITY_SIZE,
-} from './defaults'
-import { getOutcome } from './getOutcome'
+} from './defaults.js'
+import { getOutcome } from './getOutcome.js'
 import type {
   ComparisonResult,
   InternalGetOutcomeOptions,
   TTestResult,
-} from './types'
+} from './types.js'
 
 export const mergeComparisonsFromMultipleModalities = ({
   comparisons,

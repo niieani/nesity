@@ -4,8 +4,8 @@ import {
   KernelDensityEstimateConfig,
   KernelDensityEstimateConfigBase,
   optimalThreshold,
-} from '../kernelDensityEstimate'
-import * as utilities from '../utilities'
+} from '../kernelDensityEstimate.js'
+import * as utilities from '../utilities.js'
 
 export interface SplitMultiModalDistributionConfigBase
   extends KernelDensityEstimateConfigBase {

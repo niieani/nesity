@@ -1,4 +1,4 @@
-import { REAL_WORLD_DATA_12_SIMILAR_3_MODES } from './__fixtures__/testSamples'
+import { REAL_WORLD_DATA_12_SIMILAR_3_MODES } from './__fixtures__/testSamples.js'
 import {
   consecutiveRatios,
   findSharpChangeQuantile,
@@ -6,7 +6,7 @@ import {
   mostCommonBy,
   pooledVariance,
   variance,
-} from './utilities'
+} from './utilities.js'
 
 describe('variance', () => {
   it('should calculate the variance of an array of numbers', () => {
@@ -88,7 +88,7 @@ describe('findSharpChangeQuantile', () => {
     const ratios = consecutiveRatios(data)
     const sharpChangeQuantile = findSharpChangeQuantile({ data: ratios })
     expect(sharpChangeQuantile).toMatchInlineSnapshot(`
-      Object {
+      {
         "q": 0.94,
         "qMinusDeltaValue": 1.065615423365112,
         "qValue": 1.0943418345907685,
@@ -101,7 +101,7 @@ describe('consecutiveRatios', () => {
   it('should calculate the ratios between consecutive numbers', () => {
     const data = REAL_WORLD_DATA_12_SIMILAR_3_MODES.data2
     expect(consecutiveRatios(data)).toMatchInlineSnapshot(`
-      Array [
+      [
         1.0257721925660277,
         1.018988889421454,
         1.0399128449000516,

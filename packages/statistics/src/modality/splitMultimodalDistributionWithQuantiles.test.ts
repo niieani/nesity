@@ -13,8 +13,8 @@ import {
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
   UNIMODAL_SAMPLE_REAL,
-} from '../__fixtures__/testSamples'
-import { splitMultimodalDistribution } from './splitMultimodalDistributionWithQuantiles'
+} from '../__fixtures__/testSamples.js'
+import { splitMultimodalDistribution } from './splitMultimodalDistributionWithQuantiles.js'
 
 describe('splitMultimodalDistribution', () => {
   it('keeps a unimodal dataset unchanged', () => {
@@ -78,8 +78,8 @@ describe('splitMultimodalDistribution', () => {
       data: REAL_WORLD_DATA_12_SIMILAR_3_MODES.data2,
     })
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           1655.1870126281738,
           1697.844811050415,
           1730.084998422241,
@@ -88,10 +88,10 @@ describe('splitMultimodalDistribution', () => {
           1807.4067110504152,
           1836.9775984222415,
         ],
-        Array [
+        [
           2162.184772872925,
         ],
-        Array [
+        [
           2417.9209626281736,
           2460.1782126281737,
           2519.0311542205814,
@@ -113,7 +113,7 @@ describe('splitMultimodalDistribution', () => {
           2849.2273999999998,
           2894.4015158721922,
         ],
-        Array [
+        [
           3228.7299678039553,
           3293.002262628174,
           3299.105721432495,
@@ -139,8 +139,8 @@ describe('difficult splits', () => {
       data: [...REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2, 5_500],
     })
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           544.7000000001863,
           557.5,
           567.0999999999767,
@@ -151,20 +151,20 @@ describe('difficult splits', () => {
           648.2000000000698,
           686.0999999999767,
         ],
-        Array [
+        [
           779.1000000000931,
           784.9000000000233,
         ],
-        Array [
+        [
           1314,
         ],
-        Array [
+        [
           1854.8000000000466,
           1911.9000000000233,
           1930.6999999999534,
           1995.4000000000233,
         ],
-        Array [
+        [
           5500,
         ],
       ]
@@ -176,8 +176,8 @@ describe('difficult splits', () => {
       data: [...REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2, 3_500],
     })
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           544.7000000001863,
           557.5,
           567.0999999999767,
@@ -188,20 +188,20 @@ describe('difficult splits', () => {
           648.2000000000698,
           686.0999999999767,
         ],
-        Array [
+        [
           779.1000000000931,
           784.9000000000233,
         ],
-        Array [
+        [
           1314,
         ],
-        Array [
+        [
           1854.8000000000466,
           1911.9000000000233,
           1930.6999999999534,
           1995.4000000000233,
         ],
-        Array [
+        [
           3500,
         ],
       ]
@@ -213,8 +213,8 @@ describe('difficult splits', () => {
       data: REAL_WORLD_DATA_9_SIMILAR_VERY_NOISY.data2,
     })
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           544.7000000001863,
           557.5,
           567.0999999999767,
@@ -225,14 +225,14 @@ describe('difficult splits', () => {
           648.2000000000698,
           686.0999999999767,
         ],
-        Array [
+        [
           779.1000000000931,
           784.9000000000233,
         ],
-        Array [
+        [
           1314,
         ],
-        Array [
+        [
           1854.8000000000466,
           1911.9000000000233,
           1930.6999999999534,

@@ -11,10 +11,10 @@ import {
   REAL_WORLD_DATA_10_SIMILAR_NOISY,
   REAL_WORLD_DATA_11_GREATER,
   REAL_WORLD_DATA_12_SIMILAR_3_MODES,
-} from '../__fixtures__/testSamples'
-import { getStableRandom } from '../utilities'
-import { compare } from './compare'
-import type { DenoisingAndModalitySplittingOptions } from './types'
+} from '../__fixtures__/testSamples.js'
+import { getStableRandom } from '../utilities.js'
+import { compare } from './compare.js'
+import type { DenoisingAndModalitySplittingOptions } from './types.js'
 
 const kdeOptions = {
   noiseValuesPerSample: 2,

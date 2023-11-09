@@ -1,10 +1,10 @@
-import type { EffectSizeStats } from '../effectSize/effectSizeStats'
-import type { OptimalThresholdConfigBase } from '../kernelDensityEstimate'
-import type { SplitMultiModalDistributionConfig } from '../modality/splitMultimodalDistributionWithKDE'
-import type { SplitMultimodalDistributionWithQuantilesOptions } from '../modality/splitMultimodalDistributionWithQuantiles'
-import type { ComparisonQualityWeightingOptions } from './compareSplitPermutations'
-import type { KDEOptimizationParameters } from './compareWithKDEDenoising'
-import type { QuantileOptimizationParameters } from './compareWithQuantileDenoising'
+import type { EffectSizeStats } from '../effectSize/effectSizeStats.js'
+import type { OptimalThresholdConfigBase } from '../kernelDensityEstimate.js'
+import type { SplitMultiModalDistributionConfig } from '../modality/splitMultimodalDistributionWithKDE.js'
+import type { SplitMultimodalDistributionWithQuantilesOptions } from '../modality/splitMultimodalDistributionWithQuantiles.js'
+import type { ComparisonQualityWeightingOptions } from './compareSplitPermutations.js'
+import type { KDEOptimizationParameters } from './compareWithKDEDenoising.js'
+import type { QuantileOptimizationParameters } from './compareWithQuantileDenoising.js'
 
 export interface AllTTests {
   twoSided: TTestResult

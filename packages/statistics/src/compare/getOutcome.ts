@@ -1,9 +1,9 @@
-import type { EffectSizeStats } from '../effectSize/effectSizeStats'
+import type { EffectSizeStats } from '../effectSize/effectSizeStats.js'
 import type {
   ComparisonOutcome,
   InternalGetOutcomeOptions,
   TTestResultBase,
-} from './types'
+} from './types.js'
 
 export function getOutcome(
   {

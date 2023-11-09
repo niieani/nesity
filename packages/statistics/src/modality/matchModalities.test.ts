@@ -1,4 +1,4 @@
-import { matchModalities } from './matchModalities'
+import { matchModalities } from './matchModalities.js'
 
 describe('matchModalities', () => {
   it('should return an array of matched split pairs', () => {
@@ -131,15 +131,15 @@ describe('matchModalities', () => {
         result.map((d) => d?.data),
       ),
     ).toMatchInlineSnapshot(`
-      Array [
-        Array [
-          Array [
+      [
+        [
+          [
             24.992,
             28.01,
             29.373,
             32.647,
           ],
-          Array [
+          [
             10.239,
             10.293,
             10.4,
@@ -150,27 +150,27 @@ describe('matchModalities', () => {
             13.279,
           ],
         ],
-        Array [
-          Array [
+        [
+          [
             93.469,
             95.761,
             98.026,
             99.019,
             102.28,
           ],
-          Array [
+          [
             66.587,
             68.986,
           ],
         ],
-        Array [
+        [
           undefined,
-          Array [
+          [
             127.194,
           ],
         ],
-        Array [
-          Array [
+        [
+          [
             566.367,
             607.782,
             609.666,
@@ -179,7 +179,7 @@ describe('matchModalities', () => {
             621.299,
             625.553,
           ],
-          Array [
+          [
             578.245,
             586.523,
             593.91,
@@ -210,9 +210,9 @@ describe('matchModalities', () => {
       result.map((d) => d?.data),
     )
     expect(matched).toMatchInlineSnapshot(`
-      Array [
-        Array [
-          Array [
+      [
+        [
+          [
             10.239,
             10.293,
             10.4,
@@ -224,18 +224,18 @@ describe('matchModalities', () => {
             66.587,
             68.986,
           ],
-          Array [
+          [
             24.992,
             28.01,
             29.373,
             32.647,
           ],
         ],
-        Array [
-          Array [
+        [
+          [
             127.194,
           ],
-          Array [
+          [
             93.469,
             95.761,
             98.026,
@@ -243,14 +243,14 @@ describe('matchModalities', () => {
             102.28,
           ],
         ],
-        Array [
-          Array [
+        [
+          [
             578.245,
             586.523,
             593.91,
             608.943,
           ],
-          Array [
+          [
             566.367,
             607.782,
             609.666,
@@ -260,8 +260,8 @@ describe('matchModalities', () => {
             625.553,
           ],
         ],
-        Array [
-          Array [
+        [
+          [
             706.821,
           ],
           undefined,

@@ -1,4 +1,4 @@
-import { uniroot } from './uniroot'
+import { uniroot } from './uniroot.js'
 
 describe('brentsRootFinding', () => {
   it('should find the root of a linear function', () => {

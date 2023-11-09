@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import,import/no-extraneous-dependencies
 import { expectTypeOf } from 'expect-type'
-import { StrictMap, StrictMapInterface } from './StrictMap'
+import { StrictMap, StrictMapInterface } from './StrictMap.js'
 
 const map = new StrictMap<['key1', 1] | ['key2', 2]>()
 

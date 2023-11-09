@@ -1,8 +1,8 @@
 /* eslint-disable unicorn/prefer-native-coercion-functions */
-import type { GetSplitsReturnType } from '../modality/getSplits'
-import { getMatchedUsableModalities } from '../modality/matchModalities'
-import { INVALID_LEFT, INVALID_RIGHT } from '../optimize'
-import { compare } from './compare'
+import type { GetSplitsReturnType } from '../modality/getSplits.js'
+import { getMatchedUsableModalities } from '../modality/matchModalities.js'
+import { INVALID_LEFT, INVALID_RIGHT } from '../optimize.js'
+import { compare } from './compare.js'
 import {
   DEFAULT_DISCARDED_DATA_PENALTY_FACTOR,
   DEFAULT_HIGH_MEAN_DISTANCE_RATIO_PENALTY_FACTOR,
@@ -11,9 +11,9 @@ import {
   DEFAULT_MODALITY_COUNT_SIMILARITY_BONUS_FACTOR,
   DEFAULT_NOISE_SIZE_BONUS_FACTOR,
   DEFAULT_STDEV_DIFF_PENALTY_FACTOR,
-} from './defaults'
-import { mergeComparisonsFromMultipleModalities } from './mergeComparisonsFromMultipleModalities'
-import type { ComparisonResult, InternalGetOutcomeOptions } from './types'
+} from './defaults.js'
+import { mergeComparisonsFromMultipleModalities } from './mergeComparisonsFromMultipleModalities.js'
+import type { ComparisonResult, InternalGetOutcomeOptions } from './types.js'
 
 export interface ComparisonQualityWeightingOptions {
   stdevDiffPenaltyFactor: number

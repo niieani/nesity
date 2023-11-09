@@ -1,4 +1,4 @@
-import * as utilities from './utilities'
+import * as utilities from './utilities.js'
 
 export const bootstrapMean = ({
   data,

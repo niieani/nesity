@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`compare using kde denoising should compare two dataset with varying lengths 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       13.945,
       14.055,
       16.372,
@@ -13,28 +13,28 @@ Object {
     ],
     "dataCount": 6,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 29.395833333333332,
     "meanDistanceRatio": 1.4339073963755762,
     "normalityProbability": 0.9442472989953399,
     "stdev": 20.791395810927817,
     "variance": 432.28213976666683,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       30.142,
       52.941,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 41.5415,
     "meanDistanceRatio": 1.7563864375290295,
     "normalityProbability": 0.39632812046348587,
     "stdev": 16.1213275042721,
     "variance": 259.89720050000005,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.13714764273667812,
     "cohensD": -0.24429744625374952,
     "nonOverlapMeasure": 0.40350023058213813,
@@ -46,18 +46,18 @@ Object {
   "pooledStDev": 20.0885867236985,
   "pooledVariance": 403.55131655555573,
   "stdevDifference": 4.670068306655718,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 2.2763013762526123,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -50.406713190854944,
         Infinity,
       ],
       "pValue": 0.7633897280016656,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         26.115379857521617,
       ],
@@ -65,8 +65,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.8545753820814761,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -66.70695625697836,
         42.41562292364503,
       ],
@@ -78,9 +78,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two datasets 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       1168.7350000000001,
       1177.763,
       1219.81795,
@@ -100,7 +100,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1315.3505374999997,
     "meanDistanceRatio": 1.021767441203772,
     "modalityCount": 1,
@@ -109,8 +109,8 @@ Object {
     "stdev": 128.47764545139032,
     "variance": 16506.505380733157,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1174.584,
       1204.708,
       1206.626,
@@ -126,7 +126,7 @@ Object {
     ],
     "dataCount": 12,
     "discardedCount": 4,
-    "discardedData": Array [
+    "discardedData": [
       1944.3399499999998,
       2094.8806,
       2445.73,
@@ -140,14 +140,14 @@ Object {
     "stdev": 97.91030502224473,
     "variance": 9586.427829549002,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 34.6006685881664,
     "kernelStretchFactor": 1.3,
     "shouldSplit1": false,
     "shouldSplit2": true,
     "threshold": 128.47764545139034,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.10313106279676054,
     "cohensD": 0.18330704064377773,
     "nonOverlapMeasure": 0.5727214448176261,
@@ -156,25 +156,25 @@ Object {
   },
   "meanDifference": -24.72987916666648,
   "outcome": "similar",
-  "outcomeFrequencies": Object {
+  "outcomeFrequencies": {
     "greater": 0.11206896551724138,
     "similar": 0.8879310344827587,
   },
   "pooledStDev": 116.52802350904471,
   "pooledVariance": 13578.780262924476,
   "stdevDifference": 30.567340429145588,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 25.98106296036767,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -48.24633661040269,
         Infinity,
       ],
       "pValue": 0.2841175035056639,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         97.70609494373612,
       ],
@@ -182,8 +182,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.5780083258579302,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -63.21833143468515,
         112.67808976801855,
       ],
@@ -191,16 +191,16 @@ Object {
       "rejected": false,
     },
   },
-  "ttestAdjusted": Object {
-    "greater": Object {
+  "ttestAdjusted": {
+    "greater": {
       "pValue": 0.15797912910444242,
       "rejected": false,
     },
-    "less": Object {
+    "less": {
       "pValue": 0.7158824964943361,
       "rejected": false,
     },
-    "twoSided": Object {
+    "twoSided": {
       "pValue": 0.5924287350667274,
       "rejected": false,
     },
@@ -209,10 +209,10 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two datasets with noise iterations (similar 3) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         507.9000000000233,
         564.5,
         566.9000000001397,
@@ -228,15 +228,15 @@ Object {
       ],
       "dataCount": 12,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 628.4500000000504,
       "meanDistanceRatio": 1.0551934381027104,
       "normalityProbability": 0.985303543406668,
       "stdev": 97.05314851337945,
       "variance": 9419.313636360088,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1904.0999999999767,
         1944.1999999999534,
         1966.7999999999884,
@@ -244,7 +244,7 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 2032.324999999968,
       "meanDistanceRatio": 1.069772076504024,
       "normalityProbability": 0.9564785698274588,
@@ -252,9 +252,9 @@ Object {
       "variance": 35984.90249999648,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         544.7000000001863,
         557.5,
         567.0999999999767,
@@ -269,15 +269,15 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 633.3636363636629,
       "meanDistanceRatio": 1.0377883680025721,
       "normalityProbability": 0.9380714214119303,
       "stdev": 84.21425381403726,
       "variance": 7092.04054545509,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1314,
         1854.8000000000466,
         1911.9000000000233,
@@ -286,7 +286,7 @@ Object {
       ],
       "dataCount": 5,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1801.3600000000092,
       "meanDistanceRatio": 1.1214242586088297,
       "normalityProbability": 0.9834759275748338,
@@ -294,8 +294,8 @@ Object {
       "variance": 76743.76300000178,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       507.9000000000233,
       564.5,
       566.9000000001397,
@@ -315,7 +315,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 979.4187500000298,
     "meanDistanceRatio": 1.0588380977030387,
     "modalityCount": 2,
@@ -325,8 +325,8 @@ Object {
     "stdev": 120.21407889307345,
     "variance": 16060.710852269187,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       544.7000000001863,
       557.5,
       567.0999999999767,
@@ -346,7 +346,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 998.3625000000211,
     "meanDistanceRatio": 1.0639245838170277,
     "modalityCount": 2,
@@ -356,16 +356,16 @@ Object {
     "stdev": 144.4681266011406,
     "variance": 28858.20381250093,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 215.16556062035738,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 638.9659461126369,
   },
-  "discardedModalities1": Array [],
-  "discardedModalities2": Array [],
-  "effectSizeStats": Object {
+  "discardedModalities1": [],
+  "discardedModalities2": [],
+  "effectSizeStats": {
     "changeProbability": 0.053946140754062705,
     "cohensD": 0.09790222166750293,
     "nonOverlapMeasure": 0.5372627814206293,
@@ -378,18 +378,18 @@ Object {
   "pooledStDev": 150.48215753055283,
   "pooledVariance": 22644.87973505012,
   "stdevDifference": -24.254047708067148,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 16.996459570382118,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -68.6606942802218,
         Infinity,
       ],
       "pValue": 0.42181354321717063,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         191.5151545075057,
       ],
@@ -397,8 +397,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.3229231170182037,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -99.16572799334836,
         222.02018822063224,
       ],
@@ -410,9 +410,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two datasets with noise iterations (similar 4) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       558.3779999999969,
       561.0819999999945,
       568.3039999999922,
@@ -429,7 +429,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       698.2099999999915,
       1482.7349999999942,
       1759.8599999999988,
@@ -442,8 +442,8 @@ Object {
     "stdev": 23.257320874158665,
     "variance": 540.9029742435764,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       557.2959999999936,
       559.6269999999946,
       568.4069999999929,
@@ -460,7 +460,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       1458.1829999999989,
       1524.4450000000002,
       1692.5979999999925,
@@ -473,14 +473,14 @@ Object {
     "stdev": 23.84269879858383,
     "variance": 568.4742859999907,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 17.6269691358854,
     "kernelStretchFactor": 1,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 354.7947910506342,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.1038987601125747,
     "cohensD": 0.18467931381003283,
     "nonOverlapMeasure": 0.5732597138716617,
@@ -492,18 +492,18 @@ Object {
   "pooledStDev": 23.551828594013323,
   "pooledVariance": 554.6886301217836,
   "stdevDifference": -0.5853779244251633,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 23.985185076517052,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -10.722079317438691,
         Infinity,
       ],
       "pValue": 0.29361872817948476,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         20.88823316359358,
       ],
@@ -511,8 +511,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.5502483239550531,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -13.983402002509251,
         24.149555848664132,
       ],
@@ -524,16 +524,16 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of 3 different data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       57,
       58,
       59,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1.0173926194797338,
     "modalityCount": 1,
@@ -542,15 +542,15 @@ Object {
     "stdev": 1,
     "variance": 1,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       157,
       158,
       159,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1.0063492703378216,
     "modalityCount": 1,
@@ -559,14 +559,14 @@ Object {
     "stdev": 1,
     "variance": 1,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 0.539154780286722,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 1,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -40.406101782088435,
     "nonOverlapMeasure": 0,
@@ -578,18 +578,18 @@ Object {
   "pooledStDev": 1,
   "pooledVariance": 1,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 4,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -101.74064561209747,
         Infinity,
       ],
       "pValue": 0.9999999866725905,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -98.25935438790253,
       ],
@@ -597,8 +597,8 @@ Object {
       "rejected": true,
     },
     "tValue": -122.47448713915891,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -102.26695793552753,
         -97.73304206447249,
       ],
@@ -610,9 +610,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of 4 exactly the same data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
       58,
@@ -620,15 +620,15 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
@@ -636,14 +636,14 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -655,18 +655,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -674,8 +674,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -687,9 +687,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of 4 mixed data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       55,
       56,
       57,
@@ -697,7 +697,7 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 56.5,
     "meanDistanceRatio": 1.0178609402293612,
     "modalityCount": 1,
@@ -706,8 +706,8 @@ Object {
     "stdev": 1.2909944487358056,
     "variance": 1.6666666666666667,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
@@ -715,7 +715,7 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "modalityCount": 1,
@@ -724,14 +724,14 @@ Object {
     "stdev": 0,
     "variance": 0,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 0,
     "kernelStretchFactor": 1,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -44.926606816006036,
     "nonOverlapMeasure": 0,
@@ -743,18 +743,18 @@ Object {
   "pooledStDev": 0.9128709291752769,
   "pooledVariance": 0.8333333333333334,
   "stdevDifference": 1.2909944487358056,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 3,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -103.0190895650935,
         Infinity,
       ],
       "pValue": 0.9999997164285319,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -99.9809104349065,
       ],
@@ -762,8 +762,8 @@ Object {
       "rejected": true,
     },
     "tValue": -157.24312385602113,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -103.55426025676053,
         -99.44573974323947,
       ],
@@ -775,34 +775,34 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of exactly one data point 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       59,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 59,
     "meanDistanceRatio": 0,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -814,18 +814,18 @@ Object {
   "pooledStDev": NaN,
   "pooledVariance": NaN,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -833,8 +833,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -846,38 +846,38 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of exactly the same 3 data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
       58,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -889,18 +889,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -908,8 +908,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -921,36 +921,36 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets of exactly the same two data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -962,18 +962,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -981,8 +981,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -994,36 +994,36 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two different datasets with two different data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       59,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58.5,
     "meanDistanceRatio": 1.0172413793103448,
     "normalityProbability": 0.39632812046346777,
     "stdev": 0.7071067811865476,
     "variance": 0.5,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       159,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158.5,
     "meanDistanceRatio": 1.0063291139240507,
     "normalityProbability": 0.39632812046338406,
     "stdev": 0.7071067811865476,
     "variance": 0.5,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -57.14285714285714,
     "nonOverlapMeasure": 0,
@@ -1035,18 +1035,18 @@ Object {
   "pooledStDev": 0.7071067811865476,
   "pooledVariance": 0.5,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 2.000000000000001,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -102.06474160483504,
         Infinity,
       ],
       "pValue": 0.9999750018748438,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -97.93525839516495,
       ],
@@ -1054,8 +1054,8 @@ Object {
       "rejected": true,
     },
     "tValue": -141.42135623730948,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -103.04243492229665,
         -96.95756507770334,
       ],
@@ -1067,34 +1067,34 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two identical datasets of exactly one data point 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -1106,18 +1106,18 @@ Object {
   "pooledStDev": NaN,
   "pooledVariance": NaN,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 1,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -1125,8 +1125,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -1138,36 +1138,36 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two identical datasets of exactly two data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -1179,18 +1179,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 1,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -1198,8 +1198,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -1211,9 +1211,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two larger datasets with 3 modalities 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       1571.3894785003663,
       1596.3722164886472,
       1672.555412628174,
@@ -1257,7 +1257,7 @@ Object {
     ],
     "dataCount": 40,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 2529.589428904114,
     "meanDistanceRatio": 1.0222824791747493,
     "modalityCount": 1,
@@ -1266,8 +1266,8 @@ Object {
     "stdev": 698.7827070362189,
     "variance": 488297.27165286615,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1655.1870126281738,
       1697.844811050415,
       1730.084998422241,
@@ -1311,7 +1311,7 @@ Object {
     ],
     "dataCount": 40,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 2711.0965950833897,
     "meanDistanceRatio": 1.0210508749266363,
     "modalityCount": 1,
@@ -1320,14 +1320,14 @@ Object {
     "stdev": 576.8084531082699,
     "variance": 332707.9915771552,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 300.72716490786166,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": false,
     "shouldSplit2": true,
     "threshold": 698.7827070362189,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.15176204072051402,
     "cohensD": -0.2706340110648662,
     "nonOverlapMeasure": 0.39333626730768817,
@@ -1336,25 +1336,25 @@ Object {
   },
   "meanDifference": 181.50716617927583,
   "outcome": "similar",
-  "outcomeFrequencies": Object {
+  "outcomeFrequencies": {
     "less": 0.2631578947368421,
     "similar": 0.7368421052631579,
   },
   "pooledStDev": 640.7047928765717,
   "pooledVariance": 410502.6316150107,
   "stdevDifference": 121.97425392794901,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 75.29580358530849,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -420.09418698105486,
         Infinity,
       ],
       "pValue": 0.8954564866986106,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         57.0798546225041,
       ],
@@ -1362,8 +1362,8 @@ Object {
       "rejected": false,
     },
     "tValue": -1.2669246944696966,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -466.8891914408232,
         103.87485908227247,
       ],
@@ -1371,16 +1371,16 @@ Object {
       "rejected": false,
     },
   },
-  "ttestAdjusted": Object {
-    "greater": Object {
+  "ttestAdjusted": {
+    "greater": {
       "pValue": 0.8954564866986106,
       "rejected": false,
     },
-    "less": Object {
+    "less": {
       "pValue": 0.06602748208508805,
       "rejected": false,
     },
-    "twoSided": Object {
+    "twoSided": {
       "pValue": 0.3131545231024131,
       "rejected": false,
     },
@@ -1389,10 +1389,10 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (bimodal 2) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         10.239,
         10.293,
         10.4,
@@ -1406,15 +1406,15 @@ Object {
       ],
       "dataCount": 10,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 22.5391,
       "meanDistanceRatio": 1.4799130718600582,
       "normalityProbability": 0.9999867832152746,
       "stdev": 23.871928621290742,
       "variance": 569.8689761,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         578.245,
         586.523,
         593.91,
@@ -1422,7 +1422,7 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 591.90525,
       "meanDistanceRatio": 1.017407402892384,
       "normalityProbability": 0.11204146205647347,
@@ -1430,9 +1430,9 @@ Object {
       "variance": 169.9583309166663,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         24.992,
         28.01,
         29.373,
@@ -1440,15 +1440,15 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 28.755499999999998,
       "meanDistanceRatio": 1.093627581103284,
       "normalityProbability": 0.01545389028355526,
       "stdev": 3.1751525422673255,
       "variance": 10.081593666666661,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         566.367,
         607.782,
         609.666,
@@ -1459,7 +1459,7 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 607.63,
       "meanDistanceRatio": 1.0170140719706773,
       "normalityProbability": 0.9832576799307058,
@@ -1467,8 +1467,8 @@ Object {
       "variance": 374.09399800000034,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       10.239,
       10.293,
       10.4,
@@ -1486,7 +1486,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       127.194,
       706.821,
     ],
@@ -1499,8 +1499,8 @@ Object {
     "stdev": 20.77617952265714,
     "variance": 455.60879176190474,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       24.992,
       28.01,
       29.373,
@@ -1515,7 +1515,7 @@ Object {
     ],
     "dataCount": 11,
     "discardedCount": 5,
-    "discardedData": Array [
+    "discardedData": [
       93.469,
       95.761,
       98.026,
@@ -1531,23 +1531,23 @@ Object {
     "stdev": 13.462834378548832,
     "variance": 241.72585096969718,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 20.433103773604955,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 39.5289999999999,
   },
-  "discardedModalities1": Array [
-    Array [
+  "discardedModalities1": [
+    [
       127.194,
     ],
-    Array [
+    [
       706.821,
     ],
   ],
-  "discardedModalities2": Array [
-    Array [
+  "discardedModalities2": [
+    [
       93.469,
       95.761,
       98.026,
@@ -1555,7 +1555,7 @@ Object {
       102.28,
     ],
   ],
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.18858782462391765,
     "cohensD": -0.33972672366421197,
     "nonOverlapMeasure": 0.3687474186625964,
@@ -1565,25 +1565,25 @@ Object {
   "meanDifference": 10.60011980519479,
   "mergedFromMultipleModalities": true,
   "outcome": "similar",
-  "outcomeFrequencies": Object {
+  "outcomeFrequencies": {
     "greater": 0.04411764705882353,
     "similar": 0.9558823529411765,
   },
   "pooledStDev": 19.308332078922085,
   "pooledVariance": 372.8116876699316,
   "stdevDifference": 7.313345144108309,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 9.194972964901895,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -26.48361606468466,
         Infinity,
       ],
       "pValue": 0.8482055090001916,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         5.283376454295078,
       ],
@@ -1591,8 +1591,8 @@ Object {
       "rejected": false,
     },
     "tValue": -1.1745068864994517,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -30.195099052095934,
         8.994859441706351,
       ],
@@ -1600,16 +1600,16 @@ Object {
       "rejected": false,
     },
   },
-  "ttestAdjusted": Object {
-    "greater": Object {
+  "ttestAdjusted": {
+    "greater": {
       "pValue": 0.44281317013980587,
       "rejected": false,
     },
-    "less": Object {
+    "less": {
       "pValue": 0.1517944909998084,
       "rejected": false,
     },
-    "twoSided": Object {
+    "twoSided": {
       "pValue": 0.3189509897496252,
       "rejected": false,
     },
@@ -1618,10 +1618,10 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (bimodal) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         519.801,
         533.615,
         551.024,
@@ -1634,15 +1634,15 @@ Object {
       ],
       "dataCount": 9,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 567.2165555555556,
       "meanDistanceRatio": 1.0212701020134594,
       "normalityProbability": 0.021263344498033687,
       "stdev": 30.750844805920003,
       "variance": 945.6144562777772,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1061.516,
         1067.188,
         1070.919,
@@ -1653,7 +1653,7 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1095.9214285714286,
       "meanDistanceRatio": 1.0149741103064052,
       "normalityProbability": 0.709709919769268,
@@ -1661,9 +1661,9 @@ Object {
       "variance": 1180.0005776190437,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         563.563,
         567.498,
         578.969,
@@ -1674,15 +1674,15 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 586.6701428571429,
       "meanDistanceRatio": 1.0198328140594426,
       "normalityProbability": 0.8620144797621213,
       "stdev": 24.003430861917582,
       "variance": 576.1646931428575,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1070.095,
         1083.78,
         1087.077,
@@ -1695,7 +1695,7 @@ Object {
       ],
       "dataCount": 9,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1108.3907777777779,
       "meanDistanceRatio": 1.0111993604686127,
       "normalityProbability": 0.7795235585319694,
@@ -1703,8 +1703,8 @@ Object {
       "variance": 1070.5418004444446,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       519.801,
       533.615,
       551.024,
@@ -1724,7 +1724,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 798.5249375000001,
     "meanDistanceRatio": 1.0185156056416231,
     "modalityCount": 2,
@@ -1734,8 +1734,8 @@ Object {
     "stdev": 32.32597241429448,
     "variance": 1048.1583843645813,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       563.563,
       567.498,
       578.969,
@@ -1755,7 +1755,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 880.1380000000001,
     "meanDistanceRatio": 1.0149764964146009,
     "modalityCount": 2,
@@ -1765,16 +1765,16 @@ Object {
     "stdev": 28.906014485114653,
     "variance": 854.2518160000002,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 138.94510302889046,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 268.7971949089747,
   },
-  "discardedModalities1": Array [],
-  "discardedModalities2": Array [],
-  "effectSizeStats": Object {
+  "discardedModalities1": [],
+  "discardedModalities2": [],
+  "effectSizeStats": {
     "changeProbability": -0.22144592440053518,
     "cohensD": -0.3991136009996607,
     "nonOverlapMeasure": 0.34595777748695034,
@@ -1787,18 +1787,18 @@ Object {
   "pooledStDev": 30.860424077234526,
   "pooledVariance": 952.3657742267565,
   "stdevDifference": 3.41995792917983,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 13.351249157862783,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -43.057479465863494,
         Infinity,
       ],
       "pValue": 0.8368409191984947,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         11.134542957926907,
       ],
@@ -1806,8 +1806,8 @@ Object {
       "rejected": false,
     },
     "tValue": -1.0782645794261538,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -49.00045559037997,
         17.07751908244339,
       ],
@@ -1819,9 +1819,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (greater) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       1306.443,
       1310.903,
       1340.962,
@@ -1841,7 +1841,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1734.6108124999996,
     "meanDistanceRatio": 1.0400306247983537,
     "modalityCount": 1,
@@ -1850,8 +1850,8 @@ Object {
     "stdev": 389.9511438157723,
     "variance": 152061.89456322914,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1282.607,
       1401.62,
       1437.79,
@@ -1871,7 +1871,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1989.0906874999998,
     "meanDistanceRatio": 1.0463584791919407,
     "modalityCount": 1,
@@ -1880,14 +1880,14 @@ Object {
     "stdev": 377.4615563315411,
     "variance": 142477.22650822916,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 192.22324701802228,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": false,
     "shouldSplit2": true,
     "threshold": 377.4615563315411,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.3216332906238858,
     "cohensD": -0.5864643643728225,
     "nonOverlapMeasure": 0.2787817510409292,
@@ -1899,18 +1899,18 @@ Object {
   "pooledStDev": 383.7571634976071,
   "pooledVariance": 147269.56053572914,
   "stdevDifference": 12.489587484231208,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 29.96826563666702,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -484.7697018033032,
         Infinity,
       ],
       "pValue": 0.964759198234362,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -24.190048196696786,
       ],
@@ -1918,8 +1918,8 @@ Object {
       "rejected": true,
     },
     "tValue": -1.8756074143134736,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -531.5849420795118,
         22.625192079511887,
       ],
@@ -1931,9 +1931,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (significantly greater) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       83.896,
       85.574,
       86.306,
@@ -1952,7 +1952,7 @@ Object {
     ],
     "dataCount": 15,
     "discardedCount": 1,
-    "discardedData": Array [
+    "discardedData": [
       11.133,
     ],
     "mean": 93.21546666666667,
@@ -1963,8 +1963,8 @@ Object {
     "stdev": 6.490627009846768,
     "variance": 42.12823898095239,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       113.622,
       114.931,
       116.095,
@@ -1982,7 +1982,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       28.609,
       32.887,
     ],
@@ -1994,14 +1994,14 @@ Object {
     "stdev": 5.436671266642711,
     "variance": 29.55739446153846,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 4.201567827326516,
     "kernelStretchFactor": 0.9,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 21.457292422293953,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.99666356080577,
     "cohensD": -4.150590218258873,
     "nonOverlapMeasure": 0.000016580951036238023,
@@ -2013,18 +2013,18 @@ Object {
   "pooledStDev": 6.006297539938528,
   "pooledVariance": 36.07561013827161,
   "stdevDifference": 1.0539557432040567,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 26.706846267804053,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -32.38600310522957,
         Infinity,
       ],
       "pValue": 0.999999999999723,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -24.827063561437093,
       ],
@@ -2032,8 +2032,8 @@ Object {
       "rejected": true,
     },
     "tValue": -12.897094212177404,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -33.15995588618825,
         -24.05311078047841,
       ],
@@ -2045,9 +2045,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (similar - different sample) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       8490.293000000001,
       8518.646999999997,
       8560.180999999999,
@@ -2065,7 +2065,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       10789.819000000023,
       12178.027000000016,
     ],
@@ -2077,8 +2077,8 @@ Object {
     "stdev": 315.04092536524325,
     "variance": 99250.78465498876,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       8672.03300000001,
       8672.610999999995,
       8751.861000000015,
@@ -2095,7 +2095,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       8447.615000000002,
       8504.422999999988,
       8551.507999999989,
@@ -2108,14 +2108,14 @@ Object {
     "stdev": 264.57079484893745,
     "variance": 69997.70548699856,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 161.37417144278757,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 312.1875018910312,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.19644053448997578,
     "cohensD": -0.35177594218517105,
     "nonOverlapMeasure": 0.3625031510819295,
@@ -2127,18 +2127,18 @@ Object {
   "pooledStDev": 291.9063319874262,
   "pooledVariance": 85209.30665435348,
   "stdevDifference": 50.4701305163058,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 24.768125941714196,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -310.0765398756139,
         Infinity,
       ],
       "pValue": 0.8519941372426528,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         71.61196844704497,
       ],
@@ -2146,8 +2146,8 @@ Object {
       "rejected": false,
     },
     "tValue": -1.0675662075271293,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -349.36331456819096,
         110.8987431396221,
       ],
@@ -2159,10 +2159,10 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (similar 1) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         258.303,
         268.269,
         270.022,
@@ -2177,22 +2177,22 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 274.73454545454547,
       "meanDistanceRatio": 1.0103820195396211,
       "normalityProbability": 0.3097986213870877,
       "stdev": 8.070541597236659,
       "variance": 65.13364167272724,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         307.04,
         308.893,
         319.635,
       ],
       "dataCount": 3,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 311.856,
       "meanDistanceRatio": 1.0204054202216892,
       "normalityProbability": 1,
@@ -2200,9 +2200,9 @@ Object {
       "variance": 46.24303299999991,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         271.469,
         271.617,
         272.278,
@@ -2217,22 +2217,22 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 278.09672727272726,
       "meanDistanceRatio": 1.0050715659923473,
       "normalityProbability": 0.6819670385723727,
       "stdev": 5.16563374797147,
       "variance": 26.68377201818178,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         296.633,
         298.389,
         302.163,
       ],
       "dataCount": 3,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 299.06166666666667,
       "meanDistanceRatio": 1.0092838461224174,
       "normalityProbability": 0,
@@ -2240,8 +2240,8 @@ Object {
       "variance": 7.984585333333405,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       258.303,
       268.269,
       270.022,
@@ -2259,7 +2259,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       220.648,
       223.675,
     ],
@@ -2272,8 +2272,8 @@ Object {
     "stdev": 7.798330471625011,
     "variance": 61.08565409999996,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       271.469,
       271.617,
       272.278,
@@ -2291,7 +2291,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       29.341,
       198.564,
     ],
@@ -2304,28 +2304,28 @@ Object {
     "stdev": 4.664219557052155,
     "variance": 22.67680344285713,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 4.7283188882868155,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 66.03239008837507,
   },
-  "discardedModalities1": Array [
-    Array [
+  "discardedModalities1": [
+    [
       220.648,
       223.675,
     ],
   ],
-  "discardedModalities2": Array [
-    Array [
+  "discardedModalities2": [
+    [
       29.341,
     ],
-    Array [
+    [
       198.564,
     ],
   ],
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.0685364593567793,
     "cohensD": -0.10969064504104792,
     "nonOverlapMeasure": 0.44765877429957623,
@@ -2338,18 +2338,18 @@ Object {
   "pooledStDev": 6.4715708117449,
   "pooledVariance": 41.88122877142854,
   "stdevDifference": 3.1341109145728563,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 13.942008104075084,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -6.105046793811919,
         Infinity,
       ],
       "pValue": 0.6904496330264843,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         6.3049039366690955,
       ],
@@ -2357,8 +2357,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.269511369840133,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -7.80158068421277,
         8.001437827069946,
       ],
@@ -2370,9 +2370,9 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (similar 2) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       417.2763277282715,
       422.9192844238281,
       436.05932772827146,
@@ -2390,7 +2390,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       795.7223277282715,
       803.6723255157472,
     ],
@@ -2402,8 +2402,8 @@ Object {
     "stdev": 50.59236113207368,
     "variance": 2559.5870049181594,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       407.80132551574707,
       412.0413277282715,
       424.1903255157471,
@@ -2421,7 +2421,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       939.1058455505372,
       1330.7345961914061,
     ],
@@ -2433,14 +2433,14 @@ Object {
     "stdev": 58.075970369898414,
     "variance": 3372.8183344053186,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 31.53491196084364,
     "kernelStretchFactor": 0.9,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 117.00142369724773,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.004345870193199763,
     "cohensD": 0.007702892446609495,
     "nonOverlapMeasure": 0.5030729790893343,
@@ -2452,18 +2452,18 @@ Object {
   "pooledStDev": 54.46285587133436,
   "pooledVariance": 2966.2026696617395,
   "stdevDifference": -7.483609237824737,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 25.52042723761013,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -34.65053522129364,
         Infinity,
       ],
       "pValue": 0.49071169184096974,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         35.618596427348336,
       ],
@@ -2471,8 +2471,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.023513724759134977,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -41.86782635263818,
         42.83588755869288,
       ],
@@ -2484,10 +2484,10 @@ Object {
 `;
 
 exports[`compare using kde denoising should compare two small datasets with noise iterations (similar) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         258.32,
         268.336,
         270.048,
@@ -2502,22 +2502,22 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 274.7600909090909,
       "meanDistanceRatio": 1.01038887356709,
       "normalityProbability": 0.31931801360806844,
       "stdev": 8.079851934961999,
       "variance": 65.28400729090916,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         307.098,
         309,
         319.647,
       ],
       "dataCount": 3,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 311.91499999999996,
       "meanDistanceRatio": 1.0203248866763825,
       "normalityProbability": 1,
@@ -2525,9 +2525,9 @@ Object {
       "variance": 45.742268999999865,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         271.447,
         271.609,
         272.313,
@@ -2542,22 +2542,22 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 278.0945454545455,
       "meanDistanceRatio": 1.0050824619112118,
       "normalityProbability": 0.6789762980636239,
       "stdev": 5.1751151941505,
       "variance": 26.78181727272737,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         296.697,
         298.422,
         302.151,
       ],
       "dataCount": 3,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 299.09,
       "meanDistanceRatio": 1.0091548699009703,
       "normalityProbability": 0,
@@ -2565,8 +2565,8 @@ Object {
       "variance": 7.771197000000008,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       258.32,
       268.336,
       270.048,
@@ -2584,7 +2584,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       220.604,
       223.656,
     ],
@@ -2597,8 +2597,8 @@ Object {
     "stdev": 7.79773433028254,
     "variance": 61.09649194285717,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       271.447,
       271.609,
       272.313,
@@ -2616,7 +2616,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       198.567,
       3434.452,
     ],
@@ -2629,28 +2629,28 @@ Object {
     "stdev": 4.663523368696174,
     "variance": 22.708112928571506,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "bandwidth": 5.3031931238020755,
     "kernelStretchFactor": 0.8,
     "shouldSplit1": true,
     "shouldSplit2": true,
     "threshold": 562.3873600000004,
   },
-  "discardedModalities1": Array [
-    Array [
+  "discardedModalities1": [
+    [
       220.604,
       223.656,
     ],
   ],
-  "discardedModalities2": Array [
-    Array [
+  "discardedModalities2": [
+    [
       198.567,
     ],
-    Array [
+    [
       3434.452,
     ],
   ],
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.06601552387411974,
     "cohensD": -0.10467166555797736,
     "nonOverlapMeasure": 0.4492609738910154,
@@ -2660,25 +2660,25 @@ Object {
   "meanDifference": -0.12828571428566526,
   "mergedFromMultipleModalities": true,
   "outcome": "similar",
-  "outcomeFrequencies": Object {
+  "outcomeFrequencies": {
     "greater": 0.09836065573770492,
     "similar": 0.9016393442622951,
   },
   "pooledStDev": 6.473198779252367,
   "pooledVariance": 41.90230243571433,
   "stdevDifference": 3.1342109615863665,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 13.945178186857653,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -6.07107379589638,
         Infinity,
       ],
       "pValue": 0.6886076299004139,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         6.327645224467798,
       ],
@@ -2686,8 +2686,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.2549020141045023,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -7.766763912497371,
         8.02333534106879,
       ],
@@ -2695,16 +2695,16 @@ Object {
       "rejected": false,
     },
   },
-  "ttestAdjusted": Object {
-    "greater": Object {
+  "ttestAdjusted": {
+    "greater": {
       "pValue": 0.37816976396170277,
       "rejected": false,
     },
-    "less": Object {
+    "less": {
       "pValue": 0.31139237009958604,
       "rejected": false,
     },
-    "twoSided": Object {
+    "twoSided": {
       "pValue": 0.2604836291459586,
       "rejected": false,
     },
@@ -2713,9 +2713,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two dataset with varying lengths 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       13.945,
       14.055,
       16.372,
@@ -2725,28 +2725,28 @@ Object {
     ],
     "dataCount": 6,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 29.395833333333332,
     "meanDistanceRatio": 1.4339073963755762,
     "normalityProbability": 0.9442472989953399,
     "stdev": 20.791395810927817,
     "variance": 432.28213976666683,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       30.142,
       52.941,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 41.5415,
     "meanDistanceRatio": 1.7563864375290295,
     "normalityProbability": 0.39632812046348587,
     "stdev": 16.1213275042721,
     "variance": 259.89720050000005,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.13714764273667812,
     "cohensD": -0.24429744625374952,
     "nonOverlapMeasure": 0.40350023058213813,
@@ -2758,18 +2758,18 @@ Object {
   "pooledStDev": 20.0885867236985,
   "pooledVariance": 403.55131655555573,
   "stdevDifference": 4.670068306655718,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 2.2763013762526123,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -50.406713190854944,
         Infinity,
       ],
       "pValue": 0.7633897280016656,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         26.115379857521617,
       ],
@@ -2777,8 +2777,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.8545753820814761,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -66.70695625697836,
         42.41562292364503,
       ],
@@ -2790,9 +2790,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two datasets 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       1168.7350000000001,
       1177.763,
       1219.81795,
@@ -2812,7 +2812,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1315.3505374999997,
     "meanDistanceRatio": 1.021767441203772,
     "modalityCount": 1,
@@ -2821,8 +2821,8 @@ Object {
     "stdev": 128.47764545139032,
     "variance": 16506.505380733157,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1174.584,
       1204.708,
       1206.626,
@@ -2838,7 +2838,7 @@ Object {
     ],
     "dataCount": 12,
     "discardedCount": 4,
-    "discardedData": Array [
+    "discardedData": [
       1944.3399499999998,
       2094.8806,
       2445.73,
@@ -2852,11 +2852,11 @@ Object {
     "stdev": 97.91030502224473,
     "variance": 9586.427829549002,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.10313106279676054,
     "cohensD": 0.18330704064377773,
     "nonOverlapMeasure": 0.5727214448176261,
@@ -2868,18 +2868,18 @@ Object {
   "pooledStDev": 116.52802350904471,
   "pooledVariance": 13578.780262924476,
   "stdevDifference": 30.567340429145588,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 25.98106296036767,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -48.24633661040269,
         Infinity,
       ],
       "pValue": 0.2841175035056639,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         97.70609494373612,
       ],
@@ -2887,8 +2887,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.5780083258579302,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -63.21833143468515,
         112.67808976801855,
       ],
@@ -2900,10 +2900,10 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two datasets with noise iterations (similar 3) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         507.9000000000233,
         564.5,
         566.9000000001397,
@@ -2918,15 +2918,15 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 604.4181818182379,
       "meanDistanceRatio": 1.0327678120075747,
       "normalityProbability": 0.03631167712456884,
       "stdev": 52.3246752150772,
       "variance": 2737.871636363314,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1904.0999999999767,
         1944.1999999999534,
         1966.7999999999884,
@@ -2934,7 +2934,7 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 2032.324999999968,
       "meanDistanceRatio": 1.069772076504024,
       "normalityProbability": 0.9564785698274588,
@@ -2942,9 +2942,9 @@ Object {
       "variance": 35984.90249999648,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         544.7000000001863,
         557.5,
         567.0999999999767,
@@ -2957,15 +2957,15 @@ Object {
       ],
       "dataCount": 9,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 600.3333333333527,
       "meanDistanceRatio": 1.0293613048713515,
       "normalityProbability": 0.3104586003029901,
       "stdev": 45.9606353306593,
       "variance": 2112.3799999978482,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1854.8000000000466,
         1911.9000000000233,
         1930.6999999999534,
@@ -2973,7 +2973,7 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1923.2000000000116,
       "meanDistanceRatio": 1.0247097674398689,
       "normalityProbability": 0.05461915352444757,
@@ -2981,8 +2981,8 @@ Object {
       "variance": 3358.446666665255,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       507.9000000000233,
       564.5,
       566.9000000001397,
@@ -3001,7 +3001,7 @@ Object {
     ],
     "dataCount": 15,
     "discardedCount": 1,
-    "discardedData": Array [
+    "discardedData": [
       892.7999999999884,
     ],
     "mean": 985.1933333333659,
@@ -3013,8 +3013,8 @@ Object {
     "stdev": 88.9572604996314,
     "variance": 11603.746533332158,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       544.7000000001863,
       557.5,
       567.0999999999767,
@@ -3031,7 +3031,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       779.1000000000931,
       784.9000000000233,
       1314,
@@ -3045,25 +3045,25 @@ Object {
     "stdev": 49.65031881749494,
     "variance": 2495.7851282032043,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "discardedModalities1": Array [
-    Array [
+  "discardedModalities1": [
+    [
       892.7999999999884,
     ],
   ],
-  "discardedModalities2": Array [
-    Array [
+  "discardedModalities2": [
+    [
       779.1000000000931,
       784.9000000000233,
     ],
-    Array [
+    [
       1314,
     ],
   ],
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.0771977984998754,
     "cohensD": 0.13758498172163694,
     "nonOverlapMeasure": 0.5542900327924283,
@@ -3076,18 +3076,18 @@ Object {
   "pooledStDev": 86.03924122040775,
   "pooledVariance": 7402.751029783512,
   "stdevDifference": 39.30694168213646,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 13.765449177362735,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -55.91017321620312,
         Infinity,
       ],
       "pValue": 0.3534640304582129,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         124.41062387668109,
       ],
@@ -3095,8 +3095,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.448395790007951,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -81.83526268375161,
         150.3357133442296,
       ],
@@ -3108,9 +3108,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two datasets with noise iterations (similar 4) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       558.3779999999969,
       561.0819999999945,
       568.3039999999922,
@@ -3127,7 +3127,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       698.2099999999915,
       1482.7349999999942,
       1759.8599999999988,
@@ -3140,8 +3140,8 @@ Object {
     "stdev": 23.257320874158665,
     "variance": 540.9029742435764,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       557.2959999999936,
       559.6269999999946,
       568.4069999999929,
@@ -3158,7 +3158,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       1458.1829999999989,
       1524.4450000000002,
       1692.5979999999925,
@@ -3171,11 +3171,11 @@ Object {
     "stdev": 23.84269879858383,
     "variance": 568.4742859999907,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.1038987601125747,
     "cohensD": 0.18467931381003283,
     "nonOverlapMeasure": 0.5732597138716617,
@@ -3187,18 +3187,18 @@ Object {
   "pooledStDev": 23.551828594013323,
   "pooledVariance": 554.6886301217836,
   "stdevDifference": -0.5853779244251633,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 23.985185076517052,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -10.722079317438691,
         Infinity,
       ],
       "pValue": 0.29361872817948476,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         20.88823316359358,
       ],
@@ -3206,8 +3206,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.5502483239550531,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -13.983402002509251,
         24.149555848664132,
       ],
@@ -3219,16 +3219,16 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of 3 different data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       57,
       58,
       59,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1.0173926194797338,
     "modalityCount": 1,
@@ -3237,15 +3237,15 @@ Object {
     "stdev": 1,
     "variance": 1,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       157,
       158,
       159,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1.0063492703378216,
     "modalityCount": 1,
@@ -3254,11 +3254,11 @@ Object {
     "stdev": 1,
     "variance": 1,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -40.406101782088435,
     "nonOverlapMeasure": 0,
@@ -3270,18 +3270,18 @@ Object {
   "pooledStDev": 1,
   "pooledVariance": 1,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 4,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -101.74064561209747,
         Infinity,
       ],
       "pValue": 0.9999999866725905,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -98.25935438790253,
       ],
@@ -3289,8 +3289,8 @@ Object {
       "rejected": true,
     },
     "tValue": -122.47448713915891,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -102.26695793552753,
         -97.73304206447249,
       ],
@@ -3302,9 +3302,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of 4 exactly the same data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
       58,
@@ -3312,15 +3312,15 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
@@ -3328,14 +3328,14 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -3347,18 +3347,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3366,8 +3366,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3379,9 +3379,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of 4 mixed data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       55,
       56,
       57,
@@ -3389,7 +3389,7 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 56.5,
     "meanDistanceRatio": 1.0178609402293612,
     "modalityCount": 1,
@@ -3398,8 +3398,8 @@ Object {
     "stdev": 1.2909944487358056,
     "variance": 1.6666666666666667,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
@@ -3407,7 +3407,7 @@ Object {
     ],
     "dataCount": 4,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "modalityCount": 1,
@@ -3416,11 +3416,11 @@ Object {
     "stdev": 0,
     "variance": 0,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": false,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -44.926606816006036,
     "nonOverlapMeasure": 0,
@@ -3432,18 +3432,18 @@ Object {
   "pooledStDev": 0.9128709291752769,
   "pooledVariance": 0.8333333333333334,
   "stdevDifference": 1.2909944487358056,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 3,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -103.0190895650935,
         Infinity,
       ],
       "pValue": 0.9999997164285319,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -99.9809104349065,
       ],
@@ -3451,8 +3451,8 @@ Object {
       "rejected": true,
     },
     "tValue": -157.24312385602113,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -103.55426025676053,
         -99.44573974323947,
       ],
@@ -3464,34 +3464,34 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of exactly one data point 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       59,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 59,
     "meanDistanceRatio": 0,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -3503,18 +3503,18 @@ Object {
   "pooledStDev": NaN,
   "pooledVariance": NaN,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3522,8 +3522,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3535,38 +3535,38 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of exactly the same 3 data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
       58,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
       158,
     ],
     "dataCount": 3,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -3578,18 +3578,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3597,8 +3597,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3610,36 +3610,36 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets of exactly the same two data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       158,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -Infinity,
     "nonOverlapMeasure": 0,
@@ -3651,18 +3651,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 0,
       "rejected": true,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3670,8 +3670,8 @@ Object {
       "rejected": false,
     },
     "tValue": -Infinity,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3683,36 +3683,36 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two different datasets with two different data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       59,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58.5,
     "meanDistanceRatio": 1.0172413793103448,
     "normalityProbability": 0.39632812046346777,
     "stdev": 0.7071067811865476,
     "variance": 0.5,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       158,
       159,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 158.5,
     "meanDistanceRatio": 1.0063291139240507,
     "normalityProbability": 0.39632812046338406,
     "stdev": 0.7071067811865476,
     "variance": 0.5,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -1,
     "cohensD": -57.14285714285714,
     "nonOverlapMeasure": 0,
@@ -3724,18 +3724,18 @@ Object {
   "pooledStDev": 0.7071067811865476,
   "pooledVariance": 0.5,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 2.000000000000001,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -102.06474160483504,
         Infinity,
       ],
       "pValue": 0.9999750018748438,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -97.93525839516495,
       ],
@@ -3743,8 +3743,8 @@ Object {
       "rejected": true,
     },
     "tValue": -141.42135623730948,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -103.04243492229665,
         -96.95756507770334,
       ],
@@ -3756,34 +3756,34 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two identical datasets of exactly one data point 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       58,
     ],
     "dataCount": 1,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 0,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -3795,18 +3795,18 @@ Object {
   "pooledStDev": NaN,
   "pooledVariance": NaN,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 1,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3814,8 +3814,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3827,36 +3827,36 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two identical datasets of exactly two data points 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 1,
     "stdev": 0,
     "variance": 0,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       58,
       58,
     ],
     "dataCount": 2,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 58,
     "meanDistanceRatio": 1,
     "normalityProbability": 0,
     "stdev": 0,
     "variance": 0,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": NaN,
     "cohensD": NaN,
     "nonOverlapMeasure": NaN,
@@ -3868,18 +3868,18 @@ Object {
   "pooledStDev": 0,
   "pooledVariance": 0,
   "stdevDifference": 0,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": NaN,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         NaN,
         Infinity,
       ],
       "pValue": 1,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         NaN,
       ],
@@ -3887,8 +3887,8 @@ Object {
       "rejected": false,
     },
     "tValue": NaN,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         NaN,
         NaN,
       ],
@@ -3900,10 +3900,10 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two larger datasets with 3 modalities 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         1571.3894785003663,
         1596.3722164886472,
         1672.555412628174,
@@ -3923,15 +3923,15 @@ Object {
       ],
       "dataCount": 16,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1770.0728164310453,
       "meanDistanceRatio": 1.0140419540618753,
       "normalityProbability": 0.1908695300208716,
       "stdev": 102.23254404708905,
       "variance": 10451.493062340001,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         2411.590912628174,
         2544.879712628174,
         2560.276,
@@ -3946,15 +3946,15 @@ Object {
       ],
       "dataCount": 11,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 2640.608742120639,
       "meanDistanceRatio": 1.016622525968804,
       "normalityProbability": 0.5474348576765725,
       "stdev": 131.48009341224446,
       "variance": 17287.014963692527,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         3221.315171432495,
         3233.08305,
         3243.414862628174,
@@ -3971,7 +3971,7 @@ Object {
       ],
       "dataCount": 13,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 3370.439686918522,
       "meanDistanceRatio": 1.009268102674028,
       "normalityProbability": 0.3965614204900799,
@@ -3979,9 +3979,9 @@ Object {
       "variance": 13095.507892773341,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         1655.1870126281738,
         1697.844811050415,
         1730.084998422241,
@@ -3992,15 +3992,15 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1761.1601485050746,
       "meanDistanceRatio": 1.0176044557903259,
       "normalityProbability": 0.6544945542387355,
       "stdev": 67.28050237941397,
       "variance": 4526.666000426329,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         2417.9209626281736,
         2460.1782126281737,
         2519.0311542205814,
@@ -4024,15 +4024,15 @@ Object {
       ],
       "dataCount": 20,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 2652.6081584671024,
       "meanDistanceRatio": 1.0095414849800797,
       "normalityProbability": 0.014377014431133484,
       "stdev": 120.9699876772731,
       "variance": 14633.737918639605,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         3228.7299678039553,
         3293.002262628174,
         3299.105721432495,
@@ -4048,7 +4048,7 @@ Object {
       ],
       "dataCount": 12,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 3408.4495684654235,
       "meanDistanceRatio": 1.0112045391749058,
       "normalityProbability": 0.36587702914903586,
@@ -4056,8 +4056,8 @@ Object {
       "variance": 13492.701868323731,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       1571.3894785003663,
       1596.3722164886472,
       1672.555412628174,
@@ -4101,7 +4101,7 @@ Object {
     ],
     "dataCount": 40,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 2529.5894289041134,
     "meanDistanceRatio": 1.0132001096352303,
     "modalityCount": 3,
@@ -4111,8 +4111,8 @@ Object {
     "stdev": 114.24161521770677,
     "variance": 13190.566405102782,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1655.1870126281738,
       1697.844811050415,
       1730.084998422241,
@@ -4155,7 +4155,7 @@ Object {
     ],
     "dataCount": 39,
     "discardedCount": 1,
-    "discardedData": Array [
+    "discardedData": [
       2162.184772872925,
     ],
     "mean": 2725.1712571913504,
@@ -4167,17 +4167,17 @@ Object {
     "stdev": 109.85282948688001,
     "variance": 12468.56007168362,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "discardedModalities1": Array [],
-  "discardedModalities2": Array [
-    Array [
+  "discardedModalities1": [],
+  "discardedModalities2": [
+    [
       2162.184772872925,
     ],
   ],
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.055740999044624,
     "cohensD": -0.09938229098905689,
     "nonOverlapMeasure": 0.4608154376535813,
@@ -4190,18 +4190,18 @@ Object {
   "pooledStDev": 113.42555882239594,
   "pooledVariance": 12865.357394172801,
   "stdevDifference": 4.388785730826754,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 19.789031438175883,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -90.03514193037668,
         Infinity,
       ],
       "pValue": 0.6024161739438623,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         61.69797271786578,
       ],
@@ -4209,8 +4209,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.2872940694566256,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -105.94718202590533,
         77.61001281339443,
       ],
@@ -4222,10 +4222,10 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (bimodal 2) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         10.239,
         10.293,
         10.4,
@@ -4237,30 +4237,30 @@ Object {
       ],
       "dataCount": 8,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 11.22725,
       "meanDistanceRatio": 1.038390096159594,
       "normalityProbability": 0.7769609531506181,
       "stdev": 1.0436999774155131,
       "variance": 1.0893096428571427,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         66.587,
         68.986,
         127.194,
       ],
       "dataCount": 3,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 87.589,
       "meanDistanceRatio": 1.4398967275998316,
       "normalityProbability": 1,
       "stdev": 34.31990412282645,
       "variance": 1177.8558189999999,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         578.245,
         586.523,
         593.91,
@@ -4269,7 +4269,7 @@ Object {
       ],
       "dataCount": 5,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 614.8884,
       "meanDistanceRatio": 1.0532391161481827,
       "normalityProbability": 0.9729197177977249,
@@ -4277,9 +4277,9 @@ Object {
       "variance": 2768.5946678000014,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         24.992,
         28.01,
         29.373,
@@ -4287,15 +4287,15 @@ Object {
       ],
       "dataCount": 4,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 28.755499999999998,
       "meanDistanceRatio": 1.093627581103284,
       "normalityProbability": 0.01545389028355526,
       "stdev": 3.1751525422673255,
       "variance": 10.081593666666661,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         93.469,
         95.761,
         98.026,
@@ -4304,15 +4304,15 @@ Object {
       ],
       "dataCount": 5,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 97.71099999999998,
       "meanDistanceRatio": 1.0228092933207393,
       "normalityProbability": 0.014091044682530196,
       "stdev": 3.3347756296338775,
       "variance": 11.120728500000023,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         566.367,
         607.782,
         609.666,
@@ -4323,7 +4323,7 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 607.63,
       "meanDistanceRatio": 1.0170140719706773,
       "normalityProbability": 0.9832576799307058,
@@ -4331,8 +4331,8 @@ Object {
       "variance": 374.09399800000034,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       10.239,
       10.293,
       10.4,
@@ -4352,7 +4352,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 214.1891875,
     "meanDistanceRatio": 1.1183129083010726,
     "modalityCount": 3,
@@ -4362,8 +4362,8 @@ Object {
     "stdev": 23.399781048554193,
     "variance": 1086.5784545714291,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       24.992,
       28.01,
       29.373,
@@ -4383,7 +4383,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 303.5616875,
     "meanDistanceRatio": 1.0379784559257235,
     "modalityCount": 3,
@@ -4393,13 +4393,13 @@ Object {
     "stdev": 10.297816019512908,
     "variance": 169.66175019791683,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "discardedModalities1": Array [],
-  "discardedModalities2": Array [],
-  "effectSizeStats": Object {
+  "discardedModalities1": [],
+  "discardedModalities2": [],
+  "effectSizeStats": {
     "changeProbability": -0.3767552750030824,
     "cohensD": -2.024095110132711,
     "nonOverlapMeasure": 0.31126672706446484,
@@ -4412,18 +4412,18 @@ Object {
   "pooledStDev": 24.513028762722968,
   "pooledVariance": 600.8885791220836,
   "stdevDifference": 13.101965029041285,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 3.5463362508786673,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -40.96991618895219,
         Infinity,
       ],
       "pValue": 0.6886015388171662,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         28.20652868895223,
       ],
@@ -4431,8 +4431,8 @@ Object {
       "rejected": false,
     },
     "tValue": -4.049714041931279,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -53.454426622812704,
         40.69103912281273,
       ],
@@ -4444,10 +4444,10 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (bimodal) 1`] = `
-Object {
-  "comparedModalities1": Array [
-    Object {
-      "data": Array [
+{
+  "comparedModalities1": [
+    {
+      "data": [
         519.801,
         533.615,
         551.024,
@@ -4460,15 +4460,15 @@ Object {
       ],
       "dataCount": 9,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 567.2165555555556,
       "meanDistanceRatio": 1.0212701020134594,
       "normalityProbability": 0.021263344498033687,
       "stdev": 30.750844805920003,
       "variance": 945.6144562777772,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1061.516,
         1067.188,
         1070.919,
@@ -4479,7 +4479,7 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1095.9214285714286,
       "meanDistanceRatio": 1.0149741103064052,
       "normalityProbability": 0.709709919769268,
@@ -4487,9 +4487,9 @@ Object {
       "variance": 1180.0005776190437,
     },
   ],
-  "comparedModalities2": Array [
-    Object {
-      "data": Array [
+  "comparedModalities2": [
+    {
+      "data": [
         563.563,
         567.498,
         578.969,
@@ -4500,15 +4500,15 @@ Object {
       ],
       "dataCount": 7,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 586.6701428571429,
       "meanDistanceRatio": 1.0198328140594426,
       "normalityProbability": 0.8620144797621213,
       "stdev": 24.003430861917582,
       "variance": 576.1646931428575,
     },
-    Object {
-      "data": Array [
+    {
+      "data": [
         1070.095,
         1083.78,
         1087.077,
@@ -4521,7 +4521,7 @@ Object {
       ],
       "dataCount": 9,
       "discardedCount": 0,
-      "discardedData": Array [],
+      "discardedData": [],
       "mean": 1108.3907777777779,
       "meanDistanceRatio": 1.0111993604686127,
       "normalityProbability": 0.7795235585319694,
@@ -4529,8 +4529,8 @@ Object {
       "variance": 1070.5418004444446,
     },
   ],
-  "data1": Object {
-    "data": Array [
+  "data1": {
+    "data": [
       519.801,
       533.615,
       551.024,
@@ -4550,7 +4550,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 798.5249375000001,
     "meanDistanceRatio": 1.0185156056416231,
     "modalityCount": 2,
@@ -4560,8 +4560,8 @@ Object {
     "stdev": 32.32597241429448,
     "variance": 1048.1583843645813,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       563.563,
       567.498,
       578.969,
@@ -4581,7 +4581,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 880.1380000000001,
     "meanDistanceRatio": 1.0149764964146009,
     "modalityCount": 2,
@@ -4591,13 +4591,13 @@ Object {
     "stdev": 28.906014485114653,
     "variance": 854.2518160000002,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "discardedModalities1": Array [],
-  "discardedModalities2": Array [],
-  "effectSizeStats": Object {
+  "discardedModalities1": [],
+  "discardedModalities2": [],
+  "effectSizeStats": {
     "changeProbability": -0.22144592440053518,
     "cohensD": -0.3991136009996607,
     "nonOverlapMeasure": 0.34595777748695034,
@@ -4610,18 +4610,18 @@ Object {
   "pooledStDev": 30.860424077234526,
   "pooledVariance": 952.3657742267565,
   "stdevDifference": 3.41995792917983,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 13.351249157862783,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -43.057479465863494,
         Infinity,
       ],
       "pValue": 0.8368409191984947,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         11.134542957926907,
       ],
@@ -4629,8 +4629,8 @@ Object {
       "rejected": false,
     },
     "tValue": -1.0782645794261538,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -49.00045559037997,
         17.07751908244339,
       ],
@@ -4642,9 +4642,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (greater) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       1306.443,
       1310.903,
       1340.962,
@@ -4664,7 +4664,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1734.6108124999996,
     "meanDistanceRatio": 1.0400306247983537,
     "modalityCount": 1,
@@ -4673,8 +4673,8 @@ Object {
     "stdev": 389.9511438157723,
     "variance": 152061.89456322914,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       1282.607,
       1401.62,
       1437.79,
@@ -4694,7 +4694,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 1989.0906874999998,
     "meanDistanceRatio": 1.0463584791919407,
     "modalityCount": 1,
@@ -4703,11 +4703,11 @@ Object {
     "stdev": 377.4615563315411,
     "variance": 142477.22650822916,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": false,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.3216332906238858,
     "cohensD": -0.5864643643728225,
     "nonOverlapMeasure": 0.2787817510409292,
@@ -4719,18 +4719,18 @@ Object {
   "pooledStDev": 383.7571634976071,
   "pooledVariance": 147269.56053572914,
   "stdevDifference": 12.489587484231208,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 29.96826563666702,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -484.7697018033032,
         Infinity,
       ],
       "pValue": 0.964759198234362,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -24.190048196696786,
       ],
@@ -4738,8 +4738,8 @@ Object {
       "rejected": true,
     },
     "tValue": -1.8756074143134736,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -531.5849420795118,
         22.625192079511887,
       ],
@@ -4751,9 +4751,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (significantly greater) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       83.896,
       85.574,
       86.306,
@@ -4772,7 +4772,7 @@ Object {
     ],
     "dataCount": 15,
     "discardedCount": 1,
-    "discardedData": Array [
+    "discardedData": [
       11.133,
     ],
     "mean": 93.21546666666667,
@@ -4783,8 +4783,8 @@ Object {
     "stdev": 6.490627009846768,
     "variance": 42.12823898095239,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       113.622,
       114.931,
       116.095,
@@ -4802,7 +4802,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       28.609,
       32.887,
     ],
@@ -4814,11 +4814,11 @@ Object {
     "stdev": 5.436671266642711,
     "variance": 29.55739446153846,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.99666356080577,
     "cohensD": -4.150590218258873,
     "nonOverlapMeasure": 0.000016580951036238023,
@@ -4830,18 +4830,18 @@ Object {
   "pooledStDev": 6.006297539938528,
   "pooledVariance": 36.07561013827161,
   "stdevDifference": 1.0539557432040567,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 26.706846267804053,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -32.38600310522957,
         Infinity,
       ],
       "pValue": 0.999999999999723,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         -24.827063561437093,
       ],
@@ -4849,8 +4849,8 @@ Object {
       "rejected": true,
     },
     "tValue": -12.897094212177404,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -33.15995588618825,
         -24.05311078047841,
       ],
@@ -4862,9 +4862,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (similar - different sample) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       8490.293000000001,
       8518.646999999997,
       8560.180999999999,
@@ -4881,7 +4881,7 @@ Object {
     ],
     "dataCount": 13,
     "discardedCount": 3,
-    "discardedData": Array [
+    "discardedData": [
       9575.397999999996,
       10789.819000000023,
       12178.027000000016,
@@ -4894,8 +4894,8 @@ Object {
     "stdev": 254.42125831331657,
     "variance": 64730.176681731355,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       8447.615000000002,
       8504.422999999988,
       8551.507999999989,
@@ -4915,7 +4915,7 @@ Object {
     ],
     "dataCount": 16,
     "discardedCount": 0,
-    "discardedData": Array [],
+    "discardedData": [],
     "mean": 8909.8101875,
     "meanDistanceRatio": 1.0078153579658173,
     "modalityCount": 1,
@@ -4924,11 +4924,11 @@ Object {
     "stdev": 312.1875018910312,
     "variance": 97461.03633696263,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": -0.13245559322285783,
     "cohensD": -0.23586028985302326,
     "nonOverlapMeasure": 0.40677054153412495,
@@ -4940,18 +4940,18 @@ Object {
   "pooledStDev": 287.947890426904,
   "pooledVariance": 82913.9876013043,
   "stdevDifference": -57.76624357771465,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 26.99689492023146,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -257.2656584390639,
         Infinity,
       ],
       "pValue": 0.767695309352575,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         101.16466805445413,
       ],
@@ -4959,8 +4959,8 @@ Object {
       "rejected": false,
     },
     "tValue": -0.741806927600088,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -293.93854337686184,
         137.83755299225206,
       ],
@@ -4972,9 +4972,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (similar 1) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       258.303,
       268.269,
       270.022,
@@ -4992,7 +4992,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       220.648,
       223.675,
     ],
@@ -5004,8 +5004,8 @@ Object {
     "stdev": 17.523546725026183,
     "variance": 307.07468982417583,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       198.564,
       271.469,
       271.617,
@@ -5024,7 +5024,7 @@ Object {
     ],
     "dataCount": 15,
     "discardedCount": 1,
-    "discardedData": Array [
+    "discardedData": [
       29.341,
     ],
     "mean": 276.9875333333333,
@@ -5035,11 +5035,11 @@ Object {
     "stdev": 23.767313962266588,
     "variance": 564.8852129809524,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.13290836321376376,
     "cohensD": 0.2366740818100622,
     "nonOverlapMeasure": 0.5935451782627579,
@@ -5051,18 +5051,18 @@ Object {
   "pooledStDev": 20.994147287992238,
   "pooledVariance": 440.7542203499118,
   "stdevDifference": -6.243767237240405,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 25.676960238989803,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -7.47127491724578,
         Infinity,
       ],
       "pValue": 0.23342866023934428,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         18.874493964864797,
       ],
@@ -5070,8 +5070,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.7385844093898968,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -10.176070046583785,
         21.579289094202807,
       ],
@@ -5083,9 +5083,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (similar 2) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       417.2763277282715,
       422.9192844238281,
       436.05932772827146,
@@ -5103,7 +5103,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       795.7223277282715,
       803.6723255157472,
     ],
@@ -5115,8 +5115,8 @@ Object {
     "stdev": 50.59236113207368,
     "variance": 2559.5870049181594,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       407.80132551574707,
       412.0413277282715,
       424.1903255157471,
@@ -5134,7 +5134,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       939.1058455505372,
       1330.7345961914061,
     ],
@@ -5146,11 +5146,11 @@ Object {
     "stdev": 58.075970369898414,
     "variance": 3372.8183344053186,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.004345870193199763,
     "cohensD": 0.007702892446609495,
     "nonOverlapMeasure": 0.5030729790893343,
@@ -5162,18 +5162,18 @@ Object {
   "pooledStDev": 54.46285587133436,
   "pooledVariance": 2966.2026696617395,
   "stdevDifference": -7.483609237824737,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 25.52042723761013,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -34.65053522129364,
         Infinity,
       ],
       "pValue": 0.49071169184096974,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         35.618596427348336,
       ],
@@ -5181,8 +5181,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.023513724759134977,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -41.86782635263818,
         42.83588755869288,
       ],
@@ -5194,9 +5194,9 @@ Object {
 `;
 
 exports[`compare using quantile denoising should compare two small datasets with noise iterations (similar) 1`] = `
-Object {
-  "data1": Object {
-    "data": Array [
+{
+  "data1": {
+    "data": [
       258.32,
       268.336,
       270.048,
@@ -5214,7 +5214,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       220.604,
       223.656,
     ],
@@ -5226,8 +5226,8 @@ Object {
     "stdev": 17.537498983418548,
     "variance": 307.56387059340665,
   },
-  "data2": Object {
-    "data": Array [
+  "data2": {
+    "data": [
       271.447,
       271.609,
       272.313,
@@ -5245,7 +5245,7 @@ Object {
     ],
     "dataCount": 14,
     "discardedCount": 2,
-    "discardedData": Array [
+    "discardedData": [
       198.567,
       3434.452,
     ],
@@ -5257,11 +5257,11 @@ Object {
     "stdev": 10.085826366466243,
     "variance": 101.72389349450565,
   },
-  "denoiseSettings": Object {
+  "denoiseSettings": {
     "shouldSplit1": true,
     "shouldSplit2": true,
   },
-  "effectSizeStats": Object {
+  "effectSizeStats": {
     "changeProbability": 0.004385137492148861,
     "cohensD": 0.00777249296362368,
     "nonOverlapMeasure": 0.503100744847097,
@@ -5273,18 +5273,18 @@ Object {
   "pooledStDev": 14.305379479201386,
   "pooledVariance": 204.64388204395615,
   "stdevDifference": 7.451672616952305,
-  "ttest": Object {
+  "ttest": {
     "degreesOfFreedom": 20.751343544981694,
-    "greater": Object {
-      "confidenceInterval": Array [
+    "greater": {
+      "confidenceInterval": [
         -9.180784905846858,
         Infinity,
       ],
       "pValue": 0.4906488464937445,
       "rejected": false,
     },
-    "less": Object {
-      "confidenceInterval": Array [
+    "less": {
+      "confidenceInterval": [
         -Infinity,
         9.437356334418391,
       ],
@@ -5292,8 +5292,8 @@ Object {
       "rejected": false,
     },
     "tValue": 0.023726186170447,
-    "twoSided": Object {
-      "confidenceInterval": Array [
+    "twoSided": {
+      "confidenceInterval": [
         -11.124240582919482,
         11.380812011491015,
       ],

@@ -4,7 +4,7 @@ import {
   calcCohensD,
   calcGaussOverlap,
   calcU3,
-} from './cohensd'
+} from './cohensd.js'
 
 export interface EffectSizeStats {
   cohensD: number

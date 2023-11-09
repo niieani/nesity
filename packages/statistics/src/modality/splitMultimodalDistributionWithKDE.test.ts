@@ -12,9 +12,9 @@ import {
   UNIMODAL_SAMPLE,
   UNIMODAL_SAMPLE_NORMAL_DISTRIBUTION,
   UNIMODAL_SAMPLE_REAL,
-} from '../__fixtures__/testSamples'
-import * as utilities from '../utilities'
-import { splitMultimodalDistributionUsingKernelDensityEstimation } from './splitMultimodalDistributionWithKDE'
+} from '../__fixtures__/testSamples.js'
+import * as utilities from '../utilities.js'
+import { splitMultimodalDistributionUsingKernelDensityEstimation } from './splitMultimodalDistributionWithKDE.js'
 
 const random = utilities.getStableRandom()
 
@@ -100,8 +100,8 @@ describe('difficult splits', () => {
       kernelStretchFactor: 0.5,
     })
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           544.7000000001863,
           557.5,
           567.0999999999767,
@@ -114,10 +114,10 @@ describe('difficult splits', () => {
           779.1000000000931,
           784.9000000000233,
         ],
-        Array [
+        [
           1314,
         ],
-        Array [
+        [
           1854.8000000000466,
           1911.9000000000233,
           1930.6999999999534,

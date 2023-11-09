@@ -1,6 +1,6 @@
-import * as ratioTransformation from '../ratioTransformation'
-import * as utils from '../utilities'
-import type { GetSplitsReturnType } from './getSplits'
+import * as ratioTransformation from '../ratioTransformation.js'
+import * as utils from '../utilities.js'
+import type { GetSplitsReturnType } from './getSplits.js'
 
 export interface MappedSplit {
   data: number[]
@@ -147,7 +147,7 @@ export function matchModalities({
         : otherSplitMatches,
     }),
   )
-  type OtherMatch = typeof matchedSplits[number]['otherSplitMatches'][number]
+  type OtherMatch = (typeof matchedSplits)[number]['otherSplitMatches'][number]
 
   const getGlobalScore = (
     pair: {

@@ -1,12 +1,15 @@
-import type { GetSplitsReturnType } from '../modality/getSplits'
-import { getSplitsWithQuantiles } from '../modality/getSplits'
-import type { SplitMultimodalDistributionWithQuantilesOptions } from '../modality/splitMultimodalDistributionWithQuantiles'
-import { OptimizationResult, optimize } from '../optimize'
+import type { GetSplitsReturnType } from '../modality/getSplits.js'
+import { getSplitsWithQuantiles } from '../modality/getSplits.js'
+import type { SplitMultimodalDistributionWithQuantilesOptions } from '../modality/splitMultimodalDistributionWithQuantiles.js'
+import { OptimizationResult, optimize } from '../optimize.js'
 import {
   compareSplitPermutations,
   getCachedCompareFunction,
-} from './compareSplitPermutations'
-import type { CompareWithDenoisingOptionsBase, ComparisonResult } from './types'
+} from './compareSplitPermutations.js'
+import type {
+  CompareWithDenoisingOptionsBase,
+  ComparisonResult,
+} from './types.js'
 
 export interface CompareWithQuantileDenoisingOptions
   extends CompareWithDenoisingOptionsBase {

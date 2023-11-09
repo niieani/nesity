@@ -1,24 +1,24 @@
 import {
   calculateSilvermansRuleOfThumbBandwidth,
   optimalThreshold,
-} from '../kernelDensityEstimate'
-import type { GetSplitsReturnType } from '../modality/getSplits'
-import { getSplitsWithKDE } from '../modality/getSplits'
-import { OptimizationResult, optimize } from '../optimize'
+} from '../kernelDensityEstimate.js'
+import type { GetSplitsReturnType } from '../modality/getSplits.js'
+import { getSplitsWithKDE } from '../modality/getSplits.js'
+import { OptimizationResult, optimize } from '../optimize.js'
 import {
   compareSplitPermutations,
   getCachedCompareFunction,
-} from './compareSplitPermutations'
+} from './compareSplitPermutations.js'
 import {
   DEFAULT_KERNEL_STRETCH_FACTOR_RANGE,
   DEFAULT_KERNEL_STRETCH_FACTOR_SEARCH_STEP_SIZE,
   DEFAULT_NOISE_VALUES_PER_SAMPLE,
-} from './defaults'
+} from './defaults.js'
 import type {
   CompareWithDenoisingOptionsBase,
   ComparisonResult,
   KDEDenoisingOptions,
-} from './types'
+} from './types.js'
 
 export interface CompareWithKDEDenoisingOptions
   extends CompareWithDenoisingOptionsBase {

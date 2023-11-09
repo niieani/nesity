@@ -1,5 +1,5 @@
-import * as transforms from './ratioTransformation'
-import { asPlot } from './testPlottingHelpers'
+import * as transforms from './ratioTransformation.js'
+import { asPlot } from './testPlottingHelpers.js'
 
 describe('ratioTransformation', () => {
   const width = 40

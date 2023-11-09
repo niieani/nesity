@@ -1,12 +1,12 @@
-import { DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO } from '../compare/defaults'
+import { DEFAULT_MODALITY_SPLIT_TO_NOISE_RATIO } from '../compare/defaults.js'
 import {
   SplitMultiModalDistributionConfig,
   splitMultimodalDistributionUsingKernelDensityEstimation,
-} from './splitMultimodalDistributionWithKDE'
+} from './splitMultimodalDistributionWithKDE.js'
 import {
   splitMultimodalDistribution,
   SplitMultimodalDistributionWithQuantilesOptions,
-} from './splitMultimodalDistributionWithQuantiles'
+} from './splitMultimodalDistributionWithQuantiles.js'
 
 export interface GetSplitsReturnType {
   rawSplitsSortedBySize: readonly number[][]

@@ -1,4 +1,4 @@
-import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize'
+import { INVALID_LEFT, INVALID_RIGHT, optimize } from './optimize.js'
 
 describe('optimize', () => {
   it('should return an array of tuples sorted by the return value of the comparison function', () => {
@@ -16,11 +16,11 @@ describe('optimize', () => {
       iterations: 4,
     })
     expect(results).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "0",
           -0,
-          Array [
+          [
             3,
             -0,
             "reversed",
@@ -28,10 +28,10 @@ describe('optimize', () => {
           -2,
           true,
         ],
-        Array [
+        [
           "2",
           -2,
-          Array [
+          [
             -2,
             -0,
             "regular",
@@ -39,10 +39,10 @@ describe('optimize', () => {
           -2,
           true,
         ],
-        Array [
+        [
           "1",
           1,
-          Array [
+          [
             1,
             -0,
             "reversed",
@@ -50,10 +50,10 @@ describe('optimize', () => {
           1,
           true,
         ],
-        Array [
+        [
           "3",
           3,
-          Array [
+          [
             -0,
             3,
             "regular",
@@ -83,7 +83,7 @@ describe('optimize', () => {
       getNextIterationArgument: (iteration: number) => iteration,
     })
     expect(results.map(([_1, _2, _3, rank]) => rank)).toMatchInlineSnapshot(`
-      Array [
+      [
         -4,
         -3,
         -2,

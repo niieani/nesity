@@ -22,10 +22,11 @@
   },
   "scripts": {
     "build": "yarn build:cjs && yarn build:esm",
-    "build:cjs": "yarn foreach-run tsc --outDir cjs --declarationDir cjs --module commonjs --target es6",
-    "build:esm": "yarn foreach-run tsc --outDir esm --declarationDir esm --module esnext --target es6",
+    "build:cjs": "yarn foreach-run tsc --outDir cjs --declarationDir cjs --module commonjs --moduleResolution node --target es2015",
+    "build:esm": "yarn foreach-run tsc --outDir esm --declarationDir esm --module nodenext --target es2015",
+    "create-cjs-stub-package": "yarn workspaces foreach --parallel --interlaced --all run create-cjs-stub-package",
     "clean": "git clean -dfX --exclude=node_modules packages && beemo typescript:sync-project-refs",
-    "foreach-run": "PATH=\"$PWD/node_modules/.bin:$PATH\" yarn workspaces foreach --parallel --interlaced --topological --topological-dev --verbose run rrun",
+    "foreach-run": "PATH=\"$PWD/node_modules/.bin:$PATH\" yarn workspaces foreach --parallel --interlaced --topological --topological-dev --verbose --all run rrun",
     "format": "yarn foreach-run prettier --write \"./{src,tests,.config}/**/!(*.d).{.js,jsx,ts,tsx,json,md}\"",
     "postinstallDev": "yarn prepare",
     "prepare": "rrun husky install .config/husky && beemo create-config && beemo typescript:sync-project-refs",
@@ -56,8 +57,8 @@
     ]
   },
   "devDependencies": {
-    "@jest/globals": "^29.3.1",
-    "@niieani/scaffold": "^1.5.22"
+    "@jest/globals": "^29.7.0",
+    "@niieani/scaffold": "^1.7.11"
   },
-  "packageManager": "yarn@3.3.0"
+  "packageManager": "yarn@4.0.1"
 }

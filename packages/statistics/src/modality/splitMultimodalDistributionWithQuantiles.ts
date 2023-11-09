@@ -4,7 +4,7 @@ import {
   findSharpChangeQuantile,
   quantile,
   sort,
-} from '../utilities'
+} from '../utilities.js'
 
 const DEFAULT_REFERENCE_RATIO_QUANTILE = 0.8
 const DEFAULT_SPLIT_WHEN_CHANGE_IS_THIS_MANY_TIMES_LARGER_THAN_REFERENCE_RATIO = 3
