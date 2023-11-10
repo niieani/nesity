@@ -1,5 +1,7 @@
-import { normal } from 'jstat'
+import jstat from 'jstat'
 import * as utils from '../utilities.js'
+
+const { normal } = jstat
 
 /**
  * Overlap

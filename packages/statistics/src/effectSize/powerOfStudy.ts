@@ -1,6 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { normal } from 'jstat'
+import jstat from 'jstat'
 import { uniroot } from '../vendor/uniroot.js'
+
+const { normal } = jstat
 
 type TailType = 'one-tailed' | 'two-tailed'
 
