@@ -1,7 +1,7 @@
-import jerzy from 'jerzy'
+import { shapiroWilk } from './stats/normality.js'
 
 export const calcShapiroWilk = (data: number[]) => {
-  const result = jerzy.Normality.shapiroWilk(new jerzy.Vector(data))
+  const result = shapiroWilk(data)
   return {
     pValue: result.p,
     statistic: result.w,

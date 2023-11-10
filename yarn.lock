@@ -12508,13 +12508,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jerzy@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "jerzy@npm:0.2.1"
-  checksum: 3c196c882221a3b0a0318a7bb4215370ddb7cfa20b81fd81db710e5a82c1d86a2b078c3c8c90d6e07ebefcc524fffa82a3868fe8a4def192f2fffe4d2de3ea90
-  languageName: node
-  linkType: hard
-
 "jest-changed-files@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-changed-files@npm:29.7.0"
@@ -14436,7 +14429,6 @@ __metadata:
     "@stdlib/stats-ttest2": "npm:^0.1.0"
     "@types/asciichart": "npm:^1.5.8"
     asciichart: "npm:^1.5.25"
-    jerzy: "npm:^0.2.1"
     jstat: "npm:^1.9.6"
   languageName: unknown
   linkType: soft
