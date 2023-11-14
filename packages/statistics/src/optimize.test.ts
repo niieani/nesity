@@ -21,9 +21,9 @@ describe('optimize', () => {
           "0",
           -0,
           [
-            3,
             -0,
-            "reversed",
+            3,
+            "regular",
           ],
           -2,
           true,
@@ -32,9 +32,9 @@ describe('optimize', () => {
           "2",
           -2,
           [
-            -2,
             -0,
-            "regular",
+            -2,
+            "reversed",
           ],
           -2,
           true,
@@ -54,9 +54,9 @@ describe('optimize', () => {
           "3",
           3,
           [
-            -0,
             3,
-            "regular",
+            -0,
+            "reversed",
           ],
           3,
           true,
@@ -107,6 +107,23 @@ describe('optimize', () => {
     ).toEqual([3, 4, 5])
   })
 
+  it('results in correct compare metadata when only one result is correct', () => {
+    const results = optimize({
+      iterate: (iteration: number) => iteration,
+      iterations: 5,
+      compare: (a, b) =>
+        // eslint-disable-next-line jest/no-conditional-in-test
+        a <= 4 ? INVALID_LEFT : b <= 4 ? INVALID_RIGHT : [a - b, 'hello'],
+      getComparisonCache(allResults) {
+        return allResults.map(([iteration]) => ({ iteration }))
+      },
+      getNextIterationArgument: (iteration: number) => iteration + 1,
+    })
+    expect(
+      results.map(([i, iterationResult, meta]) => ({ iterationResult, meta })),
+    ).toEqual([{ iterationResult: 5, meta: 'hello' }])
+  })
+
   it('correctly handles the reverseCompareMeta function', () => {
     const results = optimize({
       iterate: (iteration: number) => iteration,
@@ -116,11 +133,11 @@ describe('optimize', () => {
       reverseCompareMeta: (meta: readonly string[]) => [...meta, 'reversed'],
     })
     expect(results.map(([_, , comparisonMeta]) => comparisonMeta)).toEqual([
+      [],
       ['reversed'],
       ['reversed'],
-      [],
-      [],
-      [],
+      ['reversed'],
+      ['reversed'],
     ])
   })
 })

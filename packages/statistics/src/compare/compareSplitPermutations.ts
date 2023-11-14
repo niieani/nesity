@@ -50,7 +50,7 @@ export const getCachedCompareFunction =
     _splitsB: readonly [GetSplitsReturnType, GetSplitsReturnType],
     indexA: number,
     indexB: number,
-    c:
+    cache:
       | {
           comparisons: (ComparisonResult | undefined)[]
           maxPooledStdev: number
@@ -67,9 +67,8 @@ export const getCachedCompareFunction =
     | typeof INVALID_LEFT
     | typeof INVALID_RIGHT
     | [compareRank: number, compareMeta: ComparisonResult] => {
-    const cache = c!
-    const comparisonA: ComparisonResult | undefined = cache?.comparisons[indexA]
-    const comparisonB: ComparisonResult | undefined = cache?.comparisons[indexB]
+    const comparisonA = cache?.comparisons[indexA]
+    const comparisonB = cache?.comparisons[indexB]
 
     if (!comparisonA) {
       return INVALID_LEFT
@@ -277,6 +276,7 @@ export function compareSplitPermutations({
     Boolean(c),
   )
   return {
+    // these need to be all comparisons in order to keep the indices correct
     comparisons,
     maxPooledStdev: Math.max(
       ...validComparisons.map((comparison) => comparison.pooledStDev),

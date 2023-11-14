@@ -44,8 +44,12 @@ export function compareWithQuantileDenoising({
     shouldSplit1?: boolean
     shouldSplit2?: boolean
   }): readonly [GetSplitsReturnType, GetSplitsReturnType] => {
-    const split1 = !shouldSplit1
-      ? ({
+    const split1: GetSplitsReturnType = shouldSplit1
+      ? getSplitsWithQuantiles({
+          sortedData: sorted1,
+          ...quantileOptions,
+        })
+      : ({
           largestModalityIndex: 0,
           largestSplitIndex: 0,
           modalities: [sorted1],
@@ -55,12 +59,12 @@ export function compareWithQuantileDenoising({
           separateModalitySizeThreshold: 0,
           splitsAndTheirDistribution: [[sorted1, 1]],
         } as const)
-      : getSplitsWithQuantiles({
-          sortedData: sorted1,
+    const split2: GetSplitsReturnType = shouldSplit2
+      ? getSplitsWithQuantiles({
+          sortedData: sorted2,
           ...quantileOptions,
         })
-    const split2 = !shouldSplit2
-      ? ({
+      : ({
           largestModalityIndex: 0,
           largestSplitIndex: 0,
           modalities: [sorted2],
@@ -70,10 +74,6 @@ export function compareWithQuantileDenoising({
           separateModalitySizeThreshold: 0,
           splitsAndTheirDistribution: [[sorted2, 1]],
         } as const)
-      : getSplitsWithQuantiles({
-          sortedData: sorted2,
-          ...quantileOptions,
-        })
     return [split1, split2] as const
   }
 

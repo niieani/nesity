@@ -1,19 +1,11 @@
 import ttest2 from '@stdlib/stats-ttest2'
 import { calcChangeProbability } from '../effectSize/cohensd.js'
 import { getEffectSizeStats } from '../effectSize/effectSizeStats.js'
-import type { GetSplitsReturnType } from '../modality/getSplits.js'
 import { calcShapiroWilk } from '../normality.js'
-import type { OptimizationResult } from '../optimize.js'
 import * as utils from '../utilities.js'
 import type { ComparisonQualityWeightingOptions } from './compareSplitPermutations.js'
-import {
-  compareWithKDEDenoising,
-  KDEOptimizationParameters,
-} from './compareWithKDEDenoising.js'
-import {
-  compareWithQuantileDenoising,
-  QuantileOptimizationParameters,
-} from './compareWithQuantileDenoising.js'
+import { compareWithKDEDenoising } from './compareWithKDEDenoising.js'
+import { compareWithQuantileDenoising } from './compareWithQuantileDenoising.js'
 import {
   DEFAULT_CONFIDENCE_LEVEL,
   DEFAULT_MINIMAL_ABSOLUTE_CHANGE_PROBABILITY,
@@ -217,11 +209,7 @@ export function compare({
   }
 
   // apply denoising logic:
-  const bestComparisons: OptimizationResult<
-    QuantileOptimizationParameters | KDEOptimizationParameters,
-    readonly [GetSplitsReturnType, GetSplitsReturnType],
-    ComparisonResult
-  >[] =
+  const bestComparisons =
     denoisingAndModalitySplittingOptions.type === 'kde'
       ? compareWithKDEDenoising({
           data1,

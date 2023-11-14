@@ -52,10 +52,10 @@ export function optimize<T, ArgT, CompareT, RefT>({
     | typeof INVALID_RIGHT
   reverseCompareMeta?: (meta: CompareT) => CompareT
 }): OptimizationResult<ArgT, T, CompareT>[] {
-  const compareResults: [number, CompareT | typeof INVALID][][] = Array.from(
-    { length: iterations },
-    (_) => Array.from({ length: iterations }),
-  )
+  const compareResultsCache: [number, CompareT | typeof INVALID][][] =
+    Array.from({ length: iterations }, (_) =>
+      Array.from({ length: iterations }),
+    )
   const results = Array.from<
     never,
     OptimizationResult<ArgT, T, CompareT | typeof INVALID | undefined>
@@ -63,24 +63,37 @@ export function optimize<T, ArgT, CompareT, RefT>({
     const arg = getNextIterationArgument(i)
     return [arg, iterate(arg), undefined, 0, false]
   })
-  const allResults = results.map(([arg, result]) => [arg, result] as const)
-  const comparisonReference = getComparisonCache?.(allResults)
+  const comparisonReference = getComparisonCache?.(
+    results.map(([arg, result]) => [arg, result] as const),
+  )
 
   for (let indexA = 0; indexA < results.length; indexA++) {
     for (let indexB = 0; indexB < results.length; indexB++) {
+      // do not compare with self
       // eslint-disable-next-line no-continue
       if (indexA === indexB) continue
 
       const resultA = results[indexA]!
       const resultB = results[indexB]!
-      if (resultA[4] && resultA[4]) {
+      if (resultA[4] && resultB[4]) {
+        // previously compared, skip
         // eslint-disable-next-line no-continue
         continue
       }
 
-      const compareResult =
-        // compareResults[indexA]?.[indexB] ??
-        compare(resultA[1], resultB[1], indexA, indexB, comparisonReference)
+      if (resultA[2] === INVALID || resultB[2] === INVALID) {
+        // previously compared and rejected, skip
+        // eslint-disable-next-line no-continue
+        continue
+      }
+
+      const compareResult = compare(
+        resultA[1],
+        resultB[1],
+        indexA,
+        indexB,
+        comparisonReference,
+      )
 
       if (compareResult === INVALID_LEFT) {
         resultA[2] = INVALID
@@ -100,7 +113,7 @@ export function optimize<T, ArgT, CompareT, RefT>({
       resultA[2] = compareMeta
       resultA[3] += compareValue
       resultA[4] = true
-      compareResults[indexA]![indexB] = compareResult
+      compareResultsCache[indexA]![indexB] = compareResult
 
       const reversedCompareMeta =
         compareMeta !== INVALID
@@ -109,8 +122,40 @@ export function optimize<T, ArgT, CompareT, RefT>({
       resultB[2] = reversedCompareMeta
       resultB[3] -= compareValue
       resultB[4] = true
-      compareResults[indexB]![indexA] = [-compareValue, reversedCompareMeta]
+      compareResultsCache[indexB]![indexA] = [
+        -compareValue,
+        reversedCompareMeta,
+      ]
     }
+  }
+
+  for (let index = 0; index < results.length; index++) {
+    // if there are any results that have not been compared,
+    // they must be compared with itself to get a valid compareMeta value
+    const result = results[index]!
+    if (result[4]) {
+      // previously compared, skip
+      // eslint-disable-next-line no-continue
+      continue
+    }
+    const compareResult = compare(
+      result[1],
+      result[1],
+      index,
+      index,
+      comparisonReference,
+    )
+    if (compareResult === INVALID_LEFT || compareResult === INVALID_RIGHT) {
+      result[2] = INVALID
+      result[3] = Number.NEGATIVE_INFINITY
+      result[4] = true
+      // eslint-disable-next-line no-continue
+      continue
+    }
+    const [compareValue, compareMeta] = compareResult
+    result[2] = compareMeta
+    result[3] = compareValue
+    result[4] = true
   }
 
   const sortedResults: OptimizationResult<ArgT, T, CompareT>[] = results
