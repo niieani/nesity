@@ -78,6 +78,6 @@
     ]
   },
   "devDependencies": {
-    "expect-type": "^0.17.3"
+    "expect-type": "^0.20.0"
   }
 }
