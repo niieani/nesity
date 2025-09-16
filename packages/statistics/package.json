@@ -86,7 +86,7 @@
     "jstat": "^1.9.6"
   },
   "devDependencies": {
-    "@niieani/scaffold": "^1.7.11",
+    "@niieani/scaffold": "^1.7.53",
     "@types/asciichart": "^1.5.8",
     "asciichart": "^1.5.25"
   }
