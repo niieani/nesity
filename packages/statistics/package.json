@@ -81,7 +81,7 @@
     ]
   },
   "dependencies": {
-    "@stdlib/stats-kstest": "^0.1.0",
+    "@stdlib/stats-kstest": "^0.2.2",
     "@stdlib/stats-ttest2": "^0.1.0",
     "jstat": "^1.9.6"
   },
